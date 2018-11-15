@@ -30,5 +30,12 @@ class ExactlySpec extends FreeSpec with Matchers with GeneratorDrivenPropertyChe
         Rope.generateArbitrary[Exactly['a']].toList should contain only Exactly('a')
       }
     }
+    "does not accept non-singletons" in {
+      """Exactly[Char]('a')""" shouldNot compile
+    }
+  }
+  "does not accept non-chars (for the moment)" in {
+    """Exactly["a"]("a")""" shouldNot compile
+    """Exactly[1](1)""" shouldNot compile
   }
 }

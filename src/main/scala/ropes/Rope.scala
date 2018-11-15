@@ -5,8 +5,7 @@ import ropes.instances._
 sealed trait Rope {
   def write: String
 }
-//TODO only allow actual singleton types for `Literal`
-final case class Exactly[Literal](value: Literal) extends Rope {
+final case class Exactly[V <: Char with Singleton](value: V) extends Rope {
   def write: String = value.toString
 }
 object Exactly extends ExactlyInstances

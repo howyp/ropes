@@ -26,6 +26,9 @@ class ExactlySpec extends FreeSpec with Matchers with GeneratorDrivenPropertyChe
       "Writing returns the same char" in forAll { char: Char =>
         Exactly(char).write should be(s"$char")
       }
+      "Generating returns only the char" in {
+        Rope.generateArbitrary[Exactly['a']].toList should contain only Exactly('a')
+      }
     }
   }
 }

@@ -1,7 +1,14 @@
 package ropes
 
+trait Parse[R <: Rope] {
+  def parse(string: String): Parse.Result[R]
+}
 object Parse {
-  type Result[R <: Rope] = Either[Parse.Failure, R]
-  //TODO this should not be string-based but contain position/expected/actual
-  final case class Failure(message: String)
+
+  sealed trait Result[+R <: Rope]
+  object Result {
+    final case class Complete[R <: Rope](value: R)                      extends Result[R]
+    final case class Incomplete[R <: Rope](value: R, remaining: String) extends Result[R]
+    case object Failure                                                 extends Result[Nothing]
+  }
 }

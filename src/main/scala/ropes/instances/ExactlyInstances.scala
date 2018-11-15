@@ -1,6 +1,6 @@
 package ropes.instances
 
-import ropes.{Exactly, Generate, Parse}
+import ropes.{Exactly, Generate, Parse, Write}
 
 trait ExactlyInstances {
   implicit def exactlyParseChar[C <: Char with Singleton](implicit c: ValueOf[C]): Parse[Exactly[C]] = { str =>
@@ -12,4 +12,5 @@ trait ExactlyInstances {
     new Generate[Exactly[C]] {
       def generate: Iterator[Exactly[C]] = Iterator(Exactly(c.value))
     }
+  implicit def exactlyWriteChar[C <: Char with Singleton]: Write[Exactly[C]] = _.value.toString
 }

@@ -7,10 +7,11 @@ sealed trait Rope
 final case class Exactly[V <: Char with Singleton](value: V) extends Rope
 object Exactly                                               extends ExactlyInstances
 
-object Rope {
-  def parseTo[R <: Rope](s: String)(implicit parse: Parse[R]): Parse.Result[R] = parse.parse(s)
+final case class AnyString(value: String) extends Rope
+object AnyString                          extends AnyStringInstances
 
-  //TODO find a monad for the return type
+object Rope {
+  def parseTo[R <: Rope](s: String)(implicit parse: Parse[R]): Parse.Result[R]  = parse.parse(s)
   def generateArbitrary[R <: Rope](implicit generate: Generate[R]): Iterator[R] = generate.generate
 
   implicit class RopeOps[R <: Rope](r: R) {

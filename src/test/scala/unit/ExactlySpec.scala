@@ -5,7 +5,7 @@ import org.scalatest.{FreeSpec, Matchers}
 import ropes._
 
 class ExactlySpec extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks {
-  "An `Exactly[_] Rope" - {
+  "An `Exactly[_]` Rope" - {
     "accepts literal chars" - {
       "Can be parsed when complete" in (
         Rope.parseTo[Exactly['a']]("a") should be(Parse.Result.Complete(Exactly('a')))

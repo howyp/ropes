@@ -1,14 +1,13 @@
 package unit
 
-import org.scalacheck.Arbitrary
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
-import org.scalatest.{FreeSpec, Matchers}
+import org.scalacheck.Gen
 import ropes._
 import ropes.scalacheck._
 
-class ExactlySpec extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks {
+class ExactlySpec extends RopeLaws {
   "An `Exactly[_]` Rope" - {
     "accepts literal chars" - {
+      `obeys Rope laws`[Exactly['a']](Gen.const("a"))
       "Can be parsed when complete" in (
         Rope.parseTo[Exactly['a']]("a") should be(Parse.Result.Complete(Exactly('a')))
       )
@@ -24,12 +23,6 @@ class ExactlySpec extends FreeSpec with Matchers with GeneratorDrivenPropertyChe
         whenever(prefix != 'a') {
           Rope.parseTo[Exactly['a']](prefix + suffix) should be(Parse.Result.Failure)
         }
-      }
-      "Writing returns the same char" in forAll { char: Char =>
-        Exactly(char).write should be(s"$char")
-      }
-      "Generating returns only the char" in forAll(Arbitrary.arbitrary[Exactly['a']]) { generated =>
-        generated should be(Exactly('a'))
       }
     }
     "does not accept non-singletons" in {

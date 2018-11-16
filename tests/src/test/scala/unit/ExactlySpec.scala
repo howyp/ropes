@@ -1,8 +1,10 @@
 package unit
 
+import org.scalacheck.Arbitrary
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.{FreeSpec, Matchers}
 import ropes._
+import ropes.scalacheck._
 
 class ExactlySpec extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks {
   "An `Exactly[_]` Rope" - {
@@ -26,10 +28,8 @@ class ExactlySpec extends FreeSpec with Matchers with GeneratorDrivenPropertyChe
       "Writing returns the same char" in forAll { char: Char =>
         Exactly(char).write should be(s"$char")
       }
-      "Generating returns only the char" in {
-        pending
-        //TODO re-enable as part of #5
-        //Rope.generateArbitrary[Exactly['a']].toList should contain only Exactly('a')
+      "Generating returns only the char" in forAll(Arbitrary.arbitrary[Exactly['a']]) { generated =>
+        generated should be(Exactly('a'))
       }
     }
     "does not accept non-singletons" in {

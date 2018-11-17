@@ -10,6 +10,9 @@ object Exactly                                               extends ExactlyInst
 final case class AnyString(value: String) extends Rope
 object AnyString                          extends AnyStringInstances
 
+final case class Concat[Prefix <: Rope, Suffix <: Rope](prefix: Prefix, suffix: Suffix) extends Rope
+object Concat                                                                           extends ConcatInstances
+
 object Rope {
   def parseTo[R <: Rope](s: String)(implicit parse: Parse[R]): Parse.Result[R] = parse.parse(s)
 

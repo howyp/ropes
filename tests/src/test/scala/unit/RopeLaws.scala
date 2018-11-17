@@ -22,8 +22,10 @@ trait RopeLaws extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks
     }
     "Round-trips arbitrary values by writing and parsing back to an identical value" in forAll(Arbitrary.arbitrary[R]) {
       original =>
-        val Parse.Result.Complete(parsed) = Rope.parseTo[R](original.write)
-        parsed should be(original)
+        val written = original.write
+        withClue(s"Wrote '$written'") {
+          Rope.parseTo[R](written) should be(Parse.Result.Complete(original))
+        }
     }
   }
 }

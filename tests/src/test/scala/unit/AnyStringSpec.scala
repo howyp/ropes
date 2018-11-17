@@ -10,7 +10,11 @@ class AnyStringSpec extends RopeLaws {
       Rope.parseTo[AnyString](s) should be(Parse.Result.Complete(AnyString(s)))
     }
     `obeys Rope laws`[AnyString](
-      genValidStrings = Arbitrary.arbitrary[String]
+      genValidStringsWithDecompositionAssertion = Arbitrary.arbitrary[String].map { str =>
+        str -> { parsed =>
+          parsed.value should be(str)
+        }
+      }
     )
   }
 }

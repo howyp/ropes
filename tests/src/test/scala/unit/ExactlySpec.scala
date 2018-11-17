@@ -7,10 +7,11 @@ import ropes.scalacheck._
 class ExactlySpec extends RopeLaws {
   "An `Exactly[_]` Rope" - {
     "accepts literal chars" - {
-      `obeys Rope laws`[Exactly['a']](Gen.const("a"))
-      "Can be parsed when complete" in (
-        Rope.parseTo[Exactly['a']]("a") should be(Parse.Result.Complete(Exactly('a')))
-      )
+      `obeys Rope laws`[Exactly['a']](Gen.const("a").map { str =>
+        str -> { parsed =>
+          parsed.value should be('a')
+        }
+      })
       "Can be parsed when incomplete" in forAll { suffix: String =>
         whenever(suffix.nonEmpty) {
           Rope.parseTo[Exactly['a']]("a" + suffix) should be(Parse.Result.Incomplete(Exactly('a'), suffix))

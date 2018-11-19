@@ -1,17 +1,22 @@
 package unit
 
-import org.scalacheck.Gen
+import org.scalacheck.{Arbitrary, Gen}
 import ropes._
 import ropes.scalacheck._
 
-class ExactlySpec extends RopeLaws {
+import scala.Some
+
+class ExactlySpec extends RopeLaws with CommonGens {
   "An `Exactly[_]` Rope" - {
     "accepts literal chars" - {
-      `obeys Rope laws`[Exactly['a']](Gen.const("a").map { str =>
-        str -> { parsed =>
-          parsed.value should be('a')
-        }
-      })
+      `obeys Rope laws`[Exactly['a']](
+        genValidStringsWithDecompositionAssertion = Gen.const("a").map { str =>
+          str -> { parsed =>
+            parsed.value should be('a')
+          }
+        },
+        genSuffixToValidStringIncomplete = Some(genNonEmptyString)
+      )
       "Can be parsed when incomplete" in forAll { suffix: String =>
         whenever(suffix.nonEmpty) {
           Rope.parseTo[Exactly['a']]("a" + suffix) should be(Parse.Result.Incomplete(Exactly('a'), suffix))

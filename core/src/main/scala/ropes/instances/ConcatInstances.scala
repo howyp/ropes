@@ -4,17 +4,13 @@ import ropes._
 
 trait ConcatInstances {
   implicit def concatParse[P <: Rope: Parse, S <: Rope: Parse]: Parse[Concat[P, S]] = { str =>
-    Rope.parseTo[P](str) match {
-      case Parse.Result.Incomplete(prefix, remaining) =>
-        Rope.parseTo[S](remaining) match {
-          case Parse.Result.Complete(suffix) =>
-            Parse.Result.Complete(Concat(prefix, suffix))
-        }
-      case Parse.Result.Complete(prefix) =>
-        Rope.parseTo[S]("") match {
-          case Parse.Result.Complete(suffix) =>
-            Parse.Result.Complete(Concat(prefix, suffix))
-        }
+    val (prefix, remaining) = Rope.parseTo[P](str) match {
+      case Parse.Result.Incomplete(prefix, remaining) => (prefix, remaining)
+      case Parse.Result.Complete(prefix)              => (prefix, "")
+    }
+    Rope.parseTo[S](remaining) match {
+      case Parse.Result.Incomplete(suffix, remaining) => Parse.Result.Incomplete(Concat(prefix, suffix), remaining)
+      case Parse.Result.Complete(suffix)              => Parse.Result.Complete(Concat(prefix, suffix))
     }
   }
 

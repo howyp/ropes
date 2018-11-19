@@ -16,5 +16,15 @@ class ConcatSpec extends RopeLaws {
         }
       )
     }
+    "with an exact prefix an AnyString suffix" - {
+      `obeys Rope laws`[Concat[Exactly['a'], AnyString]](
+        genValidStringsWithDecompositionAssertion = Arbitrary.arbitrary[String].map { suffix =>
+          "a" + suffix -> { parsed =>
+            parsed.prefix should be(Exactly('a'))
+            parsed.suffix should be(AnyString(suffix))
+          }
+        }
+      )
+    }
   }
 }

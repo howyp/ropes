@@ -10,6 +10,11 @@ trait ConcatInstances {
           case Parse.Result.Complete(suffix) =>
             Parse.Result.Complete(Concat(prefix, suffix))
         }
+      case Parse.Result.Complete(prefix) =>
+        Rope.parseTo[S]("") match {
+          case Parse.Result.Complete(suffix) =>
+            Parse.Result.Complete(Concat(prefix, suffix))
+        }
     }
   }
 

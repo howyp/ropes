@@ -1,11 +1,13 @@
 package unit
 
-import org.scalacheck.{Arbitrary, Gen}
+import org.scalacheck.{Arbitrary, Gen, Shrink}
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.{FreeSpec, Matchers}
 import ropes.{Parse, Rope, Write}
 
 trait RopeLaws extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks {
+  private implicit def noShrink[T]: Shrink[T] = Shrink(_ => Stream.empty[T])
+
   def `obeys Rope laws`[R <: Rope: Parse: Arbitrary: Write](
       genValidStringsWithDecompositionAssertion: Gen[(String, R => Unit)]
   ): Unit = {
@@ -17,7 +19,9 @@ trait RopeLaws extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks
     }
     "Round-trips valid strings by parsing and writing back to an identical string" in forAll(genValidStrings) {
       original =>
-        val Parse.Result.Complete(parsed) = Rope.parseTo[R](original)
+        val result = Rope.parseTo[R](original)
+        result should be(a[Parse.Result.Complete[_]])
+        val Parse.Result.Complete(parsed) = result
         parsed.write should be(original)
     }
     "Round-trips arbitrary values by writing and parsing back to an identical value" in forAll(Arbitrary.arbitrary[R]) {

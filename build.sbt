@@ -6,6 +6,7 @@ Global / resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots")
 )
+ThisBuild / Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oSD")
 
 lazy val core = project
   .in(file("core"))

@@ -30,6 +30,10 @@ class ExactlySpec extends RopeLaws with CommonGens {
           Rope.parseTo[Exactly['a']](prefix + suffix) should be(Parse.Result.Failure)
         }
       }
+      "Captures the literal type when using .apply(...)" in {
+        val a: Exactly['a'] = Exactly('a')
+        """val b: Exactly['a'] = Exactly('b')""" shouldNot typeCheck
+      }
     }
     "does not accept non-singletons" in {
       """Exactly[Char]('a')""" shouldNot compile

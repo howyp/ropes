@@ -1,10 +1,11 @@
 package integration
 
+import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.{FreeSpec, Matchers}
-
 import ropes._
+import ropes.scalacheck._
 
-class ExamplesSpec extends FreeSpec with Matchers {
+class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks {
   "Some examples of valid ropes include" - {
     //This is very simplified - starts with an '@', then any characters
     type TwitterHandle = Concat[Exactly['@'], AnyString]
@@ -16,6 +17,11 @@ class ExamplesSpec extends FreeSpec with Matchers {
       "composing and writing" in {
         val handle: TwitterHandle = Concat(Exactly('@'), AnyString("howyp"))
         handle.write should be("@howyp")
+      }
+      "generating" in {
+        forAll { handle: TwitterHandle =>
+          handle.write should startWith("@")
+        }
       }
     }
   }

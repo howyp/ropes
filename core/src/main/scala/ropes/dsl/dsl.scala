@@ -1,9 +1,17 @@
 package ropes
 
 package object dsl {
-  type +[Prefix <: Rope, Suffix <: Rope] = Concat[Prefix, Suffix]
+  //TODO Perhaps this should be specified next to the types itself? I guess this comes down to whether we want a
+  //separation between the main types and a DSL, or the main types and the _ops_
+  type :+[Prefix <: Rope, Suffix <: Rope] = Concat[Prefix, Suffix]
 
   implicit class ConcatOps[Prefix <: Rope](prefix: Prefix) {
-    def +[Suffix <: Rope](suffix: Suffix): Concat[Prefix, Suffix] = Concat(prefix, suffix)
+    def :+[Suffix <: Rope](suffix: Suffix): Concat[Prefix, Suffix] = Concat(prefix, suffix)
+  }
+
+  implicit class LiteralOpsViaExactly[Literal <: Char with Singleton](literal: Literal)(implicit v: ValueOf[Literal]) {
+    val literalAsExactly = Exactly[Literal](literal)
+
+    def :+[Suffix <: Rope](suffix: Suffix): Concat[Exactly[Literal], Suffix] = Concat(literalAsExactly, suffix)
   }
 }

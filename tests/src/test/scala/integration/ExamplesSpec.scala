@@ -9,14 +9,14 @@ import ropes.scalacheck._
 class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks {
   "Some examples of valid ropes include" - {
     //This is very simplified - starts with an '@', then any characters
-    type TwitterHandle = Exactly['@'] + AnyString
+    type TwitterHandle = Exactly['@'] :+ AnyString
     "twitter handles" - {
       "parsing and de-composing" in {
         val Parse.Result.Complete(parsed) = Rope.parseTo[TwitterHandle]("@howyp")
         parsed.suffix.value should be("howyp")
       }
       "composing and writing" in {
-        val handle: TwitterHandle = Exactly('@') + AnyString("howyp")
+        val handle: TwitterHandle = '@' :+ AnyString("howyp")
         handle.write should be("@howyp")
       }
       "generating" in {

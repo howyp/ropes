@@ -9,7 +9,7 @@ trait ConcatInstances {
       case Parse.Result.Complete(prefix)              => (prefix, "")
     }
     Rope.parseTo[S](remaining) match {
-      case Parse.Result.Incomplete(suffix, remaining) => Parse.Result.Incomplete(Concat(prefix, suffix), remaining)
+      case Parse.Result.Incomplete(suffix, remaining) => Parse.Result.Success(Concat(prefix, suffix), remaining)
       case Parse.Result.Complete(suffix)              => Parse.Result.Complete(Concat(prefix, suffix))
     }
   }

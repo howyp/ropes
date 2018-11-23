@@ -1,7 +1,7 @@
 name := "ropes"
 
 Global / version := "0.1.0-SNAPSHOT"
-Global / scalaVersion := "2.13.0-M4"
+Global / scalaVersion := "2.13.0-M5"
 Global / resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots")
@@ -25,7 +25,7 @@ lazy val tests = project
   .dependsOn(core, scalacheck)
   .settings(
     libraryDependencies ++= Seq(
-      "org.scalatest"  %% "scalatest"  % "3.0.6-SNAP1" % Test,
+      "org.scalatest"  %% "scalatest"  % "3.0.6-SNAP5" % Test,
       "org.scalacheck" %% "scalacheck" % "1.14.0"      % Test
     )
   )

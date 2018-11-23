@@ -1,5 +1,4 @@
-package unit
-
+package laws
 import org.scalacheck.{Arbitrary, Gen, Shrink}
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.{FreeSpec, Matchers}
@@ -34,12 +33,11 @@ trait RopeLaws extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks
         val Parse.Result.Complete(parsed) = result
         parsed.write should be(original)
     }
-    "Round-trips arbitrary values by writing and parsing back to an identical value" in forAll(Arbitrary.arbitrary[R]) {
-      original =>
-        val written = original.write
-        withClue(s"Wrote '$written'") {
-          Rope.parseTo[R](written) should be(Parse.Result.Complete(original))
-        }
+    "Round-trips arbitrary values by writing and parsing back to an identical value" in forAll { original: R =>
+      val written = original.write
+      withClue(s"Wrote '$written'") {
+        Rope.parseTo[R](written) should be(Parse.Result.Complete(original))
+      }
     }
   }
 }

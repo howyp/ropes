@@ -1,5 +1,7 @@
 package unit
 
+import gens.CommonGens
+import laws.RopeLaws
 import org.scalacheck.{Arbitrary, Gen}
 import ropes._
 import ropes.scalacheck._

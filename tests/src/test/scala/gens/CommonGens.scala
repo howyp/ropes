@@ -1,5 +1,4 @@
-package unit
-
+package gens
 import org.scalacheck.Gen
 
 trait CommonGens {

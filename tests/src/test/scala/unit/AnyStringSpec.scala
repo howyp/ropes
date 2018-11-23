@@ -1,5 +1,6 @@
 package unit
 
+import laws.RopeLaws
 import org.scalacheck.Arbitrary
 import ropes._
 import ropes.scalacheck._

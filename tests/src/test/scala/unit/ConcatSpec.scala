@@ -16,7 +16,14 @@ class ConcatSpec extends RopeLaws with CommonGens {
             parsed.suffix should be(Exactly('b'))
           }
         },
-        genSuffixToValidStringIncomplete = Some(genNonEmptyString)
+        genSuffixToValidStringIncomplete = Some(genNonEmptyString),
+        genInvalidStrings = Some(
+          Gen.oneOf(
+            Gen.const(""),
+            genNonEmptyString.suchThat(_.head != 'a'),
+            genNonEmptyString.suchThat(_.head != 'b').map('a' + _)
+          )
+        )
       )
     }
     "with an Exact['a'] prefix an AnyString suffix" - {
@@ -29,7 +36,13 @@ class ConcatSpec extends RopeLaws with CommonGens {
               parsed.suffix should be(AnyString(suffix))
             }
           },
-        genSuffixToValidStringIncomplete = None
+        genSuffixToValidStringIncomplete = None,
+        genInvalidStrings = Some(
+          Gen.oneOf(
+            Gen.const(""),
+            genNonEmptyString.suchThat(_.head != 'a')
+          )
+        )
       )
     }
   }

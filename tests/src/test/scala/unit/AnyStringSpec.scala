@@ -16,7 +16,8 @@ class AnyStringSpec extends RopeLaws {
           parsed.value should be(str)
         }
       },
-      genSuffixToValidStringIncomplete = None
+      genSuffixToValidStringIncomplete = None,
+      genInvalidStrings = None
     )
   }
 }

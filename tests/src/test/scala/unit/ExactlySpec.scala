@@ -17,19 +17,12 @@ class ExactlySpec extends RopeLaws with CommonGens {
             parsed.value should be('a')
           }
         },
-        genSuffixToValidStringIncomplete = Some(genNonEmptyString)
+        genSuffixToValidStringIncomplete = Some(genNonEmptyString),
+        genInvalidStrings = Some(Gen.oneOf(Gen.const(""), genNonEmptyString.suchThat(_.head != 'a')))
       )
       "Can be parsed when incomplete" in forAll { suffix: String =>
         whenever(suffix.nonEmpty) {
           Rope.parseTo[Exactly['a']]("a" + suffix) should be(Parse.Result.Success(Exactly('a'), suffix))
-        }
-      }
-      "Cannot be parsed with an empty string" in (
-        Rope.parseTo[Exactly['a']]("") should be(Parse.Result.Failure)
-      )
-      "Cannot be parsed with the wrong character" in forAll { (prefix: Char, suffix: String) =>
-        whenever(prefix != 'a') {
-          Rope.parseTo[Exactly['a']](prefix + suffix) should be(Parse.Result.Failure)
         }
       }
       "Captures the literal type when using .apply(...)" in {

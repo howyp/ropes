@@ -10,4 +10,9 @@ package object scalacheck {
 
   implicit def arbConcat[P <: Rope: Arbitrary, S <: Rope: Arbitrary]: Arbitrary[Concat[P, S]] =
     Arbitrary(Gen.resultOf(Concat.apply[P, S] _))
+
+  implicit def arbRange[Start <: Char with Singleton, End <: Char with Singleton](
+      implicit start: ValueOf[Start],
+      end: ValueOf[End]): Arbitrary[Range[Start, End]] =
+    Arbitrary(Gen.choose(start.value: Char, end.value: Char).map(Range.unsafeFrom(_)))
 }

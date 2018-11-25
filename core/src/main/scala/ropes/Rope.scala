@@ -13,6 +13,18 @@ object AnyString                          extends AnyStringInstances
 final case class Concat[Prefix <: Rope, Suffix <: Rope](prefix: Prefix, suffix: Suffix) extends Rope
 object Concat                                                                           extends ConcatInstances
 
+sealed abstract case class Range[Start <: Char with Singleton, End <: Char with Singleton](value: Char) extends Rope
+object Range extends RangeInstances {
+  def from[Start <: Char with Singleton, End <: Char with Singleton](
+      char: Char)(implicit start: ValueOf[Start], end: ValueOf[End]): Option[Range[Start, End]] =
+    if (char >= start.value && char <= end.value) Some(new Range[Start, End](char) {})
+    else None
+
+  def unsafeFrom[Start <: Char with Singleton: ValueOf, End <: Char with Singleton: ValueOf](
+      char: Char): Range[Start, End] =
+    from[Start, End](char).getOrElse(throw new IllegalArgumentException())
+}
+
 object Rope {
   def parseTo[R <: Rope](s: String)(implicit parse: Parse[R]): Parse.Result[R] = parse.parse(s)
 

@@ -17,7 +17,7 @@ class RangeSpec extends RopeLaws with CommonGens {
         Gen
           .oneOf(
             Gen.choose(Char.MinValue, ('a' - 1).toChar),
-            Gen.choose(('a' + 1).toChar, Char.MaxValue)
+            Gen.choose(('z' + 1).toChar, Char.MaxValue)
           )
           .map(_.toString)
       )

@@ -28,7 +28,7 @@ trait RopeLaws extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks
       }
     }
     genInvalidStrings.foreach { genInvalidStrings =>
-      "Fails to parse when invalid" in forAll(genInvalidStrings) { str =>
+      "Fails to parse when invalid" in forAll(genInvalidStrings, minSuccessful(1000)) { str =>
         Rope.parseTo[R](str) should be(Parse.Result.Failure)
       }
     }

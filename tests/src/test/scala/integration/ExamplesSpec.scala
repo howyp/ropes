@@ -28,23 +28,28 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
     "UK Postcodes" - {
       //Wikipedia lists a validation Regex as:
       // ^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? [0-9][A-Za-z]{2}|[Gg][Ii][Rr] 0[Aa]{2})$
-      type OutwardCode = Range['A', 'Z'] :+ Range['A', 'Z'] :+ Range['1', '9']
-      type InwardCode  = Range['1', '9'] :+ Range['A', 'Z'] :+ Range['A', 'Z']
-      type PostCode    = OutwardCode :+ Exactly[' '] :+ InwardCode
+      type PostCode = PostCode.OutwardCode :+ Exactly[' '] :+ PostCode.InwardCode
+      object PostCode {
+        type Area        = Range['A', 'Z'] :+ Range['A', 'Z']
+        type District    = Range['1', '9']
+        type OutwardCode = Area :+ District
 
+        type Sector     = Range['1', '9']
+        type Unit       = Range['A', 'Z'] :+ Range['A', 'Z']
+        type InwardCode = Sector :+ Unit
+      }
       "parsing and de-composing" in {
-        val Parse.Result.Complete(parsed) = Rope.parseTo[PostCode]("CR2 6XH")
-        parsed.prefix.prefix.prefix.prefix.value should be('C')
-        parsed.prefix.prefix.prefix.suffix.value should be('R')
-        parsed.prefix.prefix.suffix.value should be('2')
-        parsed.prefix.prefix.write should be("CR2")
+        val Parse.Result.Complete(outward :+ _ :+ inward) = Rope.parseTo[PostCode]("CR2 6XH")
 
-        parsed.prefix.suffix.value should be(' ')
+        outward.prefix.prefix.value should be('C')
+        outward.prefix.suffix.value should be('R')
+        outward.suffix.value should be('2')
+        outward.write should be("CR2")
 
-        parsed.suffix.prefix.prefix.value should be('6')
-        parsed.suffix.prefix.suffix.value should be('X')
-        parsed.suffix.suffix.value should be('H')
-        parsed.suffix.write should be("6XH")
+        inward.prefix.value should be('6')
+        inward.suffix.prefix.value should be('X')
+        inward.suffix.suffix.value should be('H')
+        inward.write should be("6XH")
       }
     }
   }

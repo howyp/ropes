@@ -2,7 +2,7 @@ package ropes.instances
 
 import ropes._
 
-trait ConcatInstances {
+private[ropes] trait ConcatInstances {
   implicit def concatParse[P <: Rope: Parse, S <: Rope: Parse]: Parse[Concat[P, S]] = { str =>
     Rope.parseTo[P](str).flatMap {
       case (prefix, afterSuffix) =>

@@ -2,7 +2,7 @@ package ropes.instances
 
 import ropes.{Exactly, Parse, Write}
 
-trait ExactlyInstances {
+private[ropes] trait ExactlyInstances {
   implicit def exactlyParseChar[C <: Char with Singleton](implicit c: ValueOf[C]): Parse[Exactly[C]] = { str =>
     if (str.length > 0 && str.charAt(0) == c.value) Parse.Result.Success(Exactly[C](c.value), str.substring(1))
     else Parse.Result.Failure

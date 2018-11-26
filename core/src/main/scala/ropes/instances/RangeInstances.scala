@@ -2,7 +2,7 @@ package ropes.instances
 
 import ropes.{Range, Parse, Write}
 
-trait RangeInstances {
+private[ropes] trait RangeInstances {
   implicit def rangeParse[Start <: Char with Singleton, End <: Char with Singleton](
       implicit start: ValueOf[Start],
       end: ValueOf[End]): Parse[Range[Start, End]] = { str =>

@@ -1,7 +1,7 @@
 package ropes.instances
 import ropes.{Conversion, ConvertedTo, Parse, Rope, Write}
 
-trait ConvertedToInstances {
+private[ropes] trait ConvertedToInstances {
   implicit def convertedToParse[Source <: Rope, Target](
       implicit sourceParse: Parse[Source],
       conversion: Conversion[Source, Target]): Parse[Source ConvertedTo Target] =

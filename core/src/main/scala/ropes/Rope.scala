@@ -22,7 +22,7 @@ object Range extends RangeInstances {
 
   def unsafeFrom[Start <: Char with Singleton: ValueOf, End <: Char with Singleton: ValueOf](
       char: Char): Range[Start, End] =
-    from[Start, End](char).getOrElse(throw new IllegalArgumentException())
+    from[Start, End](char).getOrElse(throw new IllegalArgumentException(char.toString))
 }
 
 final case class ConvertedTo[Source <: Rope, Target](value: Target) extends Rope

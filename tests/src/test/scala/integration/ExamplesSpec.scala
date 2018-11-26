@@ -51,6 +51,18 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
         inward.suffix.suffix.value should be('H')
         inward.write should be("6XH")
       }
+      "composing and writing" in {
+        //TODO Can we do this better? For instance allow the ' ' char to be implicit
+        val Parse.Result.Complete(outward) = Rope.parseTo[PostCode.OutwardCode]("CR2")
+        val Parse.Result.Complete(inward)  = Rope.parseTo[PostCode.InwardCode]("6XH")
+        val postcode: PostCode             = outward :+ Exactly(' ') :+ inward
+        postcode.write should be("CR2 6XH")
+      }
+      "generating" in {
+        forAll { postcode: PostCode =>
+          Rope.parseTo[PostCode](postcode.write) should be(a[Parse.Result.Complete[_]])
+        }
+      }
     }
   }
 }

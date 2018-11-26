@@ -25,6 +25,9 @@ object Range extends RangeInstances {
     from[Start, End](char).getOrElse(throw new IllegalArgumentException())
 }
 
+final case class ConvertedTo[Source <: Rope, Target](value: Target) extends Rope
+object ConvertedTo                                                  extends ConvertedToInstances
+
 object Rope {
   def parseTo[R <: Rope](s: String)(implicit parse: Parse[R]): Parse.Result[R] = parse.parse(s)
 

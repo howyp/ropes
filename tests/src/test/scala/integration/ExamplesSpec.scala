@@ -31,10 +31,10 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
       type PostCode = PostCode.OutwardCode :+ Exactly[' '] :+ PostCode.InwardCode
       object PostCode {
         type Area        = Range['A', 'Z'] :+ Range['A', 'Z']
-        type District    = Range['1', '9']
+        type District    = Digit
         type OutwardCode = Area :+ District
 
-        type Sector     = Range['1', '9']
+        type Sector     = Digit
         type Unit       = Range['A', 'Z'] :+ Range['A', 'Z']
         type InwardCode = Sector :+ Unit
       }
@@ -43,10 +43,10 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
 
         outward.prefix.prefix.value should be('C')
         outward.prefix.suffix.value should be('R')
-        outward.suffix.value should be('2')
+        outward.suffix.value should be(2)
         outward.write should be("CR2")
 
-        inward.prefix.value should be('6')
+        inward.prefix.value should be(6)
         inward.suffix.prefix.value should be('X')
         inward.suffix.suffix.value should be('H')
         inward.write should be("6XH")

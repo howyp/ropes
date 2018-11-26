@@ -4,4 +4,4 @@ scala:
 - 2.13.0-M4
 
 script:
-- sbt ++$TRAVIS_SCALA_VERSION scalafmtCheck scalafmtSbtCheck test
+- sbt ++$TRAVIS_SCALA_VERSION scalafmtCheck scalafmtSbtCheck headerCheck test:headerCheck test

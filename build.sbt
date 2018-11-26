@@ -6,13 +6,19 @@ Global / resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots")
 )
+Global / organizationName := "Howard Perrin"
+Global / startYear := Some(2018)
+Global / licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt"))
+
 ThisBuild / Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oSD")
 
 lazy val core = project
   .in(file("core"))
+  .enablePlugins(AutomateHeaderPlugin)
 
 lazy val scalacheck = project
   .in(file("scalacheck"))
+  .enablePlugins(AutomateHeaderPlugin)
   .dependsOn(core)
   .settings(
     libraryDependencies ++= Seq(
@@ -22,6 +28,7 @@ lazy val scalacheck = project
 
 lazy val tests = project
   .in(file("tests"))
+  .enablePlugins(AutomateHeaderPlugin)
   .dependsOn(core, scalacheck)
   .settings(
     libraryDependencies ++= Seq(

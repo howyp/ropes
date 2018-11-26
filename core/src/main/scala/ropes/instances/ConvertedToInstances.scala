@@ -6,11 +6,11 @@ trait ConvertedToInstances {
       implicit sourceParse: Parse[Source],
       conversion: Conversion[Source, Target]): Parse[Source ConvertedTo Target] =
     sourceParse.parse(_).flatMap { (source, remainder) =>
-      Parse.Result.Success(ConvertedTo[Source, Target](conversion.convert(source)), remainder)
+      Parse.Result.Success(ConvertedTo[Source, Target](conversion.forwards(source)), remainder)
     }
 
   implicit def convertedToWrite[Source <: Rope, Target](
       implicit sourceWrite: Write[Source],
       conversion: Conversion[Source, Target]): Write[Source ConvertedTo Target] =
-    target => sourceWrite.write(conversion.convert(target.value))
+    target => sourceWrite.write(conversion.backwards(target.value))
 }

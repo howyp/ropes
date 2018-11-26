@@ -6,9 +6,7 @@ trait ConvertedToInstances {
       implicit sourceParse: Parse[Source],
       conversion: Conversion[Source, Target]): Parse[Source ConvertedTo Target] =
     sourceParse.parse(_).flatMap { (source, remainder) =>
-      conversion.convert(source) match {
-        case Some(target) => Parse.Result.Success(ConvertedTo[Source, Target](target), remainder)
-      }
+      Parse.Result.Success(ConvertedTo[Source, Target](conversion.convert(source)), remainder)
     }
 
   implicit def convertedToWrite[Source <: Rope, Target](

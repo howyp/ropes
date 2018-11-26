@@ -14,5 +14,10 @@ package object scalacheck {
   implicit def arbRange[Start <: Char with Singleton, End <: Char with Singleton](
       implicit start: ValueOf[Start],
       end: ValueOf[End]): Arbitrary[Range[Start, End]] =
-    Arbitrary(Gen.choose(start.value: Char, end.value: Char).map(Range.unsafeFrom(_)))
+    Arbitrary(Gen.choose(start.value: Char, end.value: Char).map(Range.unsafeFrom[Start, End]))
+
+  implicit def arbConvertedTo[Source <: Rope, Target](
+      implicit arbSource: Arbitrary[Source],
+      conversion: Conversion[Source, Target]): Arbitrary[ConvertedTo[Source, Target]] =
+    Arbitrary(arbSource.arbitrary.map(conversion.forwards).map(ConvertedTo.apply[Source, Target]))
 }

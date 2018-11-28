@@ -68,16 +68,16 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
           inward.suffix.suffix.value should be('H')
           inward.write should be("6XH")
         }
-        "N1 6XH" in {
-          val Parse.Result.Complete(outward :+ _ :+ _) = Rope.parseTo[PostCode]("N1 6XH")
-          outward.prefix.prefix.value should be('N')
+        "M1 1AE" in {
+          val Parse.Result.Complete(outward :+ _ :+ _) = Rope.parseTo[PostCode]("M1 1AE")
+          outward.prefix.prefix.value should be('M')
           outward.prefix.suffix.value should be(None)
         }
-        "SW19 6XH" in {
-          val Parse.Result.Complete(outward :+ _ :+ _) = Rope.parseTo[PostCode]("SW19 6XH")
-          outward.prefix.prefix.value should be('S')
-          outward.prefix.suffix.value.get.value should be('W')
-          outward.suffix.value should be(19)
+        "DN55 1PT" in {
+          val Parse.Result.Complete(outward :+ _ :+ _) = Rope.parseTo[PostCode]("DN55 1PT")
+          outward.prefix.prefix.value should be('D')
+          outward.prefix.suffix.value.get.value should be('N')
+          outward.suffix.value should be(55)
         }
       }
       "composing and writing" in {

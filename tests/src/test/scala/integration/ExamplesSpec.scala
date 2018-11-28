@@ -69,11 +69,11 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
       }
       "composing and writing" in {
         //TODO Can we do this better? For instance allow the ' ' char to be implicit
-        val Parse.Result.Complete(outward) = Rope.parseTo[PostCode.Area]("CR")
-        val Some(district)                 = Digit.from(2)
-        val Some(sector)                   = Digit.from(6)
-        val Parse.Result.Complete(inward)  = Rope.parseTo[PostCode.Unit]("XH")
-        val postcode: PostCode             = (outward :+ district) :+ Exactly(' ') :+ (sector :+ inward)
+        val Parse.Result.Complete(area)   = Rope.parseTo[PostCode.Area]("CR")
+        val Some(district)                = Digit.from(2)
+        val Some(sector)                  = Digit.from(6)
+        val Parse.Result.Complete(inward) = Rope.parseTo[PostCode.Unit]("XH")
+        val postcode: PostCode            = (area :+ district) :+ Exactly(' ') :+ (sector :+ inward)
         postcode.write should be("CR2 6XH")
       }
       "generating" in {

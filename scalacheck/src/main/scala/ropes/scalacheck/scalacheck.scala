@@ -35,5 +35,5 @@ package object scalacheck {
   implicit def arbConvertedTo[Source <: Rope, Target](
       implicit arbSource: Arbitrary[Source],
       conversion: Conversion[Source, Target]): Arbitrary[ConvertedTo[Source, Target]] =
-    Arbitrary(arbSource.arbitrary.map(conversion.forwards).map(ConvertedTo.apply[Source, Target]))
+    Arbitrary(arbSource.arbitrary.map(ConvertedTo.fromSource[Source, Target]))
 }

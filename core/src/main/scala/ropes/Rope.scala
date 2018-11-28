@@ -41,8 +41,19 @@ object Range extends RangeInstances {
     from[Start, End](char).getOrElse(throw new IllegalArgumentException(char.toString))
 }
 
-final case class ConvertedTo[Source <: Rope, Target](value: Target) extends Rope
-object ConvertedTo                                                  extends ConvertedToInstances
+//TODO I'm not really that happy with this name, come up with something better.
+sealed abstract case class ConvertedTo[Source <: Rope, Target](value: Target) extends Rope
+object ConvertedTo extends ConvertedToInstances {
+  def fromTarget[Source <: Rope, Target](target: Target)(
+      implicit conversion: Conversion[Source, Target]): Option[ConvertedTo[Source, Target]] =
+    //TODO doing the conversion and throwing the value away feels bad, but if `backwards` was a partial function
+    // we'd be doing that anyway
+    conversion.backwards(target).map(_ => new ConvertedTo[Source, Target](target) {})
+
+  def fromSource[Source <: Rope, Target](source: Source)(
+      implicit conversion: Conversion[Source, Target]): ConvertedTo[Source, Target] =
+    new ConvertedTo[Source, Target](conversion.forwards(source)) {}
+}
 
 object Rope {
   def parseTo[R <: Rope](s: String)(implicit parse: Parse[R]): Parse.Result[R] = parse.parse(s)

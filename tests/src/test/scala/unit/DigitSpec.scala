@@ -23,8 +23,9 @@ import ropes.scalacheck._
 
 class DigitSpec extends RopeLaws with CommonGens {
   "A Digit" - {
+    val validInts = Gen.choose(0, 9)
     `obeys Rope laws`[Digit](
-      genValidStringsWithDecompositionAssertion = Gen.choose(0, 9).map { digit =>
+      genValidStringsWithDecompositionAssertion = validInts.map { digit =>
         digit.toString -> (_.value should be(digit))
       },
       genSuffixToValidStringIncomplete = Some(genNonEmptyString),
@@ -37,5 +38,12 @@ class DigitSpec extends RopeLaws with CommonGens {
           .map(_.toString)
       )
     )
+    "Can be created from a valid Int" in forAll(validInts) { int =>
+      Digit.from(int).get.value should be(int)
+    }
+    "Cannot be created from an invalid Int" in forAll(
+      Gen.oneOf(Gen.choose(Int.MinValue, 0), Gen.choose(9, Int.MaxValue))) { int =>
+      Digit.from(int) should be(empty)
+    }
   }
 }

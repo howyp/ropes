@@ -47,7 +47,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
       type PostCode = PostCode.OutwardCode :+ Exactly[' '] :+ PostCode.InwardCode
       object PostCode {
         type Area        = Range['A', 'Z'] :+ Optional[Range['A', 'Z']]
-        type District    = OneOrTwoDigits
+        type District    = OneOrTwoDigits :+ Optional[Range['A', 'Z']]
         type OutwardCode = Area :+ District
 
         type Sector     = Digit
@@ -60,7 +60,8 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
 
           outward.prefix.prefix.value should be('C')
           outward.prefix.suffix.value.get.value should be('R')
-          outward.suffix.value should be(2)
+          outward.suffix.prefix.value should be(2)
+          outward.suffix.suffix.value should be(None)
           outward.write should be("CR2")
 
           inward.prefix.value should be(6)
@@ -77,13 +78,20 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
           val Parse.Result.Complete(outward :+ _ :+ _) = Rope.parseTo[PostCode]("DN55 1PT")
           outward.prefix.prefix.value should be('D')
           outward.prefix.suffix.value.get.value should be('N')
-          outward.suffix.value should be(55)
+          outward.suffix.prefix.value should be(55)
+          outward.suffix.suffix.value should be(None)
+        }
+        "EC1A 1BB" in {
+          val Parse.Result.Complete(outward :+ _ :+ _) = Rope.parseTo[PostCode]("EC1A 1BB")
+          outward.suffix.prefix.value should be(1)
+          outward.suffix.suffix.value.get.value should be('A')
         }
       }
       "composing and writing" in {
         //TODO Can we do this better? For instance allow the ' ' char to be implicit
-        val Parse.Result.Complete(area)   = Rope.parseTo[PostCode.Area]("CR")
-        val Some(district)                = OneOrTwoDigits.from(2)
+        val Parse.Result.Complete(area) = Rope.parseTo[PostCode.Area]("CR")
+        //TODO should we change the variance of rope subclasses to avoid the Option.empty?
+        val Some(district)                = OneOrTwoDigits.from(2).map(_ :+ Optional(Option.empty[Range['A', 'Z']]))
         val Some(sector)                  = Digit.from(6)
         val Parse.Result.Complete(inward) = Rope.parseTo[PostCode.Unit]("XH")
         val postcode: PostCode            = (area :+ district) :+ Exactly(' ') :+ (sector :+ inward)

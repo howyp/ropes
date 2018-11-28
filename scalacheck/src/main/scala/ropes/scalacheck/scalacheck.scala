@@ -36,4 +36,7 @@ package object scalacheck {
       implicit arbSource: Arbitrary[Source],
       conversion: Conversion[Source, Target]): Arbitrary[ConvertedTo[Source, Target]] =
     Arbitrary(arbSource.arbitrary.map(ConvertedTo.fromSource[Source, Target]))
+
+  implicit def arbOptional[R <: Rope](implicit arb: Arbitrary[R]): Arbitrary[Optional[R]] =
+    Arbitrary(Gen.option(arb.arbitrary).map(Optional.apply[R]))
 }

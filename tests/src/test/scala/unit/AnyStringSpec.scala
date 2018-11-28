@@ -32,7 +32,7 @@ class AnyStringSpec extends RopeLaws {
           parsed.value should be(str)
         }
       },
-      genSuffixToValidStringIncomplete = None,
+      genSuffixToMakeValidStringIncomplete = None,
       genInvalidStrings = None
     )
   }

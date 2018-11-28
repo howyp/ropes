@@ -33,7 +33,7 @@ class ExactlySpec extends RopeLaws with CommonGens {
             parsed.value should be('a')
           }
         },
-        genSuffixToValidStringIncomplete = Some(genNonEmptyString),
+        genSuffixToMakeValidStringIncomplete = Some(genNonEmptyString),
         genInvalidStrings = Some(Gen.oneOf(Gen.const(""), genNonEmptyString.suchThat(_.head != 'a')))
       )
       "Can be parsed when incomplete" in forAll { suffix: String =>

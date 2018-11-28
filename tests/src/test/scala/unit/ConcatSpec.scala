@@ -32,7 +32,7 @@ class ConcatSpec extends RopeLaws with CommonGens {
             parsed.suffix should be(Exactly('b'))
           }
         },
-        genSuffixToValidStringIncomplete = Some(genNonEmptyString),
+        genSuffixToMakeValidStringIncomplete = Some(genNonEmptyString),
         genInvalidStrings = Some(
           Gen.oneOf(
             Gen.const(""),
@@ -52,7 +52,7 @@ class ConcatSpec extends RopeLaws with CommonGens {
               parsed.suffix should be(AnyString(suffix))
             }
           },
-        genSuffixToValidStringIncomplete = None,
+        genSuffixToMakeValidStringIncomplete = None,
         genInvalidStrings = Some(
           Gen.oneOf(
             Gen.const(""),

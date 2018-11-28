@@ -15,16 +15,17 @@
  */
 
 package unit
+import gens.CommonGens
 import laws.RopeLaws
 import org.scalacheck.Gen
 import ropes.{Exactly, Optional}
 import ropes.scalacheck._
 
-class OptionalSpec extends RopeLaws {
+class OptionalSpec extends RopeLaws with CommonGens {
   "An Optional[Exactly['x']" - {
     type Opt = Optional[Exactly['x']]
     `obeys Rope laws`[Opt](
-      Gen.oneOf(
+      genValidStringsWithDecompositionAssertion = Gen.oneOf(
         "x" -> { opt: Opt =>
           opt.value should be(Some(Exactly('x')))
           ()
@@ -34,8 +35,8 @@ class OptionalSpec extends RopeLaws {
           ()
         }
       ),
-      None,
-      None
+      genSuffixToMakeValidStringIncomplete = Some(genNonEmptyString.suchThat(_.head != 'x')),
+      genInvalidStrings = None
     )
   }
 }

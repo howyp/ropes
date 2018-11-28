@@ -21,8 +21,9 @@ import ropes.{Optional, Parse, Rope, Write}
 private[ropes] trait OptionalInstances {
   implicit def optionalParse[R <: Rope](implicit parse: Parse[R]): Parse[Optional[R]] = { original =>
     parse.parse(original) match {
-      case Parse.Result.Failure     => Parse.Result.Success(Optional(None), original)
-      case Parse.Result.Complete(r) => Parse.Result.Complete(Optional(Some(r)))
+      case Parse.Result.Failure                  => Parse.Result.Success(Optional(None), original)
+      case Parse.Result.Complete(r)              => Parse.Result.Complete(Optional(Some(r)))
+      case Parse.Result.Incomplete(r, remaining) => Parse.Result.Success(Optional(Some(r)), remaining)
     }
   }
 

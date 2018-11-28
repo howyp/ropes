@@ -35,7 +35,7 @@ class RangeSpec extends RopeLaws with CommonGens {
       genValidStringsWithDecompositionAssertion = genAtoZ.map { char =>
         char.toString -> (_.value should be(char))
       },
-      genSuffixToValidStringIncomplete = Some(genNonEmptyString),
+      genSuffixToMakeValidStringIncomplete = Some(genNonEmptyString),
       genInvalidStrings = Some(genNonAtoZ.map(_.toString))
     )
     "Range can be created from valid characters" - forAll(genAtoZ) { char =>

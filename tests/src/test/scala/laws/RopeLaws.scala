@@ -25,7 +25,7 @@ trait RopeLaws extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks
 
   def `obeys Rope laws`[R <: Rope: Parse: Arbitrary: Write](
       genValidStringsWithDecompositionAssertion: Gen[(String, R => Unit)],
-      genSuffixToValidStringIncomplete: Option[Gen[String]],
+      genSuffixToMakeValidStringIncomplete: Option[Gen[String]],
       genInvalidStrings: Option[Gen[String]]
   ): Unit = {
     val genValidStrings = genValidStringsWithDecompositionAssertion.map(_._1)
@@ -34,7 +34,7 @@ trait RopeLaws extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks
         val Parse.Result.Complete(parsed) = Rope.parseTo[R](str)
         assertion(parsed)
     }
-    genSuffixToValidStringIncomplete.foreach { genSuffixToValidStringIncomplete =>
+    genSuffixToMakeValidStringIncomplete.foreach { genSuffixToValidStringIncomplete =>
       "Parses correctly when incomplete" in forAll(genValidStringsWithDecompositionAssertion,
                                                    genSuffixToValidStringIncomplete,
                                                    minSuccessful(10000)) { (strAndAssertion, suffix) =>

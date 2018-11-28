@@ -28,7 +28,7 @@ class DigitSpec extends RopeLaws with CommonGens {
       genValidStringsWithDecompositionAssertion = validInts.map { digit =>
         digit.toString -> (_.value should be(digit))
       },
-      genSuffixToValidStringIncomplete = Some(genNonEmptyString),
+      genSuffixToMakeValidStringIncomplete = Some(genNonEmptyString),
       genInvalidStrings = Some(
         Gen
           .oneOf(

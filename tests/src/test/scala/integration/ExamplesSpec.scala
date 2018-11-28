@@ -46,31 +46,44 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
       // ^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? [0-9][A-Za-z]{2}|[Gg][Ii][Rr] 0[Aa]{2})$
       type PostCode = PostCode.OutwardCode :+ Exactly[' '] :+ PostCode.InwardCode
       object PostCode {
-        type Area        = Range['A', 'Z'] :+ Range['A', 'Z']
-        type District    = Digit
+        type Area        = Range['A', 'Z'] :+ Optional[Range['A', 'Z']]
+        type District    = OneOrTwoDigits
         type OutwardCode = Area :+ District
 
         type Sector     = Digit
         type Unit       = Range['A', 'Z'] :+ Range['A', 'Z']
         type InwardCode = Sector :+ Unit
       }
-      "parsing and de-composing" in {
-        val Parse.Result.Complete(outward :+ _ :+ inward) = Rope.parseTo[PostCode]("CR2 6XH")
+      "parsing and de-composing" - {
+        "CR2 6XH" in {
+          val Parse.Result.Complete(outward :+ _ :+ inward) = Rope.parseTo[PostCode]("CR2 6XH")
 
-        outward.prefix.prefix.value should be('C')
-        outward.prefix.suffix.value should be('R')
-        outward.suffix.value should be(2)
-        outward.write should be("CR2")
+          outward.prefix.prefix.value should be('C')
+          outward.prefix.suffix.value.get.value should be('R')
+          outward.suffix.value should be(2)
+          outward.write should be("CR2")
 
-        inward.prefix.value should be(6)
-        inward.suffix.prefix.value should be('X')
-        inward.suffix.suffix.value should be('H')
-        inward.write should be("6XH")
+          inward.prefix.value should be(6)
+          inward.suffix.prefix.value should be('X')
+          inward.suffix.suffix.value should be('H')
+          inward.write should be("6XH")
+        }
+        "N1 6XH" in {
+          val Parse.Result.Complete(outward :+ _ :+ _) = Rope.parseTo[PostCode]("N1 6XH")
+          outward.prefix.prefix.value should be('N')
+          outward.prefix.suffix.value should be(None)
+        }
+        "SW19 6XH" in {
+          val Parse.Result.Complete(outward :+ _ :+ _) = Rope.parseTo[PostCode]("SW19 6XH")
+          outward.prefix.prefix.value should be('S')
+          outward.prefix.suffix.value.get.value should be('W')
+          outward.suffix.value should be(19)
+        }
       }
       "composing and writing" in {
         //TODO Can we do this better? For instance allow the ' ' char to be implicit
         val Parse.Result.Complete(area)   = Rope.parseTo[PostCode.Area]("CR")
-        val Some(district)                = Digit.from(2)
+        val Some(district)                = OneOrTwoDigits.from(2)
         val Some(sector)                  = Digit.from(6)
         val Parse.Result.Complete(inward) = Rope.parseTo[PostCode.Unit]("XH")
         val postcode: PostCode            = (area :+ district) :+ Exactly(' ') :+ (sector :+ inward)

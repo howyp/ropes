@@ -15,7 +15,7 @@
  */
 
 package ropes.instances
-import ropes.{Conversion, Range}
+import ropes._
 
 private[ropes] trait DigitInstances {
   //TODO consider if we can write Conversion[Digit]
@@ -23,4 +23,21 @@ private[ropes] trait DigitInstances {
     forwards = _.value.toInt - '0'.charValue(),
     backwards = target => Range.from((target + '0'.charValue()).toChar)
   )
+
+  implicit def oneOrTwoDigitsConversion: Conversion[Digit Concat Optional[Digit], Int] =
+    Conversion[Digit Concat Optional[Digit], Int](
+      forwards = {
+        case Concat(ones, Optional(None))       => ones.value
+        case Concat(tens, Optional(Some(ones))) => tens.value * 10 + ones.value
+      },
+      backwards = int =>
+        if (int > 99 || int < 0) None
+        else
+          Digit.from(int % 10).map { ones =>
+            Digit.from(int / 10 % 10).filterNot(_.value == 0) match {
+              case None       => Concat(ones, Optional(None))
+              case Some(tens) => Concat(tens, Optional(Some(ones)))
+            }
+        }
+    )
 }

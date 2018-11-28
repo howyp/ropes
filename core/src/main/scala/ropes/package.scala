@@ -21,4 +21,9 @@ package object ropes extends DigitInstances {
   object Digit {
     def from(value: Int): Option[Digit] = ConvertedTo.fromTarget(value)
   }
+
+  type OneOrTwoDigits = Concat[Digit, Optional[Digit]] ConvertedTo Int
+  object OneOrTwoDigits {
+    def from(value: Int): Option[OneOrTwoDigits] = ConvertedTo.fromTarget(value)
+  }
 }

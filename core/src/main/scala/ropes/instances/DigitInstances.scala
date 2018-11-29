@@ -21,7 +21,7 @@ private[ropes] trait DigitInstances {
   //TODO consider if we can write Conversion[Digit]
   implicit val digitConversion: Conversion[Range['0', '9'], Int] = Conversion(
     forwards = _.value.toInt - '0'.charValue(),
-    backwards = target => Range.from((target + '0'.charValue()).toChar)
+    backwards = target => Range.from['0', '9']((target + '0'.charValue()).toChar).toOption
   )
 
   implicit def oneOrTwoDigitsConversion: Conversion[Digit Concat Optional[Digit], Int] =
@@ -33,8 +33,8 @@ private[ropes] trait DigitInstances {
       backwards = int =>
         if (int > 99 || int < 0) None
         else
-          Digit.from(int % 10).map { ones =>
-            Digit.from(int / 10 % 10).filterNot(_.value == 0) match {
+          Digit.from(int % 10).toOption.map { ones =>
+            Digit.from(int / 10 % 10).toOption.filterNot(_.value == 0) match {
               case None       => Concat(ones, Optional(None))
               case Some(tens) => Concat(tens, Optional(Some(ones)))
             }

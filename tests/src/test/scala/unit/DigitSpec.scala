@@ -39,11 +39,11 @@ class DigitSpec extends RopeLaws with CommonGens {
       )
     )
     "Can be created from a valid Int" in forAll(validInts) { int =>
-      Digit.from(int).get.value should be(int)
+      Digit.from(int).right.get.value should be(int)
     }
     "Cannot be created from an invalid Int" in forAll(
       Gen.oneOf(Gen.choose(Int.MinValue, 0), Gen.choose(9, Int.MaxValue))) { int =>
-      Digit.from(int) should be(empty)
+      Digit.from(int) should be('left)
     }
   }
 }

@@ -38,7 +38,7 @@ class ExactlySpec extends RopeLaws with CommonGens {
       )
       "Can be parsed when incomplete" in forAll { suffix: String =>
         whenever(suffix.nonEmpty) {
-          Rope.parseTo[Exactly['a']]("a" + suffix) should be(Parse.Result.Success(Exactly('a'), suffix))
+          Parse[Exactly['a']].parse("a" + suffix) should be(Parse.Result.Success(Exactly('a'), suffix))
         }
       }
       "Captures the literal type when using .apply(...)" in {

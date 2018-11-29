@@ -19,10 +19,10 @@ package ropes.instances
 import ropes._
 
 private[ropes] trait ConcatInstances {
-  implicit def concatParse[P <: Rope: Parse, S <: Rope: Parse]: Parse[Concat[P, S]] = { str =>
-    Rope.parseTo[P](str).flatMap {
+  implicit def concatParse[Prefix <: Rope: Parse, Suffix <: Rope: Parse]: Parse[Concat[Prefix, Suffix]] = { str =>
+    Parse[Prefix].parse(str).flatMap {
       case (prefix, afterSuffix) =>
-        Rope.parseTo[S](afterSuffix).flatMap {
+        Parse[Suffix].parse(afterSuffix).flatMap {
           case (suffix, remaining) => Parse.Result.Success(Concat(prefix, suffix), remaining)
         }
     }

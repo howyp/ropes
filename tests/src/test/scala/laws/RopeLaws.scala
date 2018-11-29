@@ -31,7 +31,7 @@ trait RopeLaws extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks
     val genValidStrings = genValidStringsWithDecompositionAssertion.map(_._1)
     "Parses correctly when complete" in forAll(genValidStringsWithDecompositionAssertion, minSuccessful(10000)) {
       case (str, assertion) =>
-        val Parse.Result.Complete(parsed) = Rope.parseTo[R](str)
+        val Parse.Result.Complete(parsed) = Parse[R].parse(str)
         assertion(parsed)
     }
     genSuffixToMakeValidStringIncomplete.foreach { genSuffixToValidStringIncomplete =>
@@ -39,29 +39,29 @@ trait RopeLaws extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks
                                                    genSuffixToValidStringIncomplete,
                                                    minSuccessful(10000)) { (strAndAssertion, suffix) =>
         val (str, assertion)                           = strAndAssertion
-        val Parse.Result.Incomplete(parsed, remaining) = Rope.parseTo[R](str + suffix)
+        val Parse.Result.Incomplete(parsed, remaining) = Parse[R].parse(str + suffix)
         assertion(parsed)
         remaining should be(suffix)
       }
     }
     genInvalidStrings.foreach { genInvalidStrings =>
       "Fails to parse when invalid" in forAll(genInvalidStrings, minSuccessful(10000)) { str =>
-        Rope.parseTo[R](str) should be(Parse.Result.Failure)
+        Parse[R].parse(str) should be(Parse.Result.Failure)
       }
     }
     "Round-trips valid strings by parsing and writing back to an identical string" in forAll(genValidStrings,
                                                                                              minSuccessful(10000)) {
       original =>
-        val result = Rope.parseTo[R](original)
+        val result = Parse[R].parse(original)
         result should be(a[Parse.Result.Complete[_]])
         val Parse.Result.Complete(parsed) = result
-        parsed.write should be(original)
+        Write[R].write(parsed) should be(original)
     }
     "Round-trips arbitrary values by writing and parsing back to an identical value" in forAll(minSuccessful(10000)) {
       original: R =>
-        val written = original.write
+        val written = Write[R].write(original)
         withClue(s"Wrote '$written'") {
-          Rope.parseTo[R](written) should be(Parse.Result.Complete(original))
+          Parse[R].parse(written) should be(Parse.Result.Complete(original))
         }
     }
   }

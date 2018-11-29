@@ -32,7 +32,7 @@ package object dsl {
   implicit class LiteralOps[Literal <: Char with Singleton](literal: Literal)(implicit Literal: ValueOf[Literal])
       extends RopeOps(prefix = Exactly[Literal](literal)) {
     def -->[OtherLiteral <: Char with Singleton](otherLiteral: OtherLiteral)(value: Char)(
-        implicit OtherLiteral: ValueOf[OtherLiteral]): Option[Literal --> OtherLiteral] =
+        implicit OtherLiteral: ValueOf[OtherLiteral]): Either[Rope.InvalidValue.type, Literal --> OtherLiteral] =
       Range.from[Literal, OtherLiteral](value)
   }
 }

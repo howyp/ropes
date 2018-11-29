@@ -39,10 +39,10 @@ class RangeSpec extends RopeLaws with CommonGens {
       genInvalidStrings = Some(genNonAtoZ.map(_.toString))
     )
     "Range can be created from valid characters" - forAll(genAtoZ) { char =>
-      Range.from['a', 'z'](char).get should have('value (char))
+      Range.from['a', 'z'](char).right.get should have('value (char))
     }
     "Range cannot be created from invalid characters" - forAll(genNonAtoZ) { char =>
-      Range.from['a', 'z'](char) should be(empty)
+      Range.from['a', 'z'](char) should be('left)
     }
   }
 }

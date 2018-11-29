@@ -20,6 +20,7 @@ trait Parse[R <: Rope] {
   def parse(string: String): Parse.Result[R]
 }
 object Parse {
+  def apply[R <: Rope](implicit parse: Parse[R]): Parse[R] = parse
 
   sealed trait Result[+R <: Rope] {
     def flatMap[S <: Rope](f: (R, String) => Result[S]): Result[S] = this match {

@@ -28,7 +28,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
       //This is very simplified - starts with an '@', then any characters
       type TwitterHandle = Exactly['@'] :+ AnyString
       "parsing and de-composing" in {
-        val Parse.Result.Complete(parsed) = Rope.parseTo[TwitterHandle]("@howyp")
+        val Right(parsed) = Rope.parseTo[TwitterHandle]("@howyp")
         parsed.suffix.value should be("howyp")
       }
       "composing and writing" in {
@@ -56,7 +56,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
       }
       "parsing and de-composing" - {
         "CR2 6XH" in {
-          val Parse.Result.Complete(outward :+ _ :+ inward) = Rope.parseTo[PostCode]("CR2 6XH")
+          val Right(outward :+ _ :+ inward) = Rope.parseTo[PostCode]("CR2 6XH")
 
           outward.prefix.prefix.value should be('C')
           outward.prefix.suffix.value.get.value should be('R')
@@ -70,19 +70,19 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
           inward.write should be("6XH")
         }
         "M1 1AE" in {
-          val Parse.Result.Complete(outward :+ _ :+ _) = Rope.parseTo[PostCode]("M1 1AE")
+          val Right(outward :+ _ :+ _) = Rope.parseTo[PostCode]("M1 1AE")
           outward.prefix.prefix.value should be('M')
           outward.prefix.suffix.value should be(None)
         }
         "DN55 1PT" in {
-          val Parse.Result.Complete(outward :+ _ :+ _) = Rope.parseTo[PostCode]("DN55 1PT")
+          val Right(outward :+ _ :+ _) = Rope.parseTo[PostCode]("DN55 1PT")
           outward.prefix.prefix.value should be('D')
           outward.prefix.suffix.value.get.value should be('N')
           outward.suffix.prefix.value should be(55)
           outward.suffix.suffix.value should be(None)
         }
         "EC1A 1BB" in {
-          val Parse.Result.Complete(outward :+ _ :+ _) = Rope.parseTo[PostCode]("EC1A 1BB")
+          val Right(outward :+ _ :+ _) = Rope.parseTo[PostCode]("EC1A 1BB")
           outward.suffix.prefix.value should be(1)
           outward.suffix.suffix.value.get.value should be('A')
         }
@@ -91,24 +91,26 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
         "CR2 6XH" in {
           //TODO Can we do this better? For instance allow the ' ' char to be implicit
           //TODO should we change the variance of rope subclasses to avoid the explicity typing for Optional?
-          val Parse.Result.Complete(area) = Rope.parseTo[PostCode.Area]("CR")
-          val Some(district)              = OneOrTwoDigits.from(2).map(_ :+ Option.empty['A' --> 'Z'])
-          val Some(sector)                = Digit.from(6)
-          val Parse.Result.Complete(unit) = Rope.parseTo[PostCode.Unit]("XH")
-          val postcode: PostCode          = (area :+ district) :+ Exactly(' ') :+ (sector :+ unit)
+          val Right(postcode: PostCode) = for {
+            area     <- Rope.parseTo[PostCode.Area]("CR")
+            district <- OneOrTwoDigits.from(2).map(_ :+ Option.empty['A' --> 'Z'])
+            sector   <- Digit.from(6)
+            unit     <- Rope.parseTo[PostCode.Unit]("XH")
+          } yield (area :+ district) :+ Exactly(' ') :+ (sector :+ unit)
           postcode.write should be("CR2 6XH")
         }
         "EC1A 1BB" in {
-          val Parse.Result.Complete(area)   = Rope.parseTo[PostCode.Area]("EC")
-          val Some(district)                = OneOrTwoDigits.from(1).map(_ :+ ('A' --> 'Z')('A'))
-          val Parse.Result.Complete(inward) = Rope.parseTo[PostCode.InwardCode]("1BB")
-          val postcode: PostCode            = (area :+ district) :+ Exactly(' ') :+ inward
+          val Right(postcode: PostCode) = for {
+            area     <- Rope.parseTo[PostCode.Area]("EC")
+            district <- OneOrTwoDigits.from(1).map(_ :+ ('A' --> 'Z')('A').toOption)
+            inward   <- Rope.parseTo[PostCode.InwardCode]("1BB")
+          } yield (area :+ district) :+ Exactly(' ') :+ inward
           postcode.write should be("EC1A 1BB")
         }
       }
       "generating" in {
         forAll { postcode: PostCode =>
-          Rope.parseTo[PostCode](postcode.write) should be(a[Parse.Result.Complete[_]])
+          Rope.parseTo[PostCode](postcode.write) should be('right)
         }
       }
     }

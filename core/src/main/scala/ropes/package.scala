@@ -19,11 +19,11 @@ import ropes.instances.DigitInstances
 package object ropes extends DigitInstances {
   type Digit = Range['0', '9'] ConvertedTo Int
   object Digit {
-    def from(value: Int): Option[Digit] = ConvertedTo.fromTarget(value)
+    def from(value: Int): Either[Rope.InvalidValue.type, Digit] = ConvertedTo.fromTarget(value)
   }
 
   type OneOrTwoDigits = Concat[Digit, Optional[Digit]] ConvertedTo Int
   object OneOrTwoDigits {
-    def from(value: Int): Option[OneOrTwoDigits] = ConvertedTo.fromTarget(value)
+    def from(value: Int): Either[Rope.InvalidValue.type, OneOrTwoDigits] = ConvertedTo.fromTarget(value)
   }
 }

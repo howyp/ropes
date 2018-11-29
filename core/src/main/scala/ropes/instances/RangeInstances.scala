@@ -16,13 +16,14 @@
 
 package ropes.instances
 
-import ropes.{Range, Parse, Write}
+import ropes.{Parse, Range, Rope, Write}
 
 private[ropes] trait RangeInstances {
   implicit def rangeParse[Start <: Char with Singleton, End <: Char with Singleton](
       implicit start: ValueOf[Start],
       end: ValueOf[End]): Parse[Range[Start, End]] = { str =>
     str.headOption
+      .toRight(left = Rope.InvalidValue)
       .flatMap(Range.from[Start, End](_))
       .map(Parse.Result.Success(_, str.tail))
       .getOrElse(Parse.Result.Failure)

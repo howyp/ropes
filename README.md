@@ -1,6 +1,7 @@
 Ropes
 =====
-
+[![Build Status](https://travis-ci.com/howyp/ropes.svg?branch=master)](https://travis-ci.com/howyp/ropes)
+§
 Stronger strings!
 
 Declare your string format as a type, and get parsers, writers,
@@ -54,4 +55,4 @@ great power to the user to define any refinement they choose.
 However, because of this power, it is also problematic to provide
 the ability to decompose a refined `String` based on the given
 predicate, and is also not generally possible to generate arbitrary
-values matching predicates. By restricting the types and
+values matching predicates.

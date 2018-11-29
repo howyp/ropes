@@ -37,7 +37,7 @@ class ConcatSpec extends RopeLaws with CommonGens {
           Gen.oneOf(
             Gen.const(""),
             genNonEmptyString.suchThat(_.head != 'a'),
-            genNonEmptyString.suchThat(_.head != 'b').map('a' + _)
+            genNonEmptyString.suchThat(_.head != 'b').map("a" + _)
           )
         )
       )

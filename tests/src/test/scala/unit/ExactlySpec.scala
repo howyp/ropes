@@ -40,7 +40,7 @@ class ExactlySpec extends RopeLaws with CommonGens {
         }
       }
       "Captures the literal type when using .apply(...)" in {
-        val a: Exactly['a'] = Exactly('a')
+        val _: Exactly['a'] = Exactly('a')
         """val b: Exactly['a'] = Exactly('b')""" shouldNot typeCheck
       }
     }

@@ -18,7 +18,7 @@ package unit
 import gens.CommonGens
 import laws.RopeLaws
 import org.scalacheck.Gen
-import ropes._
+import ropes.core._
 import ropes.scalacheck._
 
 class DigitSpec extends RopeLaws with CommonGens {

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package ropes.instances
-import ropes.{Conversion, ConvertedTo, Parse, Rope, Write}
+package ropes.core.instances
+import ropes.core._
 
 private[ropes] trait ConvertedToInstances {
   implicit def convertedToParse[Source <: Rope, Target](

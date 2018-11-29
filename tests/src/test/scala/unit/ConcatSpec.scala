@@ -19,7 +19,7 @@ package unit
 import gens.CommonGens
 import laws.RopeLaws
 import org.scalacheck.{Arbitrary, Gen}
-import ropes._
+import ropes.core.{AnyString, Concat, Exactly}
 import ropes.scalacheck._
 
 class ConcatSpec extends RopeLaws with CommonGens {

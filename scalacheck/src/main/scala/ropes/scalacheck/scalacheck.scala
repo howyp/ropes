@@ -16,6 +16,7 @@
 
 package ropes
 
+import ropes.core._
 import org.scalacheck.{Arbitrary, Gen}
 
 package object scalacheck {

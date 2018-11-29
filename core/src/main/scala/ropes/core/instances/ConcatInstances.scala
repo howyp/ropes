@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package ropes
+package ropes.core.instances
 
-trait Conversion[Source <: Rope, Target] {
-  def forwards(source: Source): Target
-  def backwards(target: Target): Option[Source]
-}
-object Conversion {
-  def apply[Source <: Rope, Target](forwards: Source => Target,
-                                    backwards: Target => Option[Source]): Conversion[Source, Target] = {
-    val f = forwards
-    val b = backwards
-    new Conversion[Source, Target] {
-      def forwards(source: Source)  = f(source)
-      def backwards(target: Target) = b(target)
+import ropes.core.{Concat, Parse, Rope, Write}
+
+private[ropes] trait ConcatInstances {
+  implicit def concatParse[Prefix <: Rope: Parse, Suffix <: Rope: Parse]: Parse[Concat[Prefix, Suffix]] = { str =>
+    Parse[Prefix].parse(str).flatMap {
+      case (prefix, afterSuffix) =>
+        Parse[Suffix].parse(afterSuffix).flatMap {
+          case (suffix, remaining) => Parse.Result.Success(Concat(prefix, suffix), remaining)
+        }
     }
   }
+
+  implicit def concatWrite[P <: Rope: Write, S <: Rope: Write]: Write[Concat[P, S]] =
+    concat => concat.prefix.write + concat.suffix.write
 }

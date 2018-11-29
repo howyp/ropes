@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package ropes.instances
+package ropes.core.instances
 
-import ropes.{Optional, Parse, Rope, Write}
+import ropes.core._
 
 private[ropes] trait OptionalInstances {
   implicit def optionalParse[R <: Rope](implicit parse: Parse[R]): Parse[Optional[R]] = { original =>

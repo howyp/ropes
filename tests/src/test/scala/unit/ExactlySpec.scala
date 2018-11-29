@@ -18,11 +18,9 @@ package unit
 
 import gens.CommonGens
 import laws.RopeLaws
-import org.scalacheck.{Arbitrary, Gen}
-import ropes._
+import org.scalacheck.Gen
+import ropes.core._
 import ropes.scalacheck._
-
-import scala.Some
 
 class ExactlySpec extends RopeLaws with CommonGens {
   "An `Exactly[_]` Rope" - {

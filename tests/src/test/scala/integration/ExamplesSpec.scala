@@ -16,11 +16,12 @@
 
 package integration
 
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
-import org.scalatest.{FreeSpec, Matchers}
-import ropes._
+import ropes.core._
 import ropes.dsl._
 import ropes.scalacheck._
+
+import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.scalatest.{FreeSpec, Matchers}
 
 class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks {
   "Some examples of valid ropes include" - {

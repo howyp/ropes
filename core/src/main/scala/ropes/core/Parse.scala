@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ropes
+package ropes.core
 
 trait Parse[R <: Rope] {
   def parse(string: String): Parse.Result[R]

@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-import ropes.instances.DigitInstances
+package ropes.core
 
-package object ropes extends DigitInstances {
-  type Digit = Range['0', '9'] ConvertedTo Int
-  object Digit {
-    def from(value: Int): Either[Rope.InvalidValue.type, Digit] = ConvertedTo.fromTarget(value)
-  }
-
-  type OneOrTwoDigits = Concat[Digit, Optional[Digit]] ConvertedTo Int
-  object OneOrTwoDigits {
-    def from(value: Int): Either[Rope.InvalidValue.type, OneOrTwoDigits] = ConvertedTo.fromTarget(value)
+trait Conversion[Source <: Rope, Target] {
+  def forwards(source: Source): Target
+  def backwards(target: Target): Option[Source]
+}
+object Conversion {
+  def apply[Source <: Rope, Target](forwards: Source => Target,
+                                    backwards: Target => Option[Source]): Conversion[Source, Target] = {
+    val f = forwards
+    val b = backwards
+    new Conversion[Source, Target] {
+      def forwards(source: Source)  = f(source)
+      def backwards(target: Target) = b(target)
+    }
   }
 }

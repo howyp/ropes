@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package ropes.instances
+package ropes.core.instances
 
-import ropes._
+import ropes.core._
 
-private[ropes] trait ConcatInstances {
-  implicit def concatParse[Prefix <: Rope: Parse, Suffix <: Rope: Parse]: Parse[Concat[Prefix, Suffix]] = { str =>
-    Parse[Prefix].parse(str).flatMap {
-      case (prefix, afterSuffix) =>
-        Parse[Suffix].parse(afterSuffix).flatMap {
-          case (suffix, remaining) => Parse.Result.Success(Concat(prefix, suffix), remaining)
-        }
-    }
+private[ropes] trait ExactlyInstances {
+  implicit def exactlyParseChar[C <: Char with Singleton](implicit c: ValueOf[C]): Parse[Exactly[C]] = { str =>
+    if (str.length > 0 && str.charAt(0) == c.value) Parse.Result.Success(Exactly[C](c.value), str.substring(1))
+    else Parse.Result.Failure
   }
-
-  implicit def concatWrite[P <: Rope: Write, S <: Rope: Write]: Write[Concat[P, S]] =
-    concat => concat.prefix.write + concat.suffix.write
+  implicit def exactlyWriteChar[C <: Char with Singleton]: Write[Exactly[C]] = _.value.toString
 }

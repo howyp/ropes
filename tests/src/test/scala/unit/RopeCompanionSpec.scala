@@ -16,7 +16,7 @@
 
 package unit
 import org.scalatest.{FreeSpec, Matchers}
-import ropes.{AnyString, Parse, Rope}
+import ropes.core._
 
 class RopeCompanionSpec extends FreeSpec with Matchers {
   "The Rope companion object" - {

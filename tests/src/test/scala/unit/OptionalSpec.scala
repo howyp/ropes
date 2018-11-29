@@ -18,7 +18,7 @@ package unit
 import gens.CommonGens
 import laws.RopeLaws
 import org.scalacheck.Gen
-import ropes.{Exactly, Optional}
+import ropes.core._
 import ropes.scalacheck._
 
 class OptionalSpec extends RopeLaws with CommonGens {

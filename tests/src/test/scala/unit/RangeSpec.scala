@@ -19,7 +19,7 @@ package unit
 import gens.CommonGens
 import laws.RopeLaws
 import org.scalacheck.Gen
-import ropes._
+import ropes.{core, _}
 import ropes.scalacheck._
 
 class RangeSpec extends RopeLaws with CommonGens {
@@ -31,7 +31,7 @@ class RangeSpec extends RopeLaws with CommonGens {
         Gen.choose(('z' + 1).toChar, Char.MaxValue)
       )
 
-    `obeys Rope laws`[Range['a', 'z']](
+    `obeys Rope laws`[core.Range['a', 'z']](
       genValidStringsWithDecompositionAssertion = genAtoZ.map { char =>
         char.toString -> (_.value should be(char))
       },
@@ -39,10 +39,10 @@ class RangeSpec extends RopeLaws with CommonGens {
       genInvalidStrings = Some(genNonAtoZ.map(_.toString))
     )
     "Range can be created from valid characters" - forAll(genAtoZ) { char =>
-      Range.from['a', 'z'](char).right.get should have('value (char))
+      core.Range.from['a', 'z'](char).right.get should have('value (char))
     }
     "Range cannot be created from invalid characters" - forAll(genNonAtoZ) { char =>
-      Range.from['a', 'z'](char) should be('left)
+      core.Range.from['a', 'z'](char) should be('left)
     }
   }
 }

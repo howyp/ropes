@@ -14,26 +14,19 @@
  * limitations under the License.
  */
 
-package unit
+package ropes
 
-import laws.RopeLaws
-import org.scalacheck.Arbitrary
 import ropes.core._
-import ropes.scalacheck._
+import ropes.core.instances.DigitInstances
 
-class AnyStringSpec extends RopeLaws {
-  "An `AnyString` Rope" - {
-    "Always parses to complete for any string" in forAll { s: String =>
-      Parse[AnyString].parse(s) should be(Parse.Result.Complete(AnyString(s)))
-    }
-    `obeys Rope laws`[AnyString](
-      genValidStringsWithDecompositionAssertion = Arbitrary.arbitrary[String].map { str =>
-        str -> { parsed =>
-          parsed.value should be(str)
-        }
-      },
-      genSuffixToMakeValidStringIncomplete = None,
-      genInvalidStrings = None
-    )
+package object core extends DigitInstances {
+  type Digit = Range['0', '9'] ConvertedTo Int
+  object Digit {
+    def from(value: Int): Either[Rope.InvalidValue.type, Digit] = ConvertedTo.fromTarget(value)
+  }
+
+  type OneOrTwoDigits = Concat[Digit, Optional[Digit]] ConvertedTo Int
+  object OneOrTwoDigits {
+    def from(value: Int): Either[Rope.InvalidValue.type, OneOrTwoDigits] = ConvertedTo.fromTarget(value)
   }
 }

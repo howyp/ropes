@@ -18,7 +18,7 @@ package laws
 import org.scalacheck.{Arbitrary, Gen, Shrink}
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.{FreeSpec, Matchers}
-import ropes.{Parse, Rope, Write}
+import ropes.core.{Parse, Rope, Write}
 
 trait RopeLaws extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks {
   private implicit def noShrink[T]: Shrink[T] = Shrink(_ => Stream.empty[T])

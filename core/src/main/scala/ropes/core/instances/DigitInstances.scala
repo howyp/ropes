@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package ropes.instances
-import ropes._
+package ropes.core.instances
 
-private[ropes] trait DigitInstances {
+import ropes.core._
+
+private[core] trait DigitInstances {
   //TODO consider if we can write Conversion[Digit]
   implicit val digitConversion: Conversion[Range['0', '9'], Int] = Conversion(
     forwards = _.value.toInt - '0'.charValue(),

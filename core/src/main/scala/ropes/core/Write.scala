@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package ropes.instances
+package ropes.core
 
-import ropes.{AnyString, Parse, Write}
-
-private[ropes] trait AnyStringInstances {
-  implicit val anyStringParse: Parse[AnyString] = str => Parse.Result.Complete(AnyString(str))
-  implicit val anyStringWrite: Write[AnyString] = _.value
+trait Write[R <: Rope] {
+  def write(r: R): String
+}
+object Write {
+  def apply[R <: Rope](implicit write: Write[R]): Write[R] = write
 }

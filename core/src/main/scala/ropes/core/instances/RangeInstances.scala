@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package ropes
+package ropes.core.instances
 
-trait Write[R <: Rope] {
-  def write(r: R): String
-}
-object Write {
-  def apply[R <: Rope](implicit write: Write[R]): Write[R] = write
+import ropes.core._
+
+private[ropes] trait RangeInstances {
+  implicit def rangeParse[Start <: Char with Singleton, End <: Char with Singleton](
+      implicit start: ValueOf[Start],
+      end: ValueOf[End]): Parse[Range[Start, End]] = { str =>
+    str.headOption
+      .toRight(left = Rope.InvalidValue)
+      .flatMap(Range.from[Start, End](_))
+      .map(Parse.Result.Success(_, str.tail))
+      .getOrElse(Parse.Result.Failure)
+  }
+
+  implicit def rangeWrite[Start <: Char with Singleton, End <: Char with Singleton]: Write[Range[Start, End]] =
+    _.value.toString
 }

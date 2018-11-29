@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package ropes
+package ropes.core
 
-import ropes.instances._
+import instances._
 
 sealed trait Rope
 

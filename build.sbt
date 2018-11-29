@@ -16,6 +16,11 @@ lazy val core = project
   .in(file("core"))
   .enablePlugins(AutomateHeaderPlugin)
 
+lazy val dsl = project
+  .in(file("dsl"))
+  .dependsOn(core)
+  .enablePlugins(AutomateHeaderPlugin)
+
 lazy val scalacheck = project
   .in(file("scalacheck"))
   .enablePlugins(AutomateHeaderPlugin)
@@ -29,7 +34,7 @@ lazy val scalacheck = project
 lazy val tests = project
   .in(file("tests"))
   .enablePlugins(AutomateHeaderPlugin)
-  .dependsOn(core, scalacheck)
+  .dependsOn(core, dsl, scalacheck)
   .settings(
     libraryDependencies ++= Seq(
       "org.scalatest"  %% "scalatest"  % "3.0.6-SNAP5" % Test,

@@ -92,7 +92,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
           //TODO Can we do this better? For instance allow the ' ' char to be implicit
           //TODO should we change the variance of rope subclasses to avoid the explicity typing for Optional?
           val Parse.Result.Complete(area) = Rope.parseTo[PostCode.Area]("CR")
-          val Some(district)              = OneOrTwoDigits.from(2).map(_ :+ Optional['A' --> 'Z'](None))
+          val Some(district)              = OneOrTwoDigits.from(2).map(_ :+ Option.empty['A' --> 'Z'])
           val Some(sector)                = Digit.from(6)
           val Parse.Result.Complete(unit) = Rope.parseTo[PostCode.Unit]("XH")
           val postcode: PostCode          = (area :+ district) :+ Exactly(' ') :+ (sector :+ unit)
@@ -100,7 +100,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
         }
         "EC1A 1BB" in {
           val Parse.Result.Complete(area)   = Rope.parseTo[PostCode.Area]("EC")
-          val Some(district)                = OneOrTwoDigits.from(1).map(_ :+ Optional(('A' --> 'Z')('A')))
+          val Some(district)                = OneOrTwoDigits.from(1).map(_ :+ ('A' --> 'Z')('A'))
           val Parse.Result.Complete(inward) = Rope.parseTo[PostCode.InwardCode]("1BB")
           val postcode: PostCode            = (area :+ district) :+ Exactly(' ') :+ inward
           postcode.write should be("EC1A 1BB")

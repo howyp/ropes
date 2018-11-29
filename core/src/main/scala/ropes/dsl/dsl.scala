@@ -25,7 +25,8 @@ package object dsl {
   type -->[Start <: Char with Singleton, End <: Char with Singleton] = Range[Start, End]
 
   implicit class RopeOps[Prefix <: Rope](prefix: Prefix) {
-    def :+[Suffix <: Rope](suffix: Suffix): Concat[Prefix, Suffix] = Concat(prefix, suffix)
+    def :+[Suffix <: Rope](suffix: Suffix): Concat[Prefix, Suffix]                   = Concat(prefix, suffix)
+    def :+[Suffix <: Rope](suffix: Option[Suffix]): Concat[Prefix, Optional[Suffix]] = Concat(prefix, Optional(suffix))
   }
 
   implicit class LiteralOps[Literal <: Char with Singleton](literal: Literal)(implicit Literal: ValueOf[Literal])

@@ -20,27 +20,14 @@ import ropes.instances._
 
 sealed trait Rope
 
-final case class Exactly[V <: Char with Singleton](value: V) extends Rope
-object Exactly                                               extends ExactlyInstances
-
 final case class AnyString(value: String) extends Rope
 object AnyString                          extends AnyStringInstances
 
+final case class Exactly[V <: Char with Singleton](value: V) extends Rope
+object Exactly                                               extends ExactlyInstances
+
 final case class Concat[Prefix <: Rope, Suffix <: Rope](prefix: Prefix, suffix: Suffix) extends Rope
 object Concat                                                                           extends ConcatInstances
-
-sealed abstract case class Range[Start <: Char with Singleton, End <: Char with Singleton](value: Char) extends Rope
-object Range extends RangeInstances {
-  def from[Start <: Char with Singleton, End <: Char with Singleton](char: Char)(
-      implicit start: ValueOf[Start],
-      end: ValueOf[End]): Either[Rope.InvalidValue.type, Range[Start, End]] =
-    if (char >= start.value && char <= end.value) Right(new Range[Start, End](char) {})
-    else Left(Rope.InvalidValue)
-
-  def unsafeFrom[Start <: Char with Singleton: ValueOf, End <: Char with Singleton: ValueOf](
-      char: Char): Range[Start, End] =
-    from[Start, End](char).getOrElse(throw new IllegalArgumentException(char.toString))
-}
 
 //TODO I'm not really that happy with this name, come up with something better.
 sealed abstract case class ConvertedTo[Source <: Rope, Target](value: Target) extends Rope
@@ -58,6 +45,19 @@ object ConvertedTo extends ConvertedToInstances {
 
 final case class Optional[R <: Rope](value: Option[R]) extends Rope
 object Optional                                        extends OptionalInstances
+
+sealed abstract case class Range[Start <: Char with Singleton, End <: Char with Singleton](value: Char) extends Rope
+object Range extends RangeInstances {
+  def from[Start <: Char with Singleton, End <: Char with Singleton](char: Char)(
+      implicit start: ValueOf[Start],
+      end: ValueOf[End]): Either[Rope.InvalidValue.type, Range[Start, End]] =
+    if (char >= start.value && char <= end.value) Right(new Range[Start, End](char) {})
+    else Left(Rope.InvalidValue)
+
+  def unsafeFrom[Start <: Char with Singleton: ValueOf, End <: Char with Singleton: ValueOf](
+      char: Char): Range[Start, End] =
+    from[Start, End](char).getOrElse(throw new IllegalArgumentException(char.toString))
+}
 
 object Rope {
   def parseTo[R <: Rope](s: String)(implicit parse: Parse[R]): Either[Parse.Result.Failure.type, R] =

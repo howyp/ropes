@@ -22,10 +22,16 @@ package object dsl {
   type :+[Prefix <: Rope, Suffix <: Rope] = Concat[Prefix, Suffix]
   val :+ = Concat
 
+  type -->[Start <: Char with Singleton, End <: Char with Singleton] = Range[Start, End]
+
   implicit class RopeOps[Prefix <: Rope](prefix: Prefix) {
     def :+[Suffix <: Rope](suffix: Suffix): Concat[Prefix, Suffix] = Concat(prefix, suffix)
   }
 
-  implicit class LiteralOpsViaExactly[Literal <: Char with Singleton](literal: Literal)(implicit v: ValueOf[Literal])
-      extends RopeOps(prefix = Exactly[Literal](literal))
+  implicit class LiteralOps[Literal <: Char with Singleton](literal: Literal)(implicit Literal: ValueOf[Literal])
+      extends RopeOps(prefix = Exactly[Literal](literal)) {
+    def -->[OtherLiteral <: Char with Singleton](otherLiteral: OtherLiteral)(value: Char)(
+        implicit OtherLiteral: ValueOf[OtherLiteral]): Option[Literal --> OtherLiteral] =
+      Range.from[Literal, OtherLiteral](value)
+  }
 }

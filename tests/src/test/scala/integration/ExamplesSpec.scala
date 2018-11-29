@@ -46,12 +46,12 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
       // ^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? [0-9][A-Za-z]{2}|[Gg][Ii][Rr] 0[Aa]{2})$
       type PostCode = PostCode.OutwardCode :+ Exactly[' '] :+ PostCode.InwardCode
       object PostCode {
-        type Area        = Range['A', 'Z'] :+ Optional[Range['A', 'Z']]
-        type District    = OneOrTwoDigits :+ Optional[Range['A', 'Z']]
+        type Area        = 'A' --> 'Z' :+ Optional['A' --> 'Z']
+        type District    = OneOrTwoDigits :+ Optional['A' --> 'Z']
         type OutwardCode = Area :+ District
 
         type Sector     = Digit
-        type Unit       = Range['A', 'Z'] :+ Range['A', 'Z']
+        type Unit       = 'A' --> 'Z' :+ ('A' --> 'Z')
         type InwardCode = Sector :+ Unit
       }
       "parsing and de-composing" - {
@@ -87,15 +87,24 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
           outward.suffix.suffix.value.get.value should be('A')
         }
       }
-      "composing and writing" in {
-        //TODO Can we do this better? For instance allow the ' ' char to be implicit
-        val Parse.Result.Complete(area) = Rope.parseTo[PostCode.Area]("CR")
-        //TODO should we change the variance of rope subclasses to avoid the Option.empty?
-        val Some(district)                = OneOrTwoDigits.from(2).map(_ :+ Optional(Option.empty[Range['A', 'Z']]))
-        val Some(sector)                  = Digit.from(6)
-        val Parse.Result.Complete(inward) = Rope.parseTo[PostCode.Unit]("XH")
-        val postcode: PostCode            = (area :+ district) :+ Exactly(' ') :+ (sector :+ inward)
-        postcode.write should be("CR2 6XH")
+      "composing and writing" - {
+        "CR2 6XH" in {
+          //TODO Can we do this better? For instance allow the ' ' char to be implicit
+          //TODO should we change the variance of rope subclasses to avoid the explicity typing for Optional?
+          val Parse.Result.Complete(area) = Rope.parseTo[PostCode.Area]("CR")
+          val Some(district)              = OneOrTwoDigits.from(2).map(_ :+ Optional['A' --> 'Z'](None))
+          val Some(sector)                = Digit.from(6)
+          val Parse.Result.Complete(unit) = Rope.parseTo[PostCode.Unit]("XH")
+          val postcode: PostCode          = (area :+ district) :+ Exactly(' ') :+ (sector :+ unit)
+          postcode.write should be("CR2 6XH")
+        }
+        "EC1A 1BB" in {
+          val Parse.Result.Complete(area)   = Rope.parseTo[PostCode.Area]("EC")
+          val Some(district)                = OneOrTwoDigits.from(1).map(_ :+ Optional(('A' --> 'Z')('A')))
+          val Parse.Result.Complete(inward) = Rope.parseTo[PostCode.InwardCode]("1BB")
+          val postcode: PostCode            = (area :+ district) :+ Exactly(' ') :+ inward
+          postcode.write should be("EC1A 1BB")
+        }
       }
       "generating" in {
         forAll { postcode: PostCode =>

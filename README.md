@@ -1,7 +1,7 @@
 Ropes
 =====
 [![Build Status](https://travis-ci.com/howyp/ropes.svg?branch=master)](https://travis-ci.com/howyp/ropes)
-§
+
 Stronger strings!
 
 Declare your string format as a type, and get parsers, writers,

@@ -59,15 +59,15 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
         "CR2 6XH" in {
           val Right(outward :+ _ :+ inward) = Rope.parseTo[PostCode]("CR2 6XH")
 
-          outward.prefix.prefix.value should be('C')
-          outward.prefix.suffix.value.get.value should be('R')
-          outward.suffix.prefix.value should be(2)
-          outward.suffix.suffix.value should be(None)
+          outward.prefix.section[1].value should be('C')
+          outward.prefix.section[2].value.get.value should be('R')
+          outward.suffix.section[1].value should be(2)
+          outward.suffix.section[2].value should be(None)
           outward.write should be("CR2")
 
-          inward.prefix.value should be(6)
-          inward.suffix.prefix.value should be('X')
-          inward.suffix.suffix.value should be('H')
+          inward.section[1].value should be(6)
+          inward.section[2].value should be('X')
+          inward.section[3].value should be('H')
           inward.write should be("6XH")
         }
         "M1 1AE" in {

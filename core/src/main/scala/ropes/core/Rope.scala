@@ -23,7 +23,7 @@ sealed trait Rope
 final case class Concat[Prefix <: Rope, Suffix <: Rope](prefix: Prefix, suffix: Suffix) extends Rope {
   def section[SectionNumber <: Int with Singleton](
       implicit sectionFinder: SectionFinder[Concat[Prefix, Suffix], SectionNumber]
-  ): Rope = sectionFinder(this)
+  ): sectionFinder.Out = sectionFinder(this)
 }
 object Concat extends ConcatInstances
 

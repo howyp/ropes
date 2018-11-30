@@ -16,26 +16,36 @@
 
 package ropes.core
 
-trait SectionFinder[R <: Rope, SectionNumber <: Int with Singleton] {
-  def apply(concat: R): Rope
+trait SectionFinder[In <: Rope, SectionNumber <: Int with Singleton] {
+  type Out <: Rope
+  def apply(in: In): Out
 }
 object SectionFinder {
-  implicit def section1[Section1 <: Section, Section2 <: Rope]: SectionFinder[Concat[Section1, Section2], 1] =
-    concat => concat.prefix
+  type Aux[In <: Rope, SectionNumber <: Int with Singleton, _Out <: Rope] = SectionFinder[In, SectionNumber] {
+    type Out = _Out
+  }
+
+  private def instance[In <: Rope, SectionNumber <: Int with Singleton, _Out <: Rope](
+      f: In => _Out): SectionFinder.Aux[In, SectionNumber, _Out] = new SectionFinder[In, SectionNumber] {
+    type Out = _Out
+    def apply(in: In) = f(in)
+  }
+
+  implicit def section1[Section1 <: Section, Section2 <: Rope]
+    : SectionFinder.Aux[Concat[Section1, Section2], 1, Section1] = instance { _.prefix }
 
   implicit def section2forSection[Section1 <: Section, Section2 <: Section]
-    : SectionFinder[Concat[Section1, Section2], 2] =
-    concat => concat.suffix
+    : SectionFinder.Aux[Concat[Section1, Section2], 2, Section2] = instance(_.suffix)
 
   implicit def section2forConcat[Prefix <: Section, Suffix <: Rope](
-      implicit nested: SectionFinder[Suffix, 1]): SectionFinder[Concat[Prefix, Suffix], 2] =
-    concat => nested(concat.suffix)
+      implicit nested: SectionFinder[Suffix, 1]): SectionFinder.Aux[Concat[Prefix, Suffix], 2, nested.Out] =
+    instance(concat => nested(concat.suffix))
 
   implicit def section3[Prefix <: Section, Suffix <: Rope](
-      implicit nested: SectionFinder[Suffix, 2]): SectionFinder[Concat[Prefix, Suffix], 3] =
-    concat => nested(concat.suffix)
+      implicit nested: SectionFinder[Suffix, 2]): SectionFinder.Aux[Concat[Prefix, Suffix], 3, nested.Out] =
+    instance(concat => nested(concat.suffix))
 
   implicit def section4[Prefix <: Section, Suffix <: Rope](
-      implicit nested: SectionFinder[Suffix, 3]): SectionFinder[Concat[Prefix, Suffix], 4] =
-    concat => nested(concat.suffix)
+      implicit nested: SectionFinder[Suffix, 3]): SectionFinder.Aux[Concat[Prefix, Suffix], 4, nested.Out] =
+    instance(concat => nested(concat.suffix))
 }

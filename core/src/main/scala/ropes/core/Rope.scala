@@ -20,17 +20,23 @@ import instances._
 
 sealed trait Rope
 
-final case class AnyString(value: String) extends Rope
+final case class Concat[Prefix <: Rope, Suffix <: Rope](prefix: Prefix, suffix: Suffix) extends Rope {
+  def section[SectionNumber <: Int with Singleton](
+      implicit sectionFinder: SectionFinder[Concat[Prefix, Suffix], SectionNumber]
+  ): Rope = sectionFinder(this)
+}
+object Concat extends ConcatInstances
+
+sealed trait Section extends Rope
+
+final case class AnyString(value: String) extends Section
 object AnyString                          extends AnyStringInstances
 
-final case class Exactly[V <: Char with Singleton](value: V) extends Rope
+final case class Exactly[V <: Char with Singleton](value: V) extends Section
 object Exactly                                               extends ExactlyInstances
 
-final case class Concat[Prefix <: Rope, Suffix <: Rope](prefix: Prefix, suffix: Suffix) extends Rope
-object Concat                                                                           extends ConcatInstances
-
 //TODO I'm not really that happy with this name, come up with something better.
-sealed abstract case class ConvertedTo[Source <: Rope, Target](value: Target) extends Rope
+sealed abstract case class ConvertedTo[Source <: Rope, Target](value: Target) extends Section
 object ConvertedTo extends ConvertedToInstances {
   def fromTarget[Source <: Rope, Target](target: Target)(
       implicit conversion: Conversion[Source, Target]): Either[Rope.InvalidValue.type, ConvertedTo[Source, Target]] =
@@ -43,10 +49,10 @@ object ConvertedTo extends ConvertedToInstances {
     new ConvertedTo[Source, Target](conversion.forwards(source)) {}
 }
 
-final case class Optional[R <: Rope](value: Option[R]) extends Rope
+final case class Optional[R <: Rope](value: Option[R]) extends Section
 object Optional                                        extends OptionalInstances
 
-sealed abstract case class Range[Start <: Char with Singleton, End <: Char with Singleton](value: Char) extends Rope
+sealed abstract case class Range[Start <: Char with Singleton, End <: Char with Singleton](value: Char) extends Section
 object Range extends RangeInstances {
   def from[Start <: Char with Singleton, End <: Char with Singleton](char: Char)(
       implicit start: ValueOf[Start],

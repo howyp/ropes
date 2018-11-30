@@ -24,12 +24,14 @@ import ropes.scalacheck._
 
 class ConcatSpec extends RopeLaws with CommonGens {
   "A `Concat` Rope" - {
-    "with an Exact['a'] prefix and suffix" - {
+    "with an Exact prefix and suffix" - {
       `obeys Rope laws`[Concat[Exactly['a'], Exactly['b']]](
         genValidStringsWithDecompositionAssertion = Gen.const {
           "ab" -> { parsed =>
             parsed.prefix should be(Exactly('a'))
             parsed.suffix should be(Exactly('b'))
+            parsed.section[1] should be(Exactly('a'))
+            parsed.section[2] should be(Exactly('b'))
           }
         },
         genSuffixToMakeValidStringIncomplete = Some(genNonEmptyString),
@@ -50,6 +52,8 @@ class ConcatSpec extends RopeLaws with CommonGens {
             "a" + suffix -> { parsed =>
               parsed.prefix should be(Exactly('a'))
               parsed.suffix should be(AnyString(suffix))
+              parsed.section[1] should be(Exactly('a'))
+              parsed.section[2] should be(AnyString(suffix))
             }
           },
         genSuffixToMakeValidStringIncomplete = None,
@@ -59,6 +63,20 @@ class ConcatSpec extends RopeLaws with CommonGens {
             genNonEmptyString.suchThat(_.head != 'a')
           )
         )
+      )
+    }
+    "with an nested Concats in the Suffix" - {
+      `obeys Rope laws`[Concat[Exactly['a'], Concat[Exactly['b'], Concat[Exactly['c'], Exactly['d']]]]](
+        genValidStringsWithDecompositionAssertion = Gen.const {
+          "abcd" -> { parsed =>
+            parsed.section[1] should be(Exactly('a'))
+            parsed.section[2] should be(Exactly('b'))
+            parsed.section[3] should be(Exactly('c'))
+            parsed.section[4] should be(Exactly('d'))
+          }
+        },
+        genSuffixToMakeValidStringIncomplete = Some(genNonEmptyString),
+        genInvalidStrings = Some(genNonEmptyString.suchThat(!_.startsWith("abcd")))
       )
     }
   }

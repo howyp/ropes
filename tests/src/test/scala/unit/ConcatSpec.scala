@@ -66,6 +66,20 @@ class ConcatSpec extends RopeLaws with CommonGens {
       )
     }
     "with an nested Concats in the Suffix" - {
+      `obeys Rope laws`[Concat[Exactly['a'], Concat[Exactly['b'], Exactly['c']]]](
+        genValidStringsWithDecompositionAssertion = Gen.const {
+          "abc" -> { parsed =>
+            parsed.section[1] should be(Exactly('a'))
+            parsed.section[2] should be(Exactly('b'))
+            parsed.section[3] should be(Exactly('c'))
+            "parsed.section[4]" shouldNot typeCheck
+          }
+        },
+        genSuffixToMakeValidStringIncomplete = Some(genNonEmptyString),
+        genInvalidStrings = Some(genNonEmptyString.suchThat(!_.startsWith("abc")))
+      )
+    }
+    "with a deeper nested Concats in the Suffix" - {
       `obeys Rope laws`[Concat[Exactly['a'], Concat[Exactly['b'], Concat[Exactly['c'], Exactly['d']]]]](
         genValidStringsWithDecompositionAssertion = Gen.const {
           "abcd" -> { parsed =>
@@ -73,6 +87,19 @@ class ConcatSpec extends RopeLaws with CommonGens {
             parsed.section[2] should be(Exactly('b'))
             parsed.section[3] should be(Exactly('c'))
             parsed.section[4] should be(Exactly('d'))
+          }
+        },
+        genSuffixToMakeValidStringIncomplete = Some(genNonEmptyString),
+        genInvalidStrings = Some(genNonEmptyString.suchThat(!_.startsWith("abcd")))
+      )
+    }
+    "with a concat in the prefix" - {
+      `obeys Rope laws`[Concat[Concat[Exactly['a'], Exactly['b']], Concat[Exactly['c'], Exactly['d']]]](
+        genValidStringsWithDecompositionAssertion = Gen.const {
+          "abcd" -> { parsed =>
+            parsed.section[1] should be(Concat(Exactly('a'), Exactly('b')))
+            parsed.section[2] should be(Exactly('c'))
+            parsed.section[3] should be(Exactly('d'))
           }
         },
         genSuffixToMakeValidStringIncomplete = Some(genNonEmptyString),

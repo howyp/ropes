@@ -21,23 +21,12 @@ import ropes.core._
 package object dsl {
   //TODO Perhaps this should be specified next to the types itself? I guess this comes down to whether we want a
   //separation between the main types and a DSL, or the main types and the _ops_
-  type :+[Prefix <: Rope, Suffix <: Rope] = Concat[Prefix, Suffix]
-  val :+ = Concat
+  type +:[Prefix <: Rope, Suffix <: Rope] = Concat[Prefix, Suffix]
+  val +: = Concat
 
-  type -->[Start <: Char with Singleton, End <: Char with Singleton] = core.Range[Start, End]
-
-  implicit class RopeOps[Prefix <: Rope](prefix: Prefix) {
-    def :+[Suffix <: Rope](suffix: Suffix): Concat[Prefix, Suffix] = Concat(prefix, suffix)
-    def :+[Suffix <: Rope](suffix: Option[Suffix]): Concat[Prefix, Optional[Suffix]] =
-      core.Concat(prefix, Optional(suffix))
-  }
-
-  implicit class LiteralOps[Literal <: Char with Singleton](literal: Literal)(implicit Literal: ValueOf[Literal])
-      extends RopeOps(prefix = Exactly[Literal](literal)) {
-    def -->[OtherLiteral <: Char with Singleton](otherLiteral: OtherLiteral)(value: Char)(
-        implicit OtherLiteral: ValueOf[OtherLiteral]): Either[Rope.InvalidValue.type, Literal --> OtherLiteral] = {
-      val _ = otherLiteral
-      core.Range.from[Literal, OtherLiteral](value)
-    }
+  implicit class RopeOps[Suffix <: Rope](suffix: Suffix) {
+    def +:[Prefix <: Rope](prefix: Prefix): Concat[Prefix, Suffix] = Concat(prefix, suffix)
+//    def +:[Prefix <: Rope](prefix: Option[Prefix]): Concat[Prefix, Optional[Suffix]] =
+//      core.Concat(prefix, Optional(suffix))
   }
 }

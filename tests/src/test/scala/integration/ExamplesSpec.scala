@@ -17,6 +17,7 @@
 package integration
 
 import ropes.core._
+import ropes.dsl._
 import ropes.scalacheck._
 
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
@@ -26,13 +27,13 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
   "Some examples of valid ropes include" - {
     "twitter handles" - {
       //This is very simplified - starts with an '@', then any characters
-      type TwitterHandle = Concat[Exactly['@'], AnyString]
+      type TwitterHandle = Exactly['@'] +: AnyString
       "parsing and de-composing" in {
         val Right(parsed) = Rope.parseTo[TwitterHandle]("@howyp")
         parsed.suffix.value should be("howyp")
       }
       "composing and writing" in {
-        val handle: TwitterHandle = Concat(Exactly('@'), AnyString("howyp"))
+        val handle: TwitterHandle = Exactly('@') +: AnyString("howyp")
         handle.write should be("@howyp")
       }
       "generating" in {
@@ -51,8 +52,8 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
         type OutwardCode = Concat[Area, District]
 
         type Sector     = Digit
-        type Unit       = Concat[Range['A', 'Z'], Range['A', 'Z']]
-        type InwardCode = Concat[Sector, Unit]
+        type Unit       = Range['A', 'Z'] +: Range['A', 'Z']
+        type InwardCode = Sector +: Unit
       }
       "parsing and de-composing" - {
         "CR2 6XH" in {
@@ -71,21 +72,21 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
           postCode.section[5].value should be('H')
         }
         "M1 1AE" in {
-          val Right(postCode) = Rope.parseTo[PostCode]("M1 1AE")
-          postCode.section[1].prefix.prefix.value should be('M')
-          postCode.section[1].prefix.suffix.value should be(None)
+          val Right((area +: district) +: _) = Rope.parseTo[PostCode]("M1 1AE")
+          area.prefix.value should be('M')
+          district.suffix.value should be(None)
         }
         "DN55 1PT" in {
-          val Right(postCode) = Rope.parseTo[PostCode]("DN55 1PT")
-          postCode.section[1].prefix.prefix.value should be('D')
-          postCode.section[1].prefix.suffix.value.get.value should be('N')
-          postCode.section[1].suffix.prefix.value should be(55)
-          postCode.section[1].suffix.suffix.value should be(None)
+          val Right(outward +: _) = Rope.parseTo[PostCode]("DN55 1PT")
+          outward.prefix.prefix.value should be('D')
+          outward.prefix.suffix.value.get.value should be('N')
+          outward.suffix.prefix.value should be(55)
+          outward.suffix.suffix.value should be(None)
         }
         "EC1A 1BB" in {
-          val Right(postCode) = Rope.parseTo[PostCode]("EC1A 1BB")
-          postCode.section[1].suffix.prefix.value should be(1)
-          postCode.section[1].suffix.suffix.value.get.value should be('A')
+          val Right(outward +: _) = Rope.parseTo[PostCode]("EC1A 1BB")
+          outward.suffix.prefix.value should be(1)
+          outward.suffix.suffix.value.get.value should be('A')
         }
       }
       "composing and writing" - {
@@ -94,18 +95,18 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
 //          TODO should we change the variance of rope subclasses to avoid the explicity typing for Optional?
           val Right(postcode: PostCode) = for {
             area     <- Rope.parseTo[PostCode.Area]("CR")
-            district <- OneOrTwoDigits.from(2).map(Concat(_, Optional[Range['A', 'Z']](None)))
+            district <- OneOrTwoDigits.from(2).map(_ +: Optional[Range['A', 'Z']](None))
             sector   <- Digit.from(6)
             unit     <- Rope.parseTo[PostCode.Unit]("XH")
-          } yield Concat(Concat(area, district), Concat(Exactly(' '), Concat(sector, unit)))
+          } yield (area +: district) +: Exactly(' ') +: sector +: unit
           postcode.write should be("CR2 6XH")
         }
         "EC1A 1BB" in {
           val Right(postcode: PostCode) = for {
             area     <- Rope.parseTo[PostCode.Area]("EC")
-            district <- OneOrTwoDigits.from(1).map(Concat(_, Optional(Range.from['A', 'Z']('A').toOption)))
+            district <- OneOrTwoDigits.from(1).map(_ +: Optional(Range.from['A', 'Z']('A').toOption))
             inward   <- Rope.parseTo[PostCode.InwardCode]("1BB")
-          } yield Concat(Concat(area, district), Concat(Exactly(' '), inward))
+          } yield (area +: district) +: Exactly(' ') +: inward
           postcode.write should be("EC1A 1BB")
         }
       }

@@ -63,6 +63,20 @@ object Range extends RangeInstances {
     from[Start, End](char).getOrElse(throw new IllegalArgumentException(char.toString))
 }
 
+sealed abstract case class Repeated[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope](
+    values: List[R])
+    extends Rope
+object Repeated {
+  def from[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope](values: List[R])(
+      implicit min: ValueOf[MinReps],
+      max: ValueOf[MaxReps]): Either[Rope.InvalidValue.type, Repeated[MinReps, MaxReps, R]] =
+    Either.cond(
+      test = values.size >= min.value && values.size <= max.value,
+      right = new Repeated[MinReps, MaxReps, R](values) {},
+      left = Rope.InvalidValue
+    )
+}
+
 object Rope {
   def parseTo[R <: Rope](s: String)(implicit parse: Parse[R]): Either[Parse.Result.Failure.type, R] =
     parse.parse(s) match {

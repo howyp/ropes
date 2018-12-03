@@ -49,4 +49,8 @@ object SectionFinder extends LowPri {
   implicit def section4[Prefix <: Rope, Suffix <: Rope](
       implicit nested: SectionFinder[Suffix, 3]): SectionFinder.Aux[Concat[Prefix, Suffix], 4, nested.Out] =
     instance(concat => nested(concat.suffix))
+
+  implicit def section5[Prefix <: Rope, Suffix <: Rope](
+      implicit nested: SectionFinder[Suffix, 4]): SectionFinder.Aux[Concat[Prefix, Suffix], 5, nested.Out] =
+    instance(concat => nested(concat.suffix))
 }

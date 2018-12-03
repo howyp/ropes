@@ -65,7 +65,7 @@ ThisBuild / Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oSD
 
 lazy val core = project
   .in(file("core"))
-  .enablePlugins(AutomateHeaderPlugin)
+  .enablePlugins(AutomateHeaderPlugin, spray.boilerplate.BoilerplatePlugin)
 
 lazy val dsl = project
   .in(file("dsl"))

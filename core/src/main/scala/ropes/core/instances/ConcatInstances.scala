@@ -25,23 +25,6 @@ private[ropes] trait ConcatExplicitSectionFinderInstances {
   implicit def section2forSection[Section1 <: Rope, Section2 <: Rope]
     : SectionFinder.Aux[Concat[Section1, Section2], 2, Section2] = SectionFinder.instance(_.suffix)
 }
-private[ropes] trait ConcatGeneratedSectionFinderInstances extends ConcatExplicitSectionFinderInstances {
-  implicit def section2forConcat[Prefix <: Rope, Suffix <: Rope](
-      implicit nested: SectionFinder[Suffix, 1]): SectionFinder.Aux[Concat[Prefix, Suffix], 2, nested.Out] =
-    SectionFinder.instance(concat => nested(concat.suffix))
-
-  implicit def section3[Prefix <: Rope, Suffix <: Rope](
-      implicit nested: SectionFinder[Suffix, 2]): SectionFinder.Aux[Concat[Prefix, Suffix], 3, nested.Out] =
-    SectionFinder.instance(concat => nested(concat.suffix))
-
-  implicit def section4[Prefix <: Rope, Suffix <: Rope](
-      implicit nested: SectionFinder[Suffix, 3]): SectionFinder.Aux[Concat[Prefix, Suffix], 4, nested.Out] =
-    SectionFinder.instance(concat => nested(concat.suffix))
-
-  implicit def section5[Prefix <: Rope, Suffix <: Rope](
-      implicit nested: SectionFinder[Suffix, 4]): SectionFinder.Aux[Concat[Prefix, Suffix], 5, nested.Out] =
-    SectionFinder.instance(concat => nested(concat.suffix))
-}
 private[ropes] trait ConcatInstances extends ConcatGeneratedSectionFinderInstances {
   implicit def concatParse[Prefix <: Rope: Parse, Suffix <: Rope: Parse]: Parse[Concat[Prefix, Suffix]] = { str =>
     Parse[Prefix].parse(str).flatMap {

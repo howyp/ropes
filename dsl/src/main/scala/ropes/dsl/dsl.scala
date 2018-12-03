@@ -25,8 +25,11 @@ package object dsl {
   val +: = Concat
 
   implicit class RopeOps[Suffix <: Rope](suffix: Suffix) {
-    def +:[Prefix <: Rope](prefix: Prefix): Concat[Prefix, Suffix] = Concat(prefix, suffix)
-//    def +:[Prefix <: Rope](prefix: Option[Prefix]): Concat[Prefix, Optional[Suffix]] =
-//      core.Concat(prefix, Optional(suffix))
+    def +:[Prefix <: Rope](prefix: Prefix): +:[Prefix, Suffix] = Concat(prefix, suffix)
+  }
+
+  implicit class LiteralOps[Suffix <: Rope](suffix: Suffix) {
+    def +:[Literal <: Char with Singleton](prefix: Literal): Concat[Exactly[Literal], Suffix] =
+      Concat(Exactly[Literal](prefix), suffix)
   }
 }

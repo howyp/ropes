@@ -33,7 +33,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
         parsed.suffix.value should be("howyp")
       }
       "composing and writing" in {
-        val handle: TwitterHandle = Exactly('@') +: AnyString("howyp")
+        val handle: TwitterHandle = '@' +: AnyString("howyp")
         handle.write should be("@howyp")
       }
       "generating" in {
@@ -98,7 +98,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
             district <- OneOrTwoDigits.from(2).map(_ +: Optional[Range['A', 'Z']](None))
             sector   <- Digit.from(6)
             unit     <- Rope.parseTo[PostCode.Unit]("XH")
-          } yield (area +: district) +: Exactly(' ') +: sector +: unit
+          } yield (area +: district) +: ' ' +: sector +: unit
           postcode.write should be("CR2 6XH")
         }
         "EC1A 1BB" in {
@@ -106,7 +106,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
             area     <- Rope.parseTo[PostCode.Area]("EC")
             district <- OneOrTwoDigits.from(1).map(_ +: Optional(Range.from['A', 'Z']('A').toOption))
             inward   <- Rope.parseTo[PostCode.InwardCode]("1BB")
-          } yield (area +: district) +: Exactly(' ') +: inward
+          } yield (area +: district) +: ' ' +: inward
           postcode.write should be("EC1A 1BB")
         }
       }

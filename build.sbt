@@ -61,7 +61,7 @@ Global / scalacOptions ++= Seq(
   "-Ywarn-value-discard" // Warn when non-Unit expression results are unused.
 )
 ThisBuild / Compile / console / scalacOptions --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings")
-ThisBuild / Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oSD")
+ThisBuild / Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oSDI")
 
 lazy val core = project
   .in(file("core"))

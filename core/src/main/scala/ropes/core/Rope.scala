@@ -66,7 +66,7 @@ object Range extends RangeInstances {
 sealed abstract case class Repeated[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope](
     values: List[R])
     extends Rope
-object Repeated {
+object Repeated extends RepeatedInstances {
   def from[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope](values: List[R])(
       implicit min: ValueOf[MinReps],
       max: ValueOf[MaxReps]): Either[Rope.InvalidValue.type, Repeated[MinReps, MaxReps, R]] =
@@ -75,6 +75,10 @@ object Repeated {
       right = new Repeated[MinReps, MaxReps, R](values) {},
       left = Rope.InvalidValue
     )
+
+  def unsafeFrom[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope](
+      values: List[R])(implicit min: ValueOf[MinReps], max: ValueOf[MaxReps]): Repeated[MinReps, MaxReps, R] =
+    from[MinReps, MaxReps, R](values).getOrElse(throw new IllegalArgumentException(values.toString))
 }
 
 object Rope {

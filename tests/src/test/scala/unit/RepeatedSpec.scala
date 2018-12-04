@@ -24,6 +24,14 @@ import ropes.scalacheck._
 
 class RepeatedSpec extends RopeLaws {
   "A Repeated[1,3,Range['a', 'z']]" - {
+    `obeys Rope laws`[Repeated[1, 3, Range['a', 'z']]](
+      genValidStringsWithDecompositionAssertion = Gen
+        .choose(1, 3)
+        .flatMap(Gen.listOfN(_, arbitrary[Range['a', 'z']]))
+        .map(list => list.map(_.value).mkString("") -> (_.values should be(list))),
+      genSuffixToMakeValidStringIncomplete = None,
+      genInvalidStrings = None
+    )
     "Can be created from valid lists of characters" in {
       forAll(Gen.choose(1, 3).flatMap(Gen.listOfN(_, arbitrary[Range['a', 'z']]))) { list =>
         Repeated.from[1, 3, Range['a', 'z']](list).getOrElse(fail()).values should be(list)

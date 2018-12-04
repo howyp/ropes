@@ -40,4 +40,15 @@ package object scalacheck {
 
   implicit def arbOptional[R <: Rope](implicit arb: Arbitrary[R]): Arbitrary[Optional[R]] =
     Arbitrary(Gen.option(arb.arbitrary).map(Optional.apply[R]))
+
+  implicit def arbRepeated[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope](
+      implicit
+      min: ValueOf[MinReps],
+      max: ValueOf[MaxReps],
+      arb: Arbitrary[R]): Arbitrary[Repeated[MinReps, MaxReps, R]] =
+    Arbitrary(
+      Gen
+        .chooseNum(min.value: Int, max.value: Int)
+        .flatMap(Gen.listOfN(_, arb.arbitrary))
+        .map(Repeated.unsafeFrom[MinReps, MaxReps, R](_)))
 }

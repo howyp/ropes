@@ -47,12 +47,12 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
       // ^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? [0-9][A-Za-z]{2}|[Gg][Ii][Rr] 0[Aa]{2})$
       type PostCode = Concat[PostCode.OutwardCode, Concat[Exactly[' '], PostCode.InwardCode]]
       object PostCode {
-        type Area        = Concat[Range['A', 'Z'], Optional[Range['A', 'Z']]]
+        type Area        = Repeated[1, 2, Range['A', 'Z']]
         type District    = Concat[OneOrTwoDigits, Optional[Range['A', 'Z']]]
         type OutwardCode = Concat[Area, District]
 
         type Sector     = Digit
-        type Unit       = Range['A', 'Z'] +: Range['A', 'Z']
+        type Unit       = Repeated[2, 2, Range['A', 'Z']]
         type InwardCode = Sector +: Unit
       }
       "parsing and de-composing" - {
@@ -60,26 +60,23 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
           val Right(postCode) = Rope.parseTo[PostCode]("CR2 6XH")
 
           val outward = postCode.section[1]
-          outward.section[1].section[1].value should be('C')
-          outward.section[1].section[2].value.get.value should be('R')
+          outward.section[1].values.map(_.value) should be(List('C', 'R'))
           outward.section[2].value should be(2)
           outward.write should be("CR2")
 
           val sector = postCode.section[3]
           sector.value should be(6)
 
-          postCode.section[4].value should be('X')
-          postCode.section[5].value should be('H')
+          postCode.section[4].values.map(_.value) should be(List('X', 'H'))
         }
         "M1 1AE" in {
           val Right((area +: district) +: _) = Rope.parseTo[PostCode]("M1 1AE")
-          area.prefix.value should be('M')
+          area.values.map(_.value) should contain only 'M'
           district.suffix.value should be(None)
         }
         "DN55 1PT" in {
           val Right(outward +: _) = Rope.parseTo[PostCode]("DN55 1PT")
-          outward.prefix.prefix.value should be('D')
-          outward.prefix.suffix.value.get.value should be('N')
+          outward.prefix.values.map(_.value) should be(List('D', 'N'))
           outward.suffix.prefix.value should be(55)
           outward.suffix.suffix.value should be(None)
         }

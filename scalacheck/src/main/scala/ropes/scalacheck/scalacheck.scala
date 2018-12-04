@@ -20,32 +20,62 @@ import ropes.core._
 import org.scalacheck.{Arbitrary, Gen}
 
 package object scalacheck {
-  implicit def arbExactlyChar[C <: Char with Singleton](implicit c: ValueOf[C]): Arbitrary[Exactly[C]] =
+  implicit def arbExactlyChar[
+      C <: Char with Singleton
+  ](
+      implicit
+      c: ValueOf[C]
+  ): Arbitrary[Exactly[C]] =
     Arbitrary(Gen.const(Exactly(c.value)))
 
-  implicit val arbAnyString: Arbitrary[AnyString] = Arbitrary(Arbitrary.arbitrary[String].map(AnyString.apply))
+  implicit val arbAnyString: Arbitrary[
+    AnyString
+  ] = Arbitrary(Arbitrary.arbitrary[String].map(AnyString.apply))
 
-  implicit def arbConcat[P <: Rope: Arbitrary, S <: Rope: Arbitrary]: Arbitrary[Concat[P, S]] =
+  implicit def arbConcat[
+      P <: Rope: Arbitrary,
+      S <: Rope: Arbitrary
+  ]: Arbitrary[Concat[P, S]] =
     Arbitrary(Gen.resultOf(Concat.apply[P, S] _))
 
-  implicit def arbRange[Start <: Char with Singleton, End <: Char with Singleton](
-      implicit start: ValueOf[Start],
-      end: ValueOf[End]): Arbitrary[Range[Start, End]] =
+  implicit def arbRange[
+      Start <: Char with Singleton,
+      End <: Char with Singleton
+  ](
+      implicit
+      start: ValueOf[Start],
+      end: ValueOf[End]
+  ): Arbitrary[Range[Start, End]] =
     Arbitrary(Gen.choose(start.value: Char, end.value: Char).map(Range.unsafeFrom[Start, End]))
 
-  implicit def arbConvertedTo[Source <: Rope, Target](
-      implicit arbSource: Arbitrary[Source],
-      conversion: Conversion[Source, Target]): Arbitrary[ConvertedTo[Source, Target]] =
+  implicit def arbConvertedTo[
+      Source <: Rope,
+      Target
+  ](
+      implicit
+      arbSource: Arbitrary[Source],
+      conversion: Conversion[Source, Target]
+  ): Arbitrary[ConvertedTo[Source, Target]] =
     Arbitrary(arbSource.arbitrary.map(ConvertedTo.fromSource[Source, Target]))
 
-  implicit def arbOptional[R <: Rope](implicit arb: Arbitrary[R]): Arbitrary[Optional[R]] =
+  implicit def arbOptional[
+      R <: Rope
+  ](
+      implicit
+      arb: Arbitrary[R]
+  ): Arbitrary[Optional[R]] =
     Arbitrary(Gen.option(arb.arbitrary).map(Optional.apply[R]))
 
-  implicit def arbRepeated[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope](
+  implicit def arbRepeated[
+      MinReps <: Int with Singleton,
+      MaxReps <: Int with Singleton,
+      R <: Rope
+  ](
       implicit
       min: ValueOf[MinReps],
       max: ValueOf[MaxReps],
-      arb: Arbitrary[R]): Arbitrary[Repeated[MinReps, MaxReps, R]] =
+      arb: Arbitrary[R]
+  ): Arbitrary[Repeated[MinReps, MaxReps, R]] =
     Arbitrary(
       Gen
         .chooseNum(min.value: Int, max.value: Int)

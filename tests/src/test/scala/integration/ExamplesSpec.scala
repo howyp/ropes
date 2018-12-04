@@ -26,15 +26,16 @@ import org.scalatest.{FreeSpec, Matchers}
 class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks {
   "Some examples of valid ropes include" - {
     "twitter handles" - {
-      //This is very simplified - starts with an '@', then any characters
-      type TwitterHandle = Exactly['@'] +: AnyString
+      //This is very simplified - starts with an '@', then upper or lowercase letter characters
+      type Username      = Repeated[1, 15, Range['A', 'z']]
+      type TwitterHandle = Exactly['@'] +: Username
       "parsing and de-composing" in {
-        val Right(parsed) = Rope.parseTo[TwitterHandle]("@howyp")
-        parsed.suffix.value should be("howyp")
+        val Right(parsed) = Rope.parseTo[TwitterHandle]("@HowyP")
+        parsed.suffix.write should be("HowyP")
       }
       "composing and writing" in {
-        val handle: TwitterHandle = '@' +: AnyString("howyp")
-        handle.write should be("@howyp")
+        val handle: TwitterHandle = '@' +: Rope.parseTo[Username]("HowyP").getOrElse(fail())
+        handle.write should be("@HowyP")
       }
       "generating" in {
         forAll { handle: TwitterHandle =>

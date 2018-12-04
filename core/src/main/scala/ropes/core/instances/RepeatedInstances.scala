@@ -25,18 +25,21 @@ trait RepeatedInstances {
       implicit
       min: ValueOf[MinReps],
       max: ValueOf[MaxReps],
-      r: Parse[R]): Parse[Repeated[MinReps, MaxReps, R]] = { originalString =>
+      parseR: Parse[R]): Parse[Repeated[MinReps, MaxReps, R]] = { originalString =>
     @tailrec
-    def repeatedParseUntilFailureOrMax(str: String, listSoFar: List[R]): List[R] = {
-      r.parse(str) match {
-        case Parse.Result.Failure                  => listSoFar
-        case Parse.Result.Complete(r)              => listSoFar :+ r
-        case Parse.Result.Incomplete(r, remaining) => repeatedParseUntilFailureOrMax(remaining, listSoFar :+ r)
-      }
-    }
-    Repeated.from[MinReps, MaxReps, R](repeatedParseUntilFailureOrMax(originalString, List.empty)) match {
+    def repeatedParseUntilFailureOrMax(listSoFar: List[R], str: String): (List[R], String) =
+      if (listSoFar.size == max.value) listSoFar -> str
+      else
+        parseR.parse(str) match {
+          case Parse.Result.Failure                  => listSoFar -> str
+          case Parse.Result.Complete(v)              => (listSoFar :+ v) -> ""
+          case Parse.Result.Incomplete(v, remaining) => repeatedParseUntilFailureOrMax(listSoFar :+ v, remaining)
+        }
+
+    val (list, remaining) = repeatedParseUntilFailureOrMax(List.empty, originalString)
+    Repeated.from[MinReps, MaxReps, R](list) match {
       case Left(_)       => Parse.Result.Failure
-      case Right(values) => Parse.Result.Success(values, "")
+      case Right(values) => Parse.Result.Success(values, remaining)
     }
   }
 

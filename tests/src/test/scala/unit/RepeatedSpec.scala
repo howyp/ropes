@@ -15,21 +15,21 @@
  */
 
 package unit
+import gens.CommonGens
 import laws.RopeLaws
 import org.scalacheck.Gen
 import org.scalacheck.Arbitrary.arbitrary
-
 import ropes.core._
 import ropes.scalacheck._
 
-class RepeatedSpec extends RopeLaws {
+class RepeatedSpec extends RopeLaws with CommonGens {
   "A Repeated[1,3,Range['a', 'z']]" - {
     `obeys Rope laws`[Repeated[1, 3, Range['a', 'z']]](
       genValidStringsWithDecompositionAssertion = Gen
         .choose(1, 3)
         .flatMap(Gen.listOfN(_, arbitrary[Range['a', 'z']]))
         .map(list => list.map(_.value).mkString("") -> (_.values should be(list))),
-      genSuffixToMakeValidStringIncomplete = None,
+      genSuffixToMakeValidStringIncomplete = Some(genNonEmptyString.suchThat(!_.head.isLetter)),
       genInvalidStrings = None
     )
     "Can be created from valid lists of characters" in {

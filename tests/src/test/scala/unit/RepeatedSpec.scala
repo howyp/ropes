@@ -24,24 +24,20 @@ import ropes.scalacheck._
 
 class RepeatedSpec extends RopeLaws with CommonGens {
   "A Repeated[1,3,Range['a', 'z']]" - {
+    def genList(numberOfItems: Gen[Int]) = numberOfItems.flatMap(Gen.listOfN(_, arbitrary[Range['a', 'z']]))
     `obeys Rope laws`[Repeated[1, 3, Range['a', 'z']]](
-      genValidStringsWithDecompositionAssertion = Gen
-        .choose(1, 3)
-        .flatMap(Gen.listOfN(_, arbitrary[Range['a', 'z']]))
+      genValidStringsWithDecompositionAssertion = genList(Gen.choose(1, 3))
         .map(list => list.map(_.value).mkString("") -> (_.values should be(list))),
       genSuffixToMakeValidStringIncomplete = Some(genNonEmptyString.suchThat(!_.head.isLetter)),
-      genInvalidStrings = None
+      genInvalidStrings = Some(genNonEmptyString.suchThat(!_.head.isLetter))
     )
-    "Can be created from valid lists of characters" in {
-      forAll(Gen.choose(1, 3).flatMap(Gen.listOfN(_, arbitrary[Range['a', 'z']]))) { list =>
+    "Can be created from valid lists of characters" in
+      forAll(genList(Gen.choose(1, 3))) { list =>
         Repeated.from[1, 3, Range['a', 'z']](list).getOrElse(fail()).values should be(list)
       }
-    }
-    "Cannot be created from invalid lists of characters" in {
-      forAll(Gen.oneOf(Gen.const(List.empty), Gen.choose(4, 10).flatMap(Gen.listOfN(_, arbitrary[Range['a', 'z']])))) {
-        list =>
-          Repeated.from[1, 3, Range['a', 'z']](list) should be(Left(Rope.InvalidValue))
+    "Cannot be created from invalid lists of characters" in
+      forAll(genList(Gen.oneOf(Gen.const(0), Gen.choose(4, 10)))) { list =>
+        Repeated.from[1, 3, Range['a', 'z']](list) should be(Left(Rope.InvalidValue))
       }
-    }
   }
 }

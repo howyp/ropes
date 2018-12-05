@@ -29,7 +29,7 @@ package object dsl {
   }
 
   implicit class LiteralOps[Suffix <: Rope](suffix: Suffix) {
-    def +:[Literal <: Char with Singleton](prefix: Literal): Concat[Exactly[Literal], Suffix] =
-      Concat(Exactly[Literal](prefix), suffix)
+    def +:[V <: Char with Singleton](prefix: V): Concat[Literal[V], Suffix] =
+      Concat(Literal[V](prefix), suffix)
   }
 }

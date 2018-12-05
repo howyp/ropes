@@ -25,8 +25,8 @@ package object scalacheck {
   ](
       implicit
       c: ValueOf[C]
-  ): Arbitrary[Exactly[C]] =
-    Arbitrary(Gen.const(Exactly(c.value)))
+  ): Arbitrary[Literal[C]] =
+    Arbitrary(Gen.const(Literal(c.value)))
 
   implicit val arbAnyString: Arbitrary[
     AnyString

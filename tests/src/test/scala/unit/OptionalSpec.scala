@@ -22,12 +22,12 @@ import ropes.core._
 import ropes.scalacheck._
 
 class OptionalSpec extends RopeLaws with CommonGens {
-  "An Optional[Exactly['x']" - {
-    type Opt = Optional[Exactly['x']]
+  "An Optional[Literal['x']" - {
+    type Opt = Optional[Literal['x']]
     `obeys Rope laws`[Opt](
       genValidStringsWithDecompositionAssertion = Gen.oneOf(
         "x" -> { opt: Opt =>
-          opt.value should be(Some(Exactly('x')))
+          opt.value should be(Some(Literal('x')))
           ()
         },
         "" -> { opt: Opt =>

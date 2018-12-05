@@ -22,10 +22,10 @@ import org.scalacheck.Gen
 import ropes.core._
 import ropes.scalacheck._
 
-class ExactlySpec extends RopeLaws with CommonGens {
-  "An `Exactly[_]` Rope" - {
+class LiteralSpec extends RopeLaws with CommonGens {
+  "An `Literal[_]` Rope" - {
     "accepts literal chars" - {
-      `obeys Rope laws`[Exactly['a']](
+      `obeys Rope laws`[Literal['a']](
         genValidStringsWithDecompositionAssertion = Gen.const("a").map { str =>
           str -> { parsed =>
             parsed.value should be('a')
@@ -36,20 +36,20 @@ class ExactlySpec extends RopeLaws with CommonGens {
       )
       "Can be parsed when incomplete" in forAll { suffix: String =>
         whenever(suffix.nonEmpty) {
-          Parse[Exactly['a']].parse("a" + suffix) should be(Parse.Result.Success(Exactly('a'), suffix))
+          Parse[Literal['a']].parse("a" + suffix) should be(Parse.Result.Success(Literal('a'), suffix))
         }
       }
       "Captures the literal type when using .apply(...)" in {
-        val _: Exactly['a'] = Exactly('a')
-        """val b: Exactly['a'] = Exactly('b')""" shouldNot typeCheck
+        val _: Literal['a'] = Literal('a')
+        """val b: Literal['a'] = Literal('b')""" shouldNot typeCheck
       }
     }
     "does not accept non-singletons" in {
-      """Exactly[Char]('a')""" shouldNot compile
+      """Literal[Char]('a')""" shouldNot compile
     }
   }
   "does not accept non-chars (for the moment)" in {
-    """Exactly["a"]("a")""" shouldNot compile
-    """Exactly[1](1)""" shouldNot compile
+    """Literal["a"]("a")""" shouldNot compile
+    """Literal[1](1)""" shouldNot compile
   }
 }

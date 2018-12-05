@@ -28,7 +28,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
     "twitter handles" - {
       //This is very simplified - starts with an '@', then upper or lowercase letter characters
       type Username      = Repeated[1, 15, Range['A', 'z']]
-      type TwitterHandle = Exactly['@'] +: Username
+      type TwitterHandle = Literal['@'] +: Username
       "parsing and de-composing" in {
         val Right(parsed) = Rope.parseTo[TwitterHandle]("@HowyP")
         parsed.suffix.write should be("HowyP")
@@ -46,7 +46,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
     "UK Postcodes" - {
       //Wikipedia lists a validation Regex as:
       // ^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? [0-9][A-Za-z]{2}|[Gg][Ii][Rr] 0[Aa]{2})$
-      type PostCode = Concat[PostCode.OutwardCode, Concat[Exactly[' '], PostCode.InwardCode]]
+      type PostCode = Concat[PostCode.OutwardCode, Concat[Literal[' '], PostCode.InwardCode]]
       object PostCode {
         type Area        = Repeated[1, 2, Range['A', 'Z']]
         type District    = Concat[OneOrTwoDigits, Optional[Range['A', 'Z']]]

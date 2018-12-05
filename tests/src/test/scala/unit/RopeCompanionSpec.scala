@@ -27,11 +27,11 @@ class RopeCompanionSpec extends FreeSpec with Matchers {
       }
       "Failing if the parse is incomplete" in {
         implicit val exampleParse: Parse[AnyString] = _ => Parse.Result.Success(AnyString(""), "remaining")
-        Rope.parseTo[AnyString]("") should be(Left(Parse.Result.Failure))
+        Rope.parseTo[AnyString]("") should be(Left(Rope.InvalidValue))
       }
       "Failing if the parse is a failure" in {
         implicit val exampleParse: Parse[AnyString] = _ => Parse.Result.Failure
-        Rope.parseTo[AnyString]("") should be(Left(Parse.Result.Failure))
+        Rope.parseTo[AnyString]("") should be(Left(Rope.InvalidValue))
       }
     }
   }

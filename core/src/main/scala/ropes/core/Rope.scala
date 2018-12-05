@@ -79,10 +79,10 @@ object Repeated extends RepeatedInstances {
 }
 
 object Rope {
-  def parseTo[R <: Rope](s: String)(implicit parse: Parse[R]): Either[Parse.Result.Failure.type, R] =
+  def parseTo[R <: Rope](s: String)(implicit parse: Parse[R]): Either[InvalidValue.type, R] =
     parse.parse(s) match {
       case Parse.Result.Complete(r)                             => Right(r)
-      case Parse.Result.Incomplete(_, _) | Parse.Result.Failure => Left(Parse.Result.Failure)
+      case Parse.Result.Incomplete(_, _) | Parse.Result.Failure => Left(InvalidValue)
     }
 
   case object InvalidValue

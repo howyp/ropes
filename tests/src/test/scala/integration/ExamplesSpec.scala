@@ -49,7 +49,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
       type PostCode = Concat[PostCode.OutwardCode, Concat[Literal[' '], PostCode.InwardCode]]
       object PostCode {
         type Area        = Repeated[1, 2, Letter.Uppercase]
-        type District    = Concat[OneOrTwoDigits, Optional[Letter.Uppercase]]
+        type District    = Concat[Repeated[1, 2, Digit] ConvertedTo Int, Optional[Letter.Uppercase]]
         type OutwardCode = Concat[Area, District]
 
         type Sector     = Digit
@@ -93,7 +93,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
 //          TODO should we change the variance of rope subclasses to avoid the explicity typing for Optional?
           val Right(postcode: PostCode) = for {
             area     <- Rope.parseTo[PostCode.Area]("CR")
-            district <- OneOrTwoDigits.from(2).map(_ +: Optional[Letter.Uppercase](None))
+            district <- Rope.parseTo[PostCode.District]("2")
             sector   <- Digit.from(6)
             unit     <- Rope.parseTo[PostCode.Unit]("XH")
           } yield (area +: district) +: ' ' +: sector +: unit
@@ -102,7 +102,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
         "EC1A 1BB" in {
           val Right(postcode: PostCode) = for {
             area     <- Rope.parseTo[PostCode.Area]("EC")
-            district <- OneOrTwoDigits.from(1).map(_ +: Optional(Range.from['A', 'Z']('A').toOption))
+            district <- Rope.parseTo[PostCode.District]("1A")
             inward   <- Rope.parseTo[PostCode.InwardCode]("1BB")
           } yield (area +: district) +: ' ' +: inward
           postcode.write should be("EC1A 1BB")

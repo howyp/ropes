@@ -118,12 +118,13 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
       // See https://en.wikipedia.org/wiki/National_Insurance_number
       // "The format of the number is two prefix letters, six digits, and one suffix letter.
       // The suffix letter is either A, B, C, or D"
-      type NINO = Repeated.Exactly[2, Letter.Uppercase] +: Repeated.Exactly[6, Digit] +: Range['A', 'D']
+      type NINO =
+        Repeated.Exactly[2, Letter.Uppercase] +: (Repeated.Exactly[6, Digit] ConvertedTo Int) +: Range['A', 'D']
       "QQ123456C" - {
         "parsing and de-composing" in {
           val parsed = Rope.parseTo[NINO]("QQ123456C").getOrElse(fail())
           parsed.section[1].write should be("QQ")
-          parsed.section[2].write should be("123456")
+          parsed.section[2].value should be(123456)
           parsed.section[3].value should be('C')
         }
       }
@@ -131,7 +132,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
         "parsing and de-composing" in {
           val parsed = Rope.parseTo[NINO]("AA000000A").getOrElse(fail())
           parsed.section[1].write should be("AA")
-          parsed.section[2].write should be("000000")
+          parsed.section[2].value should be(0)
           parsed.section[3].value should be('A')
         }
       }

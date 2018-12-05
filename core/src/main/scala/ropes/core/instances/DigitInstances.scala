@@ -37,9 +37,15 @@ private[core] trait DigitInstances {
       forwards = _.values.foldLeft(0) {
         case (accumulated, digit) => accumulated * 10 + digit.value
       },
-      backwards = int =>
-        Some(
-          Repeated.unsafeFrom[MinReps, MaxReps, Digit](
-            int.toString.toList.map(Range.unsafeFrom['0', '9'](_)).map(ConvertedTo.fromSource(_))))
+      backwards = { int =>
+        val listOfDigits =
+          int.toString.toList
+            .map(Range.unsafeFrom['0', '9'](_))
+            .map(ConvertedTo.fromSource(_))
+        val listOfDigitsPaddedWithZeros =
+          List.fill(minReps.value - listOfDigits.size)(Digit.unsafeFrom(0)) ++ listOfDigits
+
+        Some(Repeated.unsafeFrom[MinReps, MaxReps, Digit](listOfDigitsPaddedWithZeros))
+      }
     )
 }

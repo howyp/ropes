@@ -19,6 +19,12 @@ package ropes
 import ropes.core.instances.{DigitInstances, OptionalInstances}
 
 package object core extends DigitInstances with OptionalInstances {
+  type Letter = Range['A', 'z']
+  object Letter {
+    type Uppercase = Range['A', 'Z']
+    type Lowercase = Range['a', 'z']
+  }
+
   type Digit = Range['0', '9'] ConvertedTo Int
   object Digit {
     def from(value: Int): Either[Rope.InvalidValue.type, Digit] = ConvertedTo.fromTarget(value)

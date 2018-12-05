@@ -64,6 +64,8 @@ sealed abstract case class Repeated[MinReps <: Int with Singleton, MaxReps <: In
     values: List[R])
     extends Rope
 object Repeated extends RepeatedInstances {
+  type Exactly[Reps <: Int with Singleton, R <: Rope] = Repeated[Reps, Reps, R]
+
   def from[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope](values: List[R])(
       implicit min: ValueOf[MinReps],
       max: ValueOf[MaxReps]): Either[Rope.InvalidValue.type, Repeated[MinReps, MaxReps, R]] =

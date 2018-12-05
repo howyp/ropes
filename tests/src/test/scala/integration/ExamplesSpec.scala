@@ -27,7 +27,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
   "Some examples of valid ropes include" - {
     "twitter handles" - {
       //This is very simplified - starts with an '@', then upper or lowercase letter characters
-      type Username      = Repeated[1, 15, Range['A', 'z']]
+      type Username      = Repeated[1, 15, Letter]
       type TwitterHandle = Literal['@'] +: Username
       "parsing and de-composing" in {
         val Right(parsed) = Rope.parseTo[TwitterHandle]("@HowyP")
@@ -48,12 +48,12 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
       // ^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? [0-9][A-Za-z]{2}|[Gg][Ii][Rr] 0[Aa]{2})$
       type PostCode = Concat[PostCode.OutwardCode, Concat[Literal[' '], PostCode.InwardCode]]
       object PostCode {
-        type Area        = Repeated[1, 2, Range['A', 'Z']]
-        type District    = Concat[OneOrTwoDigits, Optional[Range['A', 'Z']]]
+        type Area        = Repeated[1, 2, Letter.Uppercase]
+        type District    = Concat[OneOrTwoDigits, Optional[Letter.Uppercase]]
         type OutwardCode = Concat[Area, District]
 
         type Sector     = Digit
-        type Unit       = Repeated[2, 2, Range['A', 'Z']]
+        type Unit       = Repeated[2, 2, Letter.Uppercase]
         type InwardCode = Sector +: Unit
       }
       "parsing and de-composing" - {
@@ -93,7 +93,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
 //          TODO should we change the variance of rope subclasses to avoid the explicity typing for Optional?
           val Right(postcode: PostCode) = for {
             area     <- Rope.parseTo[PostCode.Area]("CR")
-            district <- OneOrTwoDigits.from(2).map(_ +: Optional[Range['A', 'Z']](None))
+            district <- OneOrTwoDigits.from(2).map(_ +: Optional[Letter.Uppercase](None))
             sector   <- Digit.from(6)
             unit     <- Rope.parseTo[PostCode.Unit]("XH")
           } yield (area +: district) +: ' ' +: sector +: unit
@@ -118,7 +118,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
       // See https://en.wikipedia.org/wiki/National_Insurance_number
       // "The format of the number is two prefix letters, six digits, and one suffix letter.
       // The suffix letter is either A, B, C, or D"
-      type NINO = Repeated[2, 2, Range['A', 'Z']] +: Repeated[6, 6, Digit] +: Range['A', 'D']
+      type NINO = Repeated.Exactly[2, Letter.Uppercase] +: Repeated.Exactly[6, Digit] +: Range['A', 'D']
       "QQ123456C" - {
         "parsing and de-composing" in {
           val parsed = Rope.parseTo[NINO]("QQ123456C").getOrElse(fail())
@@ -137,7 +137,6 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
       }
       "generating" in {
         forAll { nino: NINO =>
-          println(nino.write)
           Rope.parseTo[NINO](nino.write) should be('right)
         }
       }

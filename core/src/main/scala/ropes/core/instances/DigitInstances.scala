@@ -20,25 +20,26 @@ import ropes.core._
 
 private[core] trait DigitInstances {
   //TODO consider if we can write Conversion[Digit]
-  implicit val digitConversion: Conversion[Range['0', '9'], Int] = Conversion(
+  implicit val digitConversion: Conversion[Range['0', '9'], Int] = Conversion.instance(
     forwards = _.value.toInt - '0'.charValue(),
     backwards = target => Range.from['0', '9']((target + '0'.charValue()).toChar).toOption
   )
 
-  implicit def oneOrTwoDigitsConversion: Conversion[Digit Concat Optional[Digit], Int] =
-    Conversion[Digit Concat Optional[Digit], Int](
-      forwards = {
-        case Concat(ones, Optional(None))       => ones.value
-        case Concat(tens, Optional(Some(ones))) => tens.value * 10 + ones.value
+  implicit def repeatedDigitsConversion[
+      MinReps <: Int with Singleton,
+      MaxReps <: Int with Singleton,
+  ](
+      implicit
+      minReps: ValueOf[MinReps],
+      maxReps: ValueOf[MaxReps]
+  ): Conversion[Repeated[MinReps, MaxReps, Digit], Int] =
+    Conversion.instance[Repeated[MinReps, MaxReps, Digit], Int](
+      forwards = _.values.foldLeft(0) {
+        case (accumulated, digit) => accumulated * 10 + digit.value
       },
       backwards = int =>
-        if (int > 99 || int < 0) None
-        else
-          Digit.from(int % 10).toOption.map { ones =>
-            Digit.from(int / 10 % 10).toOption.filterNot(_.value == 0) match {
-              case None       => Concat(ones, Optional(None))
-              case Some(tens) => Concat(tens, Optional(Some(ones)))
-            }
-        }
+        Some(
+          Repeated.unsafeFrom[MinReps, MaxReps, Digit](
+            int.toString.toList.map(Range.unsafeFrom['0', '9'](_)).map(ConvertedTo.fromSource(_))))
     )
 }

@@ -16,16 +16,17 @@
 
 package ropes
 
-import ropes.core._
 import ropes.core.instances.DigitInstances
 
 package object core extends DigitInstances {
   type Digit = Range['0', '9'] ConvertedTo Int
   object Digit {
     def from(value: Int): Either[Rope.InvalidValue.type, Digit] = ConvertedTo.fromTarget(value)
+    def unsafeFrom(value: Int): Digit =
+      Digit.from(value).getOrElse(throw new IllegalArgumentException(value.toString))
   }
 
-  type OneOrTwoDigits = Concat[Digit, Optional[Digit]] ConvertedTo Int
+  type OneOrTwoDigits = Repeated[1, 2, Digit] ConvertedTo Int
   object OneOrTwoDigits {
     def from(value: Int): Either[Rope.InvalidValue.type, OneOrTwoDigits] = ConvertedTo.fromTarget(value)
   }

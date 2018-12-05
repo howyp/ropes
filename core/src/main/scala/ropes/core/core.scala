@@ -16,9 +16,9 @@
 
 package ropes
 
-import ropes.core.instances.DigitInstances
+import ropes.core.instances.{DigitInstances, OptionalInstances}
 
-package object core extends DigitInstances {
+package object core extends DigitInstances with OptionalInstances {
   type Digit = Range['0', '9'] ConvertedTo Int
   object Digit {
     def from(value: Int): Either[Rope.InvalidValue.type, Digit] = ConvertedTo.fromTarget(value)
@@ -29,5 +29,12 @@ package object core extends DigitInstances {
   type OneOrTwoDigits = Repeated[1, 2, Digit] ConvertedTo Int
   object OneOrTwoDigits {
     def from(value: Int): Either[Rope.InvalidValue.type, OneOrTwoDigits] = ConvertedTo.fromTarget(value)
+  }
+
+  type Optional[R <: Rope] = Repeated[0, 1, R] ConvertedTo Option[R]
+  object Optional {
+    //TODO should distinguish between partial and complete conversions, to mean that we don't need this .getOrElse
+    def apply[R <: Rope](option: Option[R]): Optional[R] =
+      ConvertedTo.fromTarget[Repeated[0, 1, R], Option[R]](option).getOrElse(throw new IllegalStateException())
   }
 }

@@ -19,14 +19,8 @@ package ropes.core.instances
 import ropes.core._
 
 private[ropes] trait OptionalInstances {
-  implicit def optionalParse[R <: Rope](implicit parse: Parse[R]): Parse[Optional[R]] = { original =>
-    parse.parse(original) match {
-      case Parse.Result.Failure                  => Parse.Result.Success(Optional(None), original)
-      case Parse.Result.Complete(r)              => Parse.Result.Complete(Optional(Some(r)))
-      case Parse.Result.Incomplete(r, remaining) => Parse.Result.Success(Optional(Some(r)), remaining)
-    }
-  }
-
-  implicit def optionalWrite[R <: Rope](implicit write: Write[R]): Write[Optional[R]] =
-    _.value.map(write.write).getOrElse("")
+  implicit def optionConversionFromRepeated[R <: Rope] = Conversion.instance[Repeated[0, 1, R], Option[R]](
+    forwards = _.values.headOption,
+    backwards = opt => Some(Repeated.unsafeFrom[0, 1, R](opt.toList))
+  )
 }

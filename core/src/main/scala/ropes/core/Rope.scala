@@ -47,9 +47,6 @@ object ConvertedTo extends ConvertedToInstances {
     new ConvertedTo[Source, Target](conversion.forwards(source)) {}
 }
 
-final case class Optional[R <: Rope](value: Option[R]) extends Rope
-object Optional                                        extends OptionalInstances
-
 sealed abstract case class Range[Start <: Char with Singleton, End <: Char with Singleton](value: Char) extends Rope
 object Range extends RangeInstances {
   def from[Start <: Char with Singleton, End <: Char with Singleton](char: Char)(

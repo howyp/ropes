@@ -114,5 +114,42 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
         }
       }
     }
+    "UK National Insurance Numbers" - {
+      // See https://en.wikipedia.org/wiki/National_Insurance_number
+      // "The format of the number is two prefix letters, six digits, and one suffix letter.
+      // The suffix letter is either A, B, C, or D"
+      type NINO = Repeated[2, 2, Range['A', 'Z']] +: Repeated[6, 6, Digit] +: Range['A', 'D']
+      "QQ123456C" - {
+        "parsing and de-composing" in {
+          val parsed = Rope.parseTo[NINO]("QQ123456C").getOrElse(fail())
+          parsed.section[1].write should be("QQ")
+          parsed.section[2].write should be("123456")
+          parsed.section[3].value should be('C')
+        }
+      }
+      "AA000000A" - {
+        "parsing and de-composing" in {
+          val parsed = Rope.parseTo[NINO]("AA000000A").getOrElse(fail())
+          parsed.section[1].write should be("AA")
+          parsed.section[2].write should be("000000")
+          parsed.section[3].value should be('A')
+        }
+      }
+      "generating" in {
+        forAll { nino: NINO =>
+          println(nino.write)
+          Rope.parseTo[NINO](nino.write) should be('right)
+        }
+      }
+      "Invalid NINOs fail to parse" in {
+        val l = List(
+          "Q0123456C", // Prefix replaced with number
+          "Q123456C", // Prefix of single letter
+          "QQ 12 34 56 C", // Spaces added
+          "QQ123456E" // Out of scope letter for suffix
+        )
+        every(l.map(Rope.parseTo[NINO](_))) should be(Left(Rope.InvalidValue))
+      }
+    }
   }
 }

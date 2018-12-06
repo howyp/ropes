@@ -23,6 +23,12 @@ object Parse {
   def apply[R <: Rope](implicit parse: Parse[R]): Parse[R] = parse
 
   sealed trait Result[+R <: Rope] {
+    def map[S <: Rope](f: R => S): Result[S] = this match {
+      case Result.Failure          => Result.Failure
+      case Result.Complete(v)      => Parse.Result.Success(f(v), "")
+      case Result.Incomplete(v, r) => Parse.Result.Success(f(v), r)
+    }
+
     def flatMap[S <: Rope](f: (R, String) => Result[S]): Result[S] = this match {
       case Result.Failure          => Result.Failure
       case Result.Complete(v)      => f(v, "")

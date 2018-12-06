@@ -81,4 +81,15 @@ package object scalacheck {
         .chooseNum(min.value: Int, max.value: Int)
         .flatMap(Gen.listOfN(_, arb.arbitrary))
         .map(Repeated.unsafeFrom[MinReps, MaxReps, R](_)))
+
+  implicit def arbOr[
+      First <: Rope,
+      Second <: Rope
+  ](
+      implicit
+      arbFirst: Arbitrary[First],
+      arbSecond: Arbitrary[Second]
+  ): Arbitrary[First Or Second] = Arbitrary(
+    Gen.oneOf(arbFirst.arbitrary.map(Or.First.apply), arbSecond.arbitrary.map(Or.Second.apply))
+  )
 }

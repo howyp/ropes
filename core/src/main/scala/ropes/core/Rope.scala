@@ -33,6 +33,17 @@ final case class Concat[Prefix <: Rope, Suffix <: Rope](prefix: Prefix, suffix: 
 }
 object Concat extends ConcatInstances
 
+sealed trait Or[+First <: Rope, +Second <: Rope] extends Rope
+object Or extends OrInstances {
+  final case class First[F <: Rope](value: F)  extends Or[F, Nothing]
+  final case class Second[S <: Rope](value: S) extends Or[Nothing, S]
+
+  def from[F <: Rope, S <: Rope](either: Either[F, S]): F Or S = either match {
+    case scala.util.Left(l)  => First(l)
+    case scala.util.Right(l) => Second(l)
+  }
+}
+
 //TODO I'm not really that happy with this name, come up with something better.
 sealed abstract case class ConvertedTo[Source <: Rope, Target](value: Target) extends Rope
 object ConvertedTo extends ConvertedToInstances {

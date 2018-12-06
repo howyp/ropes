@@ -18,10 +18,10 @@ package ropes.core.instances
 
 import ropes.core._
 
-private[ropes] trait ExactlyInstances {
-  implicit def exactlyParseChar[C <: Char with Singleton](implicit c: ValueOf[C]): Parse[Literal[C]] = { str =>
+private[ropes] trait LiteralInstances {
+  implicit def literalParseChar[C <: Char with Singleton](implicit c: ValueOf[C]): Parse[Literal[C]] = { str =>
     if (str.length > 0 && str.charAt(0) == c.value) Parse.Result.Success(Literal[C](c.value), str.substring(1))
     else Parse.Result.Failure
   }
-  implicit def exactlyWriteChar[C <: Char with Singleton]: Write[Literal[C]] = _.value.toString
+  implicit def literalWriteChar[C <: Char with Singleton]: Write[Literal[C]] = _.value.toString
 }

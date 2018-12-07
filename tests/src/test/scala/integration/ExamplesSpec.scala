@@ -50,7 +50,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
       object PostCode {
         type Area        = Repeated[1, 2, Letter.Uppercase]
         type District    = Concat[Repeated[1, 2, Digit] ConvertedTo Int, Optional[Letter.Uppercase]]
-        type OutwardCode = Concat[Area, District]
+        type OutwardCode = Concat[Area, District] Or (Literal['G'] +: Literal['I'] +: Literal['R'])
 
         type Sector     = Digit
         type Unit       = Repeated[2, 2, Letter.Uppercase]
@@ -60,7 +60,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
         "CR2 6XH" in {
           val Right(postCode) = Rope.parseTo[PostCode]("CR2 6XH")
 
-          val outward = postCode.section[1]
+          val Or.First(outward) = postCode.section[1]
           outward.section[1].values.map(_.value) should be(List('C', 'R'))
           outward.section[2].value should be(2)
           outward.write should be("CR2")
@@ -71,20 +71,24 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
           postCode.section[4].values.map(_.value) should be(List('X', 'H'))
         }
         "M1 1AE" in {
-          val Right((area +: district) +: _) = Rope.parseTo[PostCode]("M1 1AE")
+          val Right(Or.First(area +: district) +: _) = Rope.parseTo[PostCode]("M1 1AE")
           area.values.map(_.value) should contain only 'M'
           district.suffix.value should be(None)
         }
         "DN55 1PT" in {
-          val Right(outward +: _) = Rope.parseTo[PostCode]("DN55 1PT")
+          val Right(Or.First(outward) +: _) = Rope.parseTo[PostCode]("DN55 1PT")
           outward.prefix.values.map(_.value) should be(List('D', 'N'))
           outward.suffix.prefix.value should be(55)
           outward.suffix.suffix.value should be(None)
         }
         "EC1A 1BB" in {
-          val Right(outward +: _) = Rope.parseTo[PostCode]("EC1A 1BB")
+          val Right(Or.First(outward) +: _) = Rope.parseTo[PostCode]("EC1A 1BB")
           outward.suffix.prefix.value should be(1)
           outward.suffix.suffix.value.get.value should be('A')
+        }
+        "GIR 0AA" in {
+          val Right(Or.Second(outward) +: _) = Rope.parseTo[PostCode]("GIR 0AA")
+          outward.write should be("GIR")
         }
       }
       "composing and writing" - {
@@ -92,19 +96,21 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
 //          TODO Can we do this better? For instance allow the ' ' char to be implicit
 //          TODO should we change the variance of rope subclasses to avoid the explicity typing for Optional?
           val Right(postcode: PostCode) = for {
-            area     <- Rope.parseTo[PostCode.Area]("CR")
-            district <- Rope.parseTo[PostCode.District]("2")
-            sector   <- Digit.from(6)
-            unit     <- Rope.parseTo[PostCode.Unit]("XH")
-          } yield (area +: district) +: ' ' +: sector +: unit
+            area                          <- Rope.parseTo[PostCode.Area]("CR")
+            district                      <- Rope.parseTo[PostCode.District]("2")
+            outward: PostCode.OutwardCode = Or.First(area +: district)
+            sector                        <- Digit.from(6)
+            unit                          <- Rope.parseTo[PostCode.Unit]("XH")
+          } yield outward +: ' ' +: sector +: unit
           postcode.write should be("CR2 6XH")
         }
         "EC1A 1BB" in {
           val Right(postcode: PostCode) = for {
-            area     <- Rope.parseTo[PostCode.Area]("EC")
-            district <- Rope.parseTo[PostCode.District]("1A")
-            inward   <- Rope.parseTo[PostCode.InwardCode]("1BB")
-          } yield (area +: district) +: ' ' +: inward
+            area                          <- Rope.parseTo[PostCode.Area]("EC")
+            district                      <- Rope.parseTo[PostCode.District]("1A")
+            outward: PostCode.OutwardCode = Or.First(area +: district)
+            inward                        <- Rope.parseTo[PostCode.InwardCode]("1BB")
+          } yield outward +: ' ' +: inward
           postcode.write should be("EC1A 1BB")
         }
       }

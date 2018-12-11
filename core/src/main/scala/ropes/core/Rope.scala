@@ -24,7 +24,7 @@ import instances._
 sealed trait Rope
 
 /**
-  * A `Rope` which allows any number of any characters.
+  * A `Rope` which specifies any number of any characters.
   *
   * Note that this type will only be useful as the final section in a `Rope`, as it will
   * match all subsequent input.
@@ -33,7 +33,7 @@ final case class AnyString(value: String) extends Rope
 object AnyString                          extends AnyStringInstances
 
 /**
-  * A `Rope` which only matches a single literal value.
+  * A `Rope` which specifies a single literal value.
   *
   * Instances can be created either with a type-level singleton:
   *
@@ -55,7 +55,43 @@ object Literal extends LiteralInstances {
   def apply[V <: Char with Singleton](implicit valueOf: ValueOf[V]): Literal[V] = Literal[V](valueOf.value)
 }
 
+/**
+  *  A `Rope` which specifies that `Prefix` to be present before `Suffix`.
+  *
+  *  For specifications with more than two concatenated sections, `Concat` should be nested in the `Suffix`, *not* the
+  *  `Prefix`. This allows use of the `section` method to flatly access each section in a type-safe manner like so:
+  *
+  *  {{{
+  *  val rope: Concat[Literal['a'], Concat[Literal['b'], Literal['c']]] = ...
+  *
+  *  val a: Literal['a'] = parsed.section[1]
+  *  val b: Literal['b'] = parsed.section[2]
+  *  val c: Literal['c'] = parsed.section[3]
+  *  }}}
+  *
+  * @tparam Prefix The `Rope` which appears first in the specification
+  * @tparam Suffix The `Rope` which appears second in the specification
+  *
+  * @param prefix A value which matches the specification for `Prefix`
+  * @param suffix A value which matches the specification for `Suffix`
+  */
 final case class Concat[Prefix <: Rope, Suffix <: Rope](prefix: Prefix, suffix: Suffix) extends Rope {
+
+  /**
+    * Provides type-safe access to a numbered section of the concatenation, starting from `1`. Usefull when `Concat`s
+    * have been right-nested:
+    *
+    * {{{
+    * val rope: Concat[Literal['a'], Concat[Literal['b'], Literal['c']]] = ...
+    *
+    * val a: Literal['a'] = parsed.section[1]
+    * val b: Literal['b'] = parsed.section[2]
+    * val c: Literal['c'] = parsed.section[3]
+    * }}}
+    *
+    * @tparam SectionNumber a singleton-typed `Int` indicating the section required, starting from `1`
+    * @return The `SectionNumber`th section, typed according to the specification of `Prefix` or `Suffix` as appropriate
+    */
   def section[SectionNumber <: Int with Singleton](
       implicit sectionFinder: SectionFinder[Concat[Prefix, Suffix], SectionNumber]
   ): sectionFinder.Out = sectionFinder(this)

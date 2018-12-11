@@ -18,11 +18,38 @@ package ropes.core
 
 import instances._
 
+/**
+  * Super-type of all available format specifications for a strongly typed `String`s.
+  */
 sealed trait Rope
 
+/**
+  * A `Rope` which allows any number of any characters.
+  *
+  * Note that this type will only be useful as the final section in a `Rope`, as it will
+  * match all subsequent input.
+  */
 final case class AnyString(value: String) extends Rope
 object AnyString                          extends AnyStringInstances
 
+/**
+  * A `Rope` which only matches a single literal value.
+  *
+  * Instances can be created either with a type-level singleton:
+  *
+  * {{{
+  *   val a: Literal['a'] = Literal['a']
+  * }}}
+  *
+  * or with plain value, which will infer the type parameter `V`
+  *
+  * {{{
+  *   val b: Literal['b'] = Literal('b')
+  * }}}
+  *
+  * @tparam V The singleton `Char` which must be matched, expressed as a type.
+  * @param value The singleton type `V` expressed as a value.
+  */
 final case class Literal[V <: Char with Singleton](value: V) extends Rope
 object Literal extends LiteralInstances {
   def apply[V <: Char with Singleton](implicit valueOf: ValueOf[V]): Literal[V] = Literal[V](valueOf.value)

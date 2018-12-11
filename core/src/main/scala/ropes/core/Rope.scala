@@ -98,6 +98,12 @@ final case class Concat[Prefix <: Rope, Suffix <: Rope](prefix: Prefix, suffix: 
 }
 object Concat extends ConcatInstances
 
+/**
+  * A `Rope` which specifies that either `First` or `Second` should be present.
+  *
+  * @tparam First The first alternative `Rope` which may be present
+  * @tparam Second The second alternative `Rope` which must be present if `First` is not.
+  */
 sealed trait Or[+First <: Rope, +Second <: Rope] extends Rope
 object Or extends OrInstances {
   final case class First[F <: Rope](value: F)  extends Or[F, Nothing]

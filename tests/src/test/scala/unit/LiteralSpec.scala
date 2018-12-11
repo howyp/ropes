@@ -43,6 +43,9 @@ class LiteralSpec extends RopeLaws with CommonGens {
         val _: Literal['a'] = Literal('a')
         """val b: Literal['a'] = Literal('b')""" shouldNot typeCheck
       }
+      "Can be created with only a type parameter" in {
+        val _: Literal['a'] = Literal['a']
+      }
     }
     "does not accept non-singletons" in {
       """Literal[Char]('a')""" shouldNot compile

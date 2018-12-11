@@ -24,7 +24,9 @@ final case class AnyString(value: String) extends Rope
 object AnyString                          extends AnyStringInstances
 
 final case class Literal[V <: Char with Singleton](value: V) extends Rope
-object Literal                                               extends LiteralInstances
+object Literal extends LiteralInstances {
+  def apply[V <: Char with Singleton](implicit valueOf: ValueOf[V]): Literal[V] = Literal[V](valueOf.value)
+}
 
 final case class Concat[Prefix <: Rope, Suffix <: Rope](prefix: Prefix, suffix: Suffix) extends Rope {
   def section[SectionNumber <: Int with Singleton](

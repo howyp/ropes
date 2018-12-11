@@ -99,3 +99,8 @@ lazy val tests = project
       Dependencies.scalacheck % Test
     )
   )
+
+lazy val docs = project
+  .enablePlugins(MicrositesPlugin)
+  .settings(moduleName := "ropes-docs")
+  .dependsOn(core, dsl, scalacheck)

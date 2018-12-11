@@ -115,15 +115,39 @@ object Or extends OrInstances {
   }
 }
 
-//TODO I'm not really that happy with this name, come up with something better.
+/**
+  * A `Rope` which specifies a section by `Source`, but exposes it's value as `Target` via a `Conversion`. Sections
+  * specified using this type will only be usable where an instance of `Conversion[Source, Target]` is available in
+  * implicit scope to describe the conversion.
+  *
+  * @tparam Source A `Rope` type which specifies the format. This should only allow values which can be validly
+  *                converted to `Target`.
+  * @tparam Target Any type, which the `Source` will be converted to during parsing and converted from during writing.
+  *
+  * @param value The value, expressed in terms of `Target`
+  */
 sealed abstract case class ConvertedTo[Source <: Rope, Target](value: Target) extends Rope
 object ConvertedTo extends ConvertedToInstances {
+
+  /**
+    * Attempts to create a `ConvertedTo` instance using a target value. An instance of `Conversion[Source, Target]`
+    * must be available in implicit scope to describe the conversion.
+    *
+    * @return A `Right[ConvertedTo[Source, Target]]` if the value supplied could be validly converted to the `Source`
+    *         specification, or `Left[...]` otherwise
+    */
   def fromTarget[Source <: Rope, Target](target: Target)(
       implicit conversion: Conversion[Source, Target]): Either[Rope.InvalidValue.type, ConvertedTo[Source, Target]] =
     //TODO doing the conversion and throwing the value away feels bad, but if `backwards` was a partial function
     // we'd be doing that anyway
     conversion.backwards(target).map(_ => new ConvertedTo[Source, Target](target) {}).toRight(left = Rope.InvalidValue)
 
+  /**
+    * Creates a `ConvertedTo` instance using a source value. An instance of `Conversion[Source, Target]`
+    * must be available in implicit scope to describe the conversion.
+    *
+    * @return The `source` converted to the `Target` type
+    */
   def fromSource[Source <: Rope, Target](source: Source)(
       implicit conversion: Conversion[Source, Target]): ConvertedTo[Source, Target] =
     new ConvertedTo[Source, Target](conversion.forwards(source)) {}

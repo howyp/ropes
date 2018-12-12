@@ -153,6 +153,12 @@ object ConvertedTo extends ConvertedToInstances {
     new ConvertedTo[Source, Target](conversion.forwards(source)) {}
 }
 
+/**
+  * A `Rope` which holds a single character matching a given range.
+  * @tparam Start A singleton `Char` type which is the minimum allowable character, inclusive
+  * @tparam End A singleton `Char` type which is the maximum allowable character, inclusive
+  * @param value The single character value, which must be inside the range specified by `Start` and `End`
+  */
 sealed abstract case class Range[Start <: Char with Singleton, End <: Char with Singleton](value: Char) extends Rope
 object Range extends RangeInstances {
   def from[Start <: Char with Singleton, End <: Char with Singleton](char: Char)(
@@ -166,10 +172,29 @@ object Range extends RangeInstances {
     from[Start, End](char).getOrElse(throw new IllegalArgumentException(char.toString))
 }
 
+/**
+  * A `Rope` which indicates that a section should appear a given number of times.
+  *
+  * @tparam MinReps A singleton `Int` type representing the minimum number of repetitions of `R`. Must be >= 0
+  * @tparam MaxReps A singleton `Int` type representing the maximum number of repetitions of `R`. Must be >= 1
+  * @tparam R The `Rope` specification which should be repeated
+  *
+  * @param values A list of values of `R`. Will have a size >= `MinReps` and <= `MaxReps`
+  */
 sealed abstract case class Repeated[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope](
     values: List[R])
     extends Rope
+
 object Repeated extends RepeatedInstances {
+
+  /**
+    * A `Rope` which indicates that a section should appear exactly a given number of times.
+    *
+    * @tparam Reps A singleton `Int` type representing the number of repetitions of `R`. Must be >= 2
+    * @tparam R The `Rope` specification which should be repeated
+    *
+    * @param values A list of values of `R`. Will have a size >= `MinReps` and <= `MaxReps`
+    */
   type Exactly[Reps <: Int with Singleton, R <: Rope] = Repeated[Reps, Reps, R]
 
   def from[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope](values: List[R])(

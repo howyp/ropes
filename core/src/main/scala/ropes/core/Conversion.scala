@@ -18,11 +18,15 @@ package ropes.core
 
 trait Conversion[Source <: Rope, Target] {
   def forwards(source: Source): Target
-  def backwards(target: Target): Option[Source]
+  def backwards(target: Target): Either[Conversion.Failed, Source]
 }
 object Conversion {
-  def instance[Source <: Rope, Target](forwards: Source => Target,
-                                       backwards: Target => Option[Source]): Conversion[Source, Target] = {
+  final type Failed = Failed.type
+  final case object Failed
+
+  def instance[Source <: Rope, Target](
+      forwards: Source => Target,
+      backwards: Target => Either[Conversion.Failed, Source]): Conversion[Source, Target] = {
     val f = forwards
     val b = backwards
     new Conversion[Source, Target] {

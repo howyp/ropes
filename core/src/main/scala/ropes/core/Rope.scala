@@ -140,7 +140,12 @@ object ConvertedTo extends ConvertedToInstances {
       implicit conversion: Conversion[Source, Target]): Either[Rope.InvalidValue.type, ConvertedTo[Source, Target]] =
     //TODO doing the conversion and throwing the value away feels bad, but if `backwards` was a partial function
     // we'd be doing that anyway
-    conversion.backwards(target).map(_ => new ConvertedTo[Source, Target](target) {}).toRight(left = Rope.InvalidValue)
+    conversion
+      .backwards(target)
+      .swap
+      .map(_ => Rope.InvalidValue)
+      .swap
+      .map(_ => new ConvertedTo[Source, Target](target) {})
 
   /**
     * Creates a `ConvertedTo` instance using a source value. An instance of `Conversion[Source, Target]`

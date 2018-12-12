@@ -21,6 +21,6 @@ import ropes.core._
 private[ropes] trait OptionalInstances {
   implicit def optionConversionFromRepeated[R <: Rope] = Conversion.instance[Repeated[0, 1, R], Option[R]](
     forwards = _.values.headOption,
-    backwards = opt => Some(Repeated.unsafeFrom[0, 1, R](opt.toList))
+    backwards = opt => Repeated.from[0, 1, R](opt.toList).swap.map(_ => Conversion.Failed).swap
   )
 }

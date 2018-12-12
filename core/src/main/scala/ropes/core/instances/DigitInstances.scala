@@ -22,7 +22,7 @@ private[core] trait DigitInstances {
   //TODO consider if we can write Conversion[Digit]
   implicit val digitConversion: Conversion[Range['0', '9'], Int] = Conversion.instance(
     forwards = _.value.toInt - '0'.charValue(),
-    backwards = target => Range.from['0', '9']((target + '0'.charValue()).toChar).toOption
+    backwards = target => Range.from['0', '9']((target + '0'.charValue()).toChar).swap.map(_ => Conversion.Failed).swap
   )
 
   implicit def repeatedDigitsConversion[
@@ -45,7 +45,7 @@ private[core] trait DigitInstances {
         val listOfDigitsPaddedWithZeros =
           List.fill(minReps.value - listOfDigits.size)(Digit.unsafeFrom(0)) ++ listOfDigits
 
-        Some(Repeated.unsafeFrom[MinReps, MaxReps, Digit](listOfDigitsPaddedWithZeros))
+        Right(Repeated.unsafeFrom[MinReps, MaxReps, Digit](listOfDigitsPaddedWithZeros))
       }
     )
 }

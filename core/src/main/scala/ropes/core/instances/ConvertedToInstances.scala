@@ -28,5 +28,5 @@ private[ropes] trait ConvertedToInstances {
   implicit def convertedToWrite[Source <: Rope, Target](
       implicit sourceWrite: Write[Source],
       conversion: Conversion[Source, Target]): Write[Source ConvertedTo Target] =
-    target => sourceWrite.write(conversion.backwards(target.value).get)
+    target => sourceWrite.write(conversion.backwards(target.value).getOrElse(throw new IllegalStateException))
 }

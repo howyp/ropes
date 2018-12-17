@@ -24,7 +24,7 @@ import ropes.scalacheck._
 
 class ConcatSpec extends RopeLaws with CommonGens {
   "A `Concat` Rope" - {
-    "with an Exact prefix and suffix" - {
+    "with a Literal prefix and suffix" - {
       `obeys Rope laws`[Concat[Literal['a'], Literal['b']]](
         genValidStringsWithDecompositionAssertion = Gen.const {
           "ab" -> { parsed =>
@@ -44,7 +44,7 @@ class ConcatSpec extends RopeLaws with CommonGens {
         )
       )
     }
-    "with an Exact['a'] prefix an AnyString suffix" - {
+    "with a Literal['a'] prefix an AnyString suffix" - {
       `obeys Rope laws`[Concat[Literal['a'], AnyString]](
         genValidStringsWithDecompositionAssertion = Arbitrary
           .arbitrary[String]

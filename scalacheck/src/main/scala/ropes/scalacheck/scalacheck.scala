@@ -58,6 +58,7 @@ package object scalacheck {
   ): Arbitrary[ConvertedTo[Source, Target]] =
     Arbitrary(arbSource.arbitrary.map(ConvertedTo.fromSource[Source, Target]))
 
+  //TODO this should be redundant
   implicit def arbOptional[
       R <: Rope
   ](
@@ -92,4 +93,16 @@ package object scalacheck {
   ): Arbitrary[First Or Second] = Arbitrary(
     Gen.oneOf(arbFirst.arbitrary.map(Or.First.apply), arbSecond.arbitrary.map(Or.Second.apply))
   )
+
+  implicit def namedArbitrary[
+      Name <: String with Singleton,
+      R <: Rope
+  ](
+      implicit
+      name: ValueOf[Name],
+      rArbitrary: Arbitrary[R]
+  ): Arbitrary[Named[Name, R]] = Arbitrary(
+    rArbitrary.arbitrary.map(Named(name.value, _))
+  )
+
 }

@@ -158,6 +158,9 @@ object ConvertedTo extends ConvertedToInstances {
     new ConvertedTo[Source, Target](conversion.forwards(source)) {}
 }
 
+case class Named[Name <: String with Singleton, R <: Rope](name: Name, value: R) extends Rope
+object Named                                                                     extends NamedInstances
+
 /**
   * A `Rope` which holds a single character matching a given range.
   * @tparam Start A singleton `Char` type which is the minimum allowable character, inclusive

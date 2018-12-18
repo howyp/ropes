@@ -48,9 +48,10 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
       // ^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? [0-9][A-Za-z]{2}|[Gg][Ii][Rr] 0[Aa]{2})$
       type PostCode = Concat[PostCode.OutwardCode, Concat[Literal[' '], PostCode.InwardCode]]
       object PostCode {
-        type Area        = Repeated[1, 2, Letter.Uppercase]
-        type District    = Concat[Repeated[1, 2, Digit] ConvertedTo Int, Optional[Letter.Uppercase]]
-        type OutwardCode = Concat[Area, District] Or (Literal['G'] +: Literal['I'] +: Literal['R'])
+        type Area     = Repeated[1, 2, Letter.Uppercase]
+        type District = Concat[Repeated[1, 2, Digit] ConvertedTo Int, Optional[Letter.Uppercase]]
+        type OutwardCode =
+          Concat[Area Named "Area", District Named "District"] Or (Literal['G'] +: Literal['I'] +: Literal['R'])
 
         type Sector     = Digit
         type Unit       = Repeated[2, 2, Letter.Uppercase]
@@ -61,8 +62,8 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
           val Right(postCode) = Rope.parseTo[PostCode]("CR2 6XH")
 
           val Or.First(outward) = postCode.section[1]
-          outward.section[1].values.map(_.value) should be(List('C', 'R'))
-          outward.section[2].value should be(2)
+          outward.section["Area"].values.map(_.value) should be(List('C', 'R'))
+          outward.section["District"].prefix.value should be(2)
           outward.write should be("CR2")
 
           val sector = postCode.section[3]
@@ -71,20 +72,20 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
           postCode.section[4].values.map(_.value) should be(List('X', 'H'))
         }
         "M1 1AE" in {
-          val Right(Or.First(area +: district) +: _) = Rope.parseTo[PostCode]("M1 1AE")
-          area.values.map(_.value) should contain only 'M'
-          district.suffix.value should be(None)
+          val Right(Or.First(outward) +: _) = Rope.parseTo[PostCode]("M1 1AE")
+          outward.section["Area"].values.map(_.value) should contain only 'M'
+          outward.section["District"].suffix.value should be(None)
         }
         "DN55 1PT" in {
           val Right(Or.First(outward) +: _) = Rope.parseTo[PostCode]("DN55 1PT")
-          outward.prefix.values.map(_.value) should be(List('D', 'N'))
-          outward.suffix.prefix.value should be(55)
-          outward.suffix.suffix.value should be(None)
+          outward.section["Area"].values.map(_.value) should be(List('D', 'N'))
+          outward.section["District"].prefix.value should be(55)
+          outward.section["District"].suffix.value should be(None)
         }
         "EC1A 1BB" in {
           val Right(Or.First(outward) +: _) = Rope.parseTo[PostCode]("EC1A 1BB")
-          outward.suffix.prefix.value should be(1)
-          outward.suffix.suffix.value.get.value should be('A')
+          outward.section["District"].prefix.value should be(1)
+          outward.section["District"].suffix.value.get.value should be('A')
         }
         "GIR 0AA" in {
           val Right(Or.Second(outward) +: _) = Rope.parseTo[PostCode]("GIR 0AA")
@@ -98,7 +99,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
           val Right(postcode: PostCode) = for {
             area                          <- Rope.parseTo[PostCode.Area]("CR")
             district                      <- Rope.parseTo[PostCode.District]("2")
-            outward: PostCode.OutwardCode = Or.First(area +: district)
+            outward: PostCode.OutwardCode = Or.First(Named(area, "Area") +: Named(district, "District"))
             sector                        <- Digit.from(6)
             unit                          <- Rope.parseTo[PostCode.Unit]("XH")
           } yield outward +: ' ' +: sector +: unit
@@ -108,7 +109,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
           val Right(postcode: PostCode) = for {
             area                          <- Rope.parseTo[PostCode.Area]("EC")
             district                      <- Rope.parseTo[PostCode.District]("1A")
-            outward: PostCode.OutwardCode = Or.First(area +: district)
+            outward: PostCode.OutwardCode = Or.First(Named(area, "Area") +: Named(district, "District"))
             inward                        <- Rope.parseTo[PostCode.InwardCode]("1BB")
           } yield outward +: ' ' +: inward
           postcode.write should be("EC1A 1BB")

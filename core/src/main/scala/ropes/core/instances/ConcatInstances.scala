@@ -26,11 +26,11 @@ private[ropes] trait ConcatExplicitSectionFinderInstances {
     : SectionFinder.Aux[Concat[Section1, Section2], 2, Section2] = SectionFinder.instance(_.suffix)
 
   implicit def sectionByNamePrefix[Prefix <: Rope, Suffix <: Rope, SectionName <: String with Singleton]
-    : SectionFinder.Aux[Concat[Named[SectionName, Prefix], Suffix], SectionName, Prefix] =
+    : SectionFinder.Aux[Concat[Named[Prefix, SectionName], Suffix], SectionName, Prefix] =
     SectionFinder.instance(_.prefix.value)
 
   implicit def sectionByNameSuffix[Prefix <: Rope, Suffix <: Rope, SectionName <: String with Singleton]
-    : SectionFinder.Aux[Concat[Prefix, Named[SectionName, Suffix]], SectionName, Suffix] =
+    : SectionFinder.Aux[Concat[Prefix, Named[Suffix, SectionName]], SectionName, Suffix] =
     SectionFinder.instance(_.suffix.value)
 
   implicit def sectionByName2ForConcat[Prefix <: Rope, Suffix <: Rope, SectionName <: String with Singleton](

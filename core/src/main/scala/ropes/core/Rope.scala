@@ -158,7 +158,7 @@ object ConvertedTo extends ConvertedToInstances {
     new ConvertedTo[Source, Target](conversion.forwards(source)) {}
 }
 
-case class Named[Name <: String with Singleton, R <: Rope](name: Name, value: R) extends Rope
+case class Named[R <: Rope, Name <: String with Singleton](value: R, name: Name) extends Rope
 object Named                                                                     extends NamedInstances
 
 /**

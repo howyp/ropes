@@ -20,10 +20,10 @@ import ropes.core._
 
 private[ropes] trait NamedInstances {
   implicit def namedParse[Name <: String with Singleton, R <: Rope](implicit name: ValueOf[Name],
-                                                                    rParse: Parse[R]): Parse[Named[Name, R]] =
-    rParse.parse(_).map(Named(name.value, _))
+                                                                    rParse: Parse[R]): Parse[Named[R, Name]] =
+    rParse.parse(_).map(Named(_, name.value))
 
   implicit def namedWrite[Name <: String with Singleton, R <: Rope](
       implicit
-      rWrite: Write[R]): Write[Named[Name, R]] = n => rWrite.write(n.value)
+      rWrite: Write[R]): Write[Named[R, Name]] = n => rWrite.write(n.value)
 }

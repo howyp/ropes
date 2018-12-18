@@ -101,8 +101,8 @@ package object scalacheck {
       implicit
       name: ValueOf[Name],
       rArbitrary: Arbitrary[R]
-  ): Arbitrary[Named[Name, R]] = Arbitrary(
-    rArbitrary.arbitrary.map(Named(name.value, _))
+  ): Arbitrary[Named[R, Name]] = Arbitrary(
+    rArbitrary.arbitrary.map(Named(_, name.value))
   )
 
 }

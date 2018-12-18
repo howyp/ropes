@@ -37,13 +37,43 @@ class NamedSpec extends RopeLaws with CommonGens {
       )
     }
     "Can be found in a Concat by name" - {
-      """Concat[Named["The a", Literal['a']], Named["The b", Literal['b']]]""" in {
+      """For a 2-section concat""" in {
         val Parse.Result.Complete(parsed) =
           Parse[Concat[Named["The a", Literal['a']], Named["The b", Literal['b']]]].parse("ab")
         parsed.section[1].value.value should be('a')
         parsed.section[2].value.value should be('b')
         parsed.section["The a"].value should be('a')
         parsed.section["The b"].value should be('b')
+      }
+      """For a 3-section concat""" in {
+        val Parse.Result.Complete(parsed) =
+          Parse[Concat[Named["The a", Literal['a']],
+                       Concat[Named["The b", Literal['b']], Named["The c", Literal['c']]]]].parse("abc")
+        parsed.section[1].value.value should be('a')
+        parsed.section[2].value.value should be('b')
+        parsed.section[3].value.value should be('c')
+        parsed.section["The a"].value should be('a')
+        parsed.section["The b"].value should be('b')
+        parsed.section["The c"].value should be('c')
+      }
+      """For a 4-section concat""" in {
+        val Parse.Result.Complete(parsed) =
+          Parse[Concat[Named["The a", Literal['a']],
+                       Concat[Named["The b", Literal['b']],
+                              Concat[Named["The c", Literal['c']], Named["The d", Literal['d']]]]]].parse("abcd")
+        parsed.section[1].value.value should be('a')
+        parsed.section[2].value.value should be('b')
+        parsed.section[3].value.value should be('c')
+        parsed.section[4].value.value should be('d')
+        parsed.section["The a"].value should be('a')
+        parsed.section["The b"].value should be('b')
+        parsed.section["The c"].value should be('c')
+        parsed.section["The d"].value should be('d')
+      }
+      """Does not compile if the name cannot be found""" in {
+        val Parse.Result.Complete(parsed) =
+          Parse[Concat[Named["The a", Literal['a']], Named["The b", Literal['b']]]].parse("ab")
+        """parsed.section["The c"]""" shouldNot typeCheck
       }
     }
   }

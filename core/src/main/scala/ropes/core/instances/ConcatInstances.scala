@@ -25,13 +25,18 @@ private[ropes] trait ConcatExplicitSectionFinderInstances {
   implicit def sectionByNumber2forSection[Section1 <: Rope, Section2 <: Rope]
     : SectionFinder.Aux[Concat[Section1, Section2], 2, Section2] = SectionFinder.instance(_.suffix)
 
-  implicit def sectionByName1[Section1 <: Rope, Section2 <: Rope, SectionName <: String with Singleton]
-    : SectionFinder.Aux[Concat[Named[SectionName, Section1], Section2], SectionName, Section1] =
+  implicit def sectionByNamePrefix[Prefix <: Rope, Suffix <: Rope, SectionName <: String with Singleton]
+    : SectionFinder.Aux[Concat[Named[SectionName, Prefix], Suffix], SectionName, Prefix] =
     SectionFinder.instance(_.prefix.value)
 
-  implicit def sectionByName2ForSection[Section1 <: Rope, Section2 <: Rope, SectionName <: String with Singleton]
-    : SectionFinder.Aux[Concat[Section1, Named[SectionName, Section2]], SectionName, Section2] =
+  implicit def sectionByNameSuffix[Prefix <: Rope, Suffix <: Rope, SectionName <: String with Singleton]
+    : SectionFinder.Aux[Concat[Prefix, Named[SectionName, Suffix]], SectionName, Suffix] =
     SectionFinder.instance(_.suffix.value)
+
+  implicit def sectionByName2ForConcat[Prefix <: Rope, Suffix <: Rope, SectionName <: String with Singleton](
+      implicit nested: SectionFinder[Suffix, SectionName])
+    : SectionFinder.Aux[Concat[Prefix, Suffix], SectionName, nested.Out] =
+    SectionFinder.instance(concat => nested(concat.suffix))
 }
 private[ropes] trait ConcatInstances extends ConcatGeneratedSectionFinderInstances {
   implicit def concatParse[Prefix <: Rope: Parse, Suffix <: Rope: Parse]: Parse[Concat[Prefix, Suffix]] = { str =>

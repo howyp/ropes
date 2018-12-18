@@ -16,16 +16,16 @@
 
 package ropes.core
 
-trait SectionFinder[In <: Rope, SectionNumber <: Int with Singleton] {
+trait SectionFinder[In <: Rope, SectionIdentifier <: Singleton] {
   type Out <: Rope
   def apply(in: In): Out
 }
 object SectionFinder {
-  type Aux[In <: Rope, SectionNumber <: Int with Singleton, _Out <: Rope] = SectionFinder[In, SectionNumber] {
+  type Aux[In <: Rope, SectionIdentifier <: Singleton, _Out <: Rope] = SectionFinder[In, SectionIdentifier] {
     type Out = _Out
   }
-  def instance[In <: Rope, SectionNumber <: Int with Singleton, _Out <: Rope](
-      f: In => _Out): SectionFinder.Aux[In, SectionNumber, _Out] = new SectionFinder[In, SectionNumber] {
+  def instance[In <: Rope, SectionIdentifier <: Singleton, _Out <: Rope](
+      f: In => _Out): SectionFinder.Aux[In, SectionIdentifier, _Out] = new SectionFinder[In, SectionIdentifier] {
     type Out = _Out
     def apply(in: In) = f(in)
   }

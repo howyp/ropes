@@ -19,7 +19,7 @@ package unit
 import gens.CommonGens
 import laws.RopeLaws
 import org.scalacheck.Gen
-import ropes.core.{Literal, Named}
+import ropes.core.{Concat, Literal, Named, Parse}
 import ropes.scalacheck._
 
 class NamedSpec extends RopeLaws with CommonGens {
@@ -35,6 +35,16 @@ class NamedSpec extends RopeLaws with CommonGens {
         genSuffixToMakeValidStringIncomplete = Some(genNonEmptyString),
         genInvalidStrings = Some(genNonEmptyString.suchThat(_.head != '.'))
       )
+    }
+    "Can be found in a Concat by name" - {
+      """Concat[Named["The a", Literal['a']], Named["The b", Literal['b']]]""" in {
+        val Parse.Result.Complete(parsed) =
+          Parse[Concat[Named["The a", Literal['a']], Named["The b", Literal['b']]]].parse("ab")
+        parsed.section[1].value.value should be('a')
+        parsed.section[2].value.value should be('b')
+        parsed.section["The a"].value should be('a')
+        parsed.section["The b"].value should be('b')
+      }
     }
   }
 }

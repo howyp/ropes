@@ -92,7 +92,7 @@ final case class Concat[Prefix <: Rope, Suffix <: Rope](prefix: Prefix, suffix: 
     * @tparam SectionNumber a singleton-typed `Int` indicating the section required, starting from `1`
     * @return The `SectionNumber`th section, typed according to the specification of `Prefix` or `Suffix` as appropriate
     */
-  def section[SectionNumber <: Int with Singleton](
+  def section[SectionNumber <: Singleton](
       implicit sectionFinder: SectionFinder[Concat[Prefix, Suffix], SectionNumber]
   ): sectionFinder.Out = sectionFinder(this)
 }

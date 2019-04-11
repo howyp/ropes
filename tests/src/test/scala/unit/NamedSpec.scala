@@ -71,12 +71,12 @@ class NamedSpec extends RopeLaws with CommonGens {
         parsed.section["The d"].value should be('d')
       }
       """Does not compile if the name cannot be found""" in {
-        val Parse.Result.Complete(parsed) =
+        val Parse.Result.Complete(parsed @ _) =
           Parse[Concat[Named[Literal['a'], "The a"], Named[Literal['b'], "The b"]]].parse("ab")
         """parsed.section["The c"]""" shouldNot typeCheck
       }
       """Does not compile if the name is duplicated""" in {
-        val Parse.Result.Complete(parsed) =
+        val Parse.Result.Complete(parsed @ _) =
           Parse[Concat[Named[Literal['a'], "Same"], Named[Literal['b'], "Same"]]].parse("ab")
         """parsed.section["Same"]""" shouldNot typeCheck
       }

@@ -13,7 +13,6 @@ Global / scalacOptions ++= Seq(
   // Thanks to @tpolecat for this list at https://tpolecat.github.io/2017/04/25/scalac-flags.html
   // Some options have been commented as they are either not needed for this project, or do not seem to be available
   // in Scala 2.13.
-  "-deprecation", // Emit warning and location for usages of deprecated APIs.
   "-encoding",
   "utf-8", // Specify character encoding used by source files.
   "-explaintypes", // Explain type errors in more detail.
@@ -29,6 +28,7 @@ Global / scalacOptions ++= Seq(
   //"-Xlint:by-name-right-associative", // By-name parameter of right associative operator.
   "-Xlint:constant", // Evaluation of a constant arithmetic expression results in an error.
   "-Xlint:delayedinit-select", // Selecting member of DelayedInit.
+  "-Xlint:deprecation", // Emit warning and location for usages of deprecated APIs.
   "-Xlint:doc-detached", // A Scaladoc comment appears to be detached from its element.
   "-Xlint:inaccessible", // Warn about inaccessible types in method signatures.
   "-Xlint:infer-any", // Warn when a type argument is inferred to be `Any`.

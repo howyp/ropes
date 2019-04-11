@@ -20,10 +20,10 @@ import ropes.core._
 import ropes.dsl._
 import ropes.scalacheck._
 
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import org.scalatest.{FreeSpec, Matchers}
 
-class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyChecks {
+class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyChecks {
   "Some examples of valid ropes include" - {
     "twitter handles" - {
       //This is very simplified - starts with an '@', then upper or lowercase letter characters
@@ -96,28 +96,28 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
         "CR2 6XH" in {
 //          TODO Can we do this better? For instance allow the ' ' char to be implicit
 //          TODO should we change the variance of rope subclasses to avoid the explicity typing for Optional?
-          val Right(postcode: PostCode) = for {
+          val postcode = for {
             area                          <- Rope.parseTo[PostCode.Area]("CR")
             district                      <- Rope.parseTo[PostCode.District]("2")
             outward: PostCode.OutwardCode = Or.First(Named(area, "Area") +: Named(district, "District"))
             sector                        <- Digit.from(6)
             unit                          <- Rope.parseTo[PostCode.Unit]("XH")
           } yield outward +: ' ' +: sector +: unit
-          postcode.write should be("CR2 6XH")
+          postcode.getOrElse(fail()).write should be("CR2 6XH")
         }
         "EC1A 1BB" in {
-          val Right(postcode: PostCode) = for {
+          val postcode = for {
             area                          <- Rope.parseTo[PostCode.Area]("EC")
             district                      <- Rope.parseTo[PostCode.District]("1A")
             outward: PostCode.OutwardCode = Or.First(Named(area, "Area") +: Named(district, "District"))
             inward                        <- Rope.parseTo[PostCode.InwardCode]("1BB")
           } yield outward +: ' ' +: inward
-          postcode.write should be("EC1A 1BB")
+          postcode.getOrElse(fail()).write should be("EC1A 1BB")
         }
       }
       "generating" in {
         forAll { postcode: PostCode =>
-          Rope.parseTo[PostCode](postcode.write) should be('right)
+          Rope.parseTo[PostCode](postcode.write) should be(a[Right[_, _]])
         }
       }
     }
@@ -145,7 +145,7 @@ class ExamplesSpec extends FreeSpec with Matchers with GeneratorDrivenPropertyCh
       }
       "generating" in {
         forAll { nino: NINO =>
-          Rope.parseTo[NINO](nino.write) should be('right)
+          Rope.parseTo[NINO](nino.write) should be(a[Right[_, _]])
         }
       }
       "Invalid NINOs fail to parse" in {

@@ -19,23 +19,27 @@ package integration
 import ropes.core._
 import ropes.dsl._
 import ropes.scalacheck._
-
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import org.scalatest.{FreeSpec, Matchers}
 
-class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyChecks {
+trait EitherValues { this: Matchers =>
+  implicit class EitherOps[L, R](e: Either[L, R]) {
+    def leftValue  = e.swap.getOrElse(fail())
+    def rightValue = e.getOrElse(fail())
+  }
+}
+
+class ExamplesSpec extends FreeSpec with Matchers with EitherValues with ScalaCheckDrivenPropertyChecks {
   "Some examples of valid ropes include" - {
     "twitter handles" - {
       //This is very simplified - starts with an '@', then upper or lowercase letter characters
       type Username      = Repeated[1, 15, Letter]
       type TwitterHandle = Literal['@'] +: Username
       "parsing and de-composing" in {
-        val Right(parsed) = Rope.parseTo[TwitterHandle]("@HowyP")
-        parsed.suffix.write should be("HowyP")
+        Rope.parseTo[TwitterHandle]("@HowyP").rightValue.suffix.write should be("HowyP")
       }
       "composing and writing" in {
-        val handle: TwitterHandle = '@' +: Rope.parseTo[Username]("HowyP").getOrElse(fail())
-        handle.write should be("@HowyP")
+        ('@' +: Rope.parseTo[Username]("HowyP").rightValue).write should be("@HowyP")
       }
       "generating" in {
         forAll { handle: TwitterHandle =>
@@ -49,12 +53,13 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
       type PostCode = Concat[PostCode.OutwardCode, Concat[Literal[' '], PostCode.InwardCode]]
       object PostCode {
         type Area     = Repeated[1, 2, Letter.Uppercase]
-        type District = Concat[Repeated[1, 2, Digit] ConvertedTo Int, Optional[Letter.Uppercase]]
+        type District = (Repeated[1, 2, Digit] >> Int) +: Optional[Letter.Uppercase]
         type OutwardCode =
-          Concat[Area Named "Area", District Named "District"] Or (Literal['G'] +: Literal['I'] +: Literal['R'])
+          ((Area Named "Area") +: (District Named "District")) Or
+            (Literal['G'] +: Literal['I'] +: Literal['R'])
 
         type Sector     = Digit
-        type Unit       = Repeated[2, 2, Letter.Uppercase]
+        type Unit       = Letter.Uppercase ** 2
         type InwardCode = Sector +: Unit
       }
       "parsing and de-composing" - {
@@ -125,8 +130,7 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
       // See https://en.wikipedia.org/wiki/National_Insurance_number
       // "The format of the number is two prefix letters, six digits, and one suffix letter.
       // The suffix letter is either A, B, C, or D"
-      type NINO =
-        Repeated.Exactly[2, Letter.Uppercase] +: (Repeated.Exactly[6, Digit] ConvertedTo Int) +: Range['A', 'D']
+      type NINO = (Letter.Uppercase ** 2) +: ((Digit ** 6) >> Int) +: Range['A', 'D']
       "QQ123456C" - {
         "parsing and de-composing" in {
           val parsed = Rope.parseTo[NINO]("QQ123456C").getOrElse(fail())

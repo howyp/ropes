@@ -24,6 +24,11 @@ package object dsl {
   type +:[Prefix <: Rope, Suffix <: Rope] = Concat[Prefix, Suffix]
   val +: = Concat
 
+  type >>[Source <: Rope, Target] = ConvertedTo[Source, Target]
+  val >> = ConvertedTo
+
+  type **[R <: Rope, Reps <: Int with Singleton] = Repeated.Exactly[Reps, R]
+
   implicit class RopeOps[Suffix <: Rope](suffix: Suffix) {
     def +:[Prefix <: Rope](prefix: Prefix): +:[Prefix, Suffix] = Concat(prefix, suffix)
   }

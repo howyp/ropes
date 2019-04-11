@@ -29,6 +29,9 @@ package object dsl {
 
   type **[R <: Rope, Reps <: Int with Singleton] = Repeated.Exactly[Reps, R]
 
+  type -->[Start <: Char with Singleton, End <: Char with Singleton] = Range[Start, End]
+  val --> = Range
+
   implicit class RopeOps[Suffix <: Rope](suffix: Suffix) {
     def +:[Prefix <: Rope](prefix: Prefix): +:[Prefix, Suffix] = Concat(prefix, suffix)
   }

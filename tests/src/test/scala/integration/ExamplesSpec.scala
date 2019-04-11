@@ -130,7 +130,7 @@ class ExamplesSpec extends FreeSpec with Matchers with EitherValues with ScalaCh
       // See https://en.wikipedia.org/wiki/National_Insurance_number
       // "The format of the number is two prefix letters, six digits, and one suffix letter.
       // The suffix letter is either A, B, C, or D"
-      type NINO = (Letter.Uppercase ** 2) +: ((Digit ** 6) >> Int) +: Range['A', 'D']
+      type NINO = (Letter.Uppercase ** 2) +: ((Digit ** 6) >> Int) +: ('A' --> 'D')
       "QQ123456C" - {
         "parsing and de-composing" in {
           val parsed = Rope.parseTo[NINO]("QQ123456C").getOrElse(fail())

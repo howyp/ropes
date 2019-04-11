@@ -1,7 +1,7 @@
 name := "ropes"
 
 Global / version := "0.1.0-SNAPSHOT"
-Global / scalaVersion := "2.13.0-M5"
+Global / scalaVersion := "2.13.0-RC1"
 Global / resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots")
@@ -25,7 +25,6 @@ Global / scalacOptions ++= Seq(
   "-unchecked", // Enable additional warnings where generated code depends on assumptions.
   "-Xcheckinit", // Wrap field accessors to throw an exception on uninitialized access.
   "-Xfatal-warnings", // Fail the compilation if there are any warnings.
-  "-Xfuture",            // Turn on future language features.
   "-Xlint:adapted-args", // Warn if an argument list is modified to match the receiver.
   //"-Xlint:by-name-right-associative", // By-name parameter of right associative operator.
   "-Xlint:constant", // Evaluation of a constant arithmetic expression results in an error.
@@ -63,6 +62,11 @@ Global / scalacOptions ++= Seq(
 ThisBuild / Compile / console / scalacOptions --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings")
 ThisBuild / Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oSDI")
 
+val Dependencies = new {
+  val scalacheck = "org.scalacheck" %% "scalacheck" % "1.14.0"
+  val scalatest  = "org.scalatest"  %% "scalatest"  % "3.0.8-RC2"
+}
+
 lazy val core = project
   .in(file("core"))
   .enablePlugins(AutomateHeaderPlugin, spray.boilerplate.BoilerplatePlugin)
@@ -76,11 +80,7 @@ lazy val scalacheck = project
   .in(file("scalacheck"))
   .enablePlugins(AutomateHeaderPlugin)
   .dependsOn(core)
-  .settings(
-    libraryDependencies ++= Seq(
-      "org.scalacheck" %% "scalacheck" % "1.14.0"
-    )
-  )
+  .settings(libraryDependencies ++= Seq(Dependencies.scalacheck))
 
 lazy val tests = project
   .in(file("tests"))
@@ -95,7 +95,7 @@ lazy val tests = project
       "-Ywarn-value-discard"
     ),
     libraryDependencies ++= Seq(
-      "org.scalatest"  %% "scalatest"  % "3.0.6-SNAP5" % Test,
-      "org.scalacheck" %% "scalacheck" % "1.14.0"      % Test
+      Dependencies.scalatest  % Test,
+      Dependencies.scalacheck % Test
     )
   )

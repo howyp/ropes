@@ -1,5 +1,5 @@
 name: ropes
-baseurl: /ropes
+baseurl: ''
 description: Type-level String Formats
 highlighter: rouge
 docs: true

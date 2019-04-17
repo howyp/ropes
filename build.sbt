@@ -23,7 +23,7 @@ Global / scalacOptions ++= Seq(
   //"-language:implicitConversions", // Allow definition of implicit functions called views
   "-unchecked", // Enable additional warnings where generated code depends on assumptions.
   "-Xcheckinit", // Wrap field accessors to throw an exception on uninitialized access.
-  "-Xfatal-warnings", // Fail the compilation if there are any warnings.
+  "-Xfatal-warnings",    // Fail the compilation if there are any warnings.
   "-Xlint:adapted-args", // Warn if an argument list is modified to match the receiver.
   //"-Xlint:by-name-right-associative", // By-name parameter of right associative operator.
   "-Xlint:constant", // Evaluation of a constant arithmetic expression results in an error.
@@ -109,8 +109,8 @@ lazy val docs = project
     micrositeDocumentationUrl := "/docs",
     micrositeGithubOwner := "howyp",
     micrositeGithubRepo := "ropes",
-    libraryDependencies -= "org.scalameta" %% "mdoc" % "1.2.10", // MDoc not published for 2.13 yet
-    libraryDependencies -= "org.tpolecat" %% "tut-core" % "0.6.10",
-    libraryDependencies += "org.tpolecat" %% "tut-core" % "0.6.11"
+    libraryDependencies -= "org.scalameta" %% "mdoc"     % "1.2.10", // MDoc not published for 2.13 yet
+    libraryDependencies -= "org.tpolecat"  %% "tut-core" % "0.6.10",
+    libraryDependencies += "org.tpolecat"  %% "tut-core" % "0.6.11"
   )
   .dependsOn(core, dsl, scalacheck)

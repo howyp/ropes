@@ -1,0 +1,11 @@
+name: ropes
+baseurl: ''
+description: Type-level String Formats
+highlighter: rouge
+docs: true
+collections:
+  tut:
+    output: true
+version: 0.1.0-SNAPSHOT
+org: Howard Perrin
+markdown: kramdown

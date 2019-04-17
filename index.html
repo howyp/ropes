@@ -1,0 +1,56 @@
+<html><head><title>ropes</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Howard Perrin" /><meta name="description" content="Type-level String Formats" /><meta name="og:image" content="/img/poster.png" /><meta name="image" property="og:image" content="/img/poster.png" /><meta name="og:title" content="ropes" /><meta name="title" property="og:title" content="ropes" /><meta name="og:site_name" content="ropes" /><meta name="og:url" content="" /><meta name="og:type" content="website" /><meta name="og:description" content="Type-level String Formats" /><link rel="icon" type="image/png" href="/img/favicon.png" /><meta name="twitter:title" content="ropes" /><meta name="twitter:image" content="/img/poster.png" /><meta name="twitter:description" content="Type-level String Formats" /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/highlight/styles/default.css" /><link rel="stylesheet" href="/css/style.css" /><link rel="stylesheet" href="/css/palette.css" /><link rel="stylesheet" href="/css/codemirror.css" /></head><body><header id="site-header"><div class="navbar-wrapper"><div class="container"><div class="row"><div class="col-xs-6"><a href="/" class="brand"><div class="icon-wrapper"><span>ropes</span></div></a></div><div class="col-xs-6"><nav class="text-right"><ul class=""><li><a href="https://github.com/howyp/ropes"><i class="fa fa-github"></i><span class="hidden-xs">GitHub</span></a></li><li><a href="/docs"><i class="fa fa-file-text"></i><span class="hidden-xs">Documentation</span></a></li></ul></nav></div></div></div></div><div class="jumbotron"><div class="container"><h1 class="text-center">Type-level String Formats</h1><h2></h2><p class="text-center"><a href="https://github.com/howyp/ropes" class="btn btn-outline-inverse">View on GitHub</a></p></div></div><div><ul class="horizontalNav">        </ul></div></header><main id="site-main"><section class="use"><div class="container"><div id="content"><h4 id="type-level-string-formats">Type-level String Formats</h4>
+
+<p>Declare your string formats at the type level, and
+get parsers, writers, composition and generators for free.</p>
+
+<h3 id="introduction">Introduction</h3>
+
+<p>Everyone has come across code before that is <em>string</em>ly typed - where
+there are strong types for data structures, but fields that we know
+<strong>must</strong> match a certain format are represented simply as <code class="highlighter-rouge">String</code>s.
+Things like email addresses, host names, post codes, user/product IDs
+etc. And often we don’t just need to validate the formats, but to be
+able to decompose and use specific parts of them</p>
+
+<p>So, the aim of Ropes is to give a general way to define such
+strongly-typed strings, and give many useful ways to work with them.</p>
+
+<h3 id="principles">Principles</h3>
+
+<p><em>The type of a <code class="highlighter-rouge">Rope</code> completely expresses the definition of what values
+are valid.</em></p>
+
+<p>Every valid <code class="highlighter-rouge">Rope</code> can be:</p>
+<ul>
+  <li><strong>Parsed</strong> safely from a <code class="highlighter-rouge">String</code></li>
+  <li><strong>Written</strong> precisely back to a <code class="highlighter-rouge">String</code></li>
+  <li><strong>Decomposed</strong> into its constituent parts</li>
+  <li><strong>Composed</strong> with other <code class="highlighter-rouge">Rope</code>s to form a new ones</li>
+  <li><strong>Generated</strong> through arbitrary values which always adhere to the
+definition</li>
+</ul>
+
+<h3 id="current-status">Current Status</h3>
+
+<p>At the moment, this is very much an alpha. Although lots of effort has
+been made to ensure good testing, the API may be subject to breaking and
+radical changes.</p>
+
+<p>Also, because it supports
+<a href="https://docs.scala-lang.org/sips/42.type.html">literal types</a>, for the
+moment we only support Scala 2.13, but it should be possible to also
+build against Scala 2.12 in the future.</p>
+
+<h3 id="inspirations">Inspirations</h3>
+
+<p>Frank Thomas’s <strong>excellent</strong>
+<a href="https://github.com/fthomas/refined">refined</a> library provides a way to enforce
+restrictions on a wide range of value and collection types in Scala,
+including <code class="highlighter-rouge">String</code>s. It does this through predicates, which give
+great power to the user to define any refinement they choose.</p>
+
+<p>However, because of this power, it is also problematic to provide the
+ability to decompose a refined <code class="highlighter-rouge">String</code> based on the given predicate,
+and is also not generally possible to generate arbitrary values matching
+predicates.</p>
+</div></div></section><section class="technologies"><div class="container"><div class="row"></div></div></section></main><footer id="site-footer"><div class="container"><div class="row"><div class="col-xs-6"><p>ropes is designed and developed by <a href="" target="_blank">Howard Perrin</a></p></div><div class="col-xs-6"><p class="text-right"><a href="https://github.com/howyp/ropes"><span class="fa fa-github"></span>View on GitHub</a></p></div></div><div class="row"><div class="col-xs-6"><p>Website built with <a href="https://47deg.github.io/sbt-microsites/" target="_blank">Sbt-microsites</a> - © 2016 <a href="https://www.47deg.com/" target="_blank">47 Degrees</a></p></div></div></div></footer></body></html>

@@ -104,7 +104,7 @@ lazy val docs = project
   .enablePlugins(MicrositesPlugin)
   .settings(
     name := "ropes",
-    description := "Strongly Typed Strings",
+    description := "Type-level String Formats",
     moduleName := "ropes-docs",
     micrositeDocumentationUrl := "/docs",
     micrositeGithubOwner := "howyp",

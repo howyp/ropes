@@ -2,25 +2,22 @@ Ropes
 =====
 [![Build Status](https://travis-ci.com/howyp/ropes.svg?branch=master)](https://travis-ci.com/howyp/ropes)
 
-Stronger strings!
+#### Type-level String Formats
 
-Declare your string format as a type, and get parsers, writers,
-composition and generators for free.
+Declare your string formats at the type level, and
+get parsers, writers, composition and generators for free.
 
-### Motivation
+### Introduction
 
-Everyone has come across code before that is *string*ly typed - where there
-are strong types for data structures, but fields that we know **must**
-match a certain format are represented simply as `String`s. Example of
-these formats are email addresses, host names, national insurance
-numbers, parcel tracking identifiers, twitter usernames.
+Everyone has come across code before that is *string*ly typed - where
+there are strong types for data structures, but fields that we know
+**must** match a certain format are represented simply as `String`s.
+Things like email addresses, host names, post codes, user/product IDs
+etc. And often we don't just need to validate the formats, but to be
+able to decompose and use specific parts of them
 
-While it is quite possible to write custom value types to ensure such
-formats are adhered to, it can be time consuming and involve a lot of
-boiler-plate.
-
-The goal of this library is to give a general way to define such
-strongly-typed strings, with some added benefits in the process.
+So, the aim of Ropes is to give a general way to define such
+strongly-typed strings, and give many useful ways to work with them.
 
 ### Principles
 
@@ -29,20 +26,22 @@ are valid._
 
 Every valid `Rope` can be:
 * **Parsed** safely from a `String`
-* **Writen** precisely back to a `String`
+* **Written** precisely back to a `String`
 - **Decomposed** into its constituent parts
-- **Composed** with other `Rope`s to form a new one
-- **Generate** arbitrary values which match the definition
+- **Composed** with other `Rope`s to form a new ones
+- **Generated** through arbitrary values which always adhere to the
+  definition
 
 ### Current Status
 
-At the moment, this is very much a proof of concept to see if we can
-get something working that is useful more than a toy.
+At the moment, this is very much an alpha. Although lots of effort has
+been made to ensure good testing, the API may be subject to breaking and
+radical changes.
 
-Because it supports
+Also, because it supports
 [literal types](https://docs.scala-lang.org/sips/42.type.html), for the
- moment we only support Scala 2.13, but it should be possible to also
- build against Scala 2.12 in the future
+moment we only support Scala 2.13, but it should be possible to also
+build against Scala 2.12 in the future.
 
 ### Inspirations
 
@@ -52,7 +51,7 @@ restrictions on a wide range of value and collection types in Scala,
 including `String`s. It does this through predicates, which give
 great power to the user to define any refinement they choose.
 
-However, because of this power, it is also problematic to provide
-the ability to decompose a refined `String` based on the given
-predicate, and is also not generally possible to generate arbitrary
-values matching predicates.
+However, because of this power, it is also problematic to provide the
+ability to decompose a refined `String` based on the given predicate,
+and is also not generally possible to generate arbitrary values matching
+predicates.

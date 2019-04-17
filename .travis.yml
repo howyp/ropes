@@ -13,4 +13,4 @@ install:
 - gem install jekyll -v 3.2.1
 
 script:
-- sbt ++$TRAVIS_SCALA_VERSION scalafmtCheck scalafmtSbtCheck headerCheck test:headerCheck test
+- sbt ++$TRAVIS_SCALA_VERSION scalafmtCheck scalafmtSbtCheck headerCheck test:headerCheck test docs/makeMicrosite

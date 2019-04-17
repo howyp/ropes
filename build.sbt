@@ -102,5 +102,13 @@ lazy val tests = project
 
 lazy val docs = project
   .enablePlugins(MicrositesPlugin)
-  .settings(moduleName := "ropes-docs")
+  .settings(
+    name := "ropes",
+    description := "Strongly Typed Strings",
+    moduleName := "ropes-docs",
+    micrositeDocumentationUrl := "/docs",
+    micrositeGithubOwner := "howyp",
+    micrositeGithubRepo := "ropes",
+    libraryDependencies -= "org.scalameta" %% "mdoc" % "1.2.10" // MDoc not published for 2.13 yet
+  )
   .dependsOn(core, dsl, scalacheck)

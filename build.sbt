@@ -106,7 +106,7 @@ lazy val docs = project
     name := "ropes",
     description := "Type-level String Formats",
     moduleName := "ropes-docs",
-    micrositeBaseUrl := "/ropes",
+//    micrositeBaseUrl := "/ropes",
 //    micrositeDocumentationUrl := "/docs",
     micrositeGithubOwner := "howyp",
     micrositeGithubRepo := "ropes",
@@ -114,6 +114,7 @@ lazy val docs = project
     micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
     libraryDependencies -= "org.scalameta" %% "mdoc"     % "1.2.10", // MDoc not published for 2.13 yet
     libraryDependencies -= "org.tpolecat"  %% "tut-core" % "0.6.10",
-    libraryDependencies += "org.tpolecat"  %% "tut-core" % "0.6.11"
+    libraryDependencies += "org.tpolecat"  %% "tut-core" % "0.6.11",
+    scalacOptions --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings")
   )
   .dependsOn(core, dsl, scalacheck)

@@ -54,3 +54,20 @@ However, because of this power, it is also problematic to provide the
 ability to decompose a refined `String` based on the given predicate,
 and is also not generally possible to generate arbitrary values matching
 predicates.
+
+Getting Started
+===
+
+Let's dive straight into some examples.
+
+### Twitter Handles
+
+We know that a Twitter handle always has to start with an '@' symbol. We
+can define that with:
+
+```tut
+import ropes.core._
+import ropes.dsl._
+
+type TwitterHandle = Literal['@'] +: AnyString
+```

@@ -89,6 +89,10 @@ original form:</p>
 </span></code></pre>
 </div>
 
+<!---
+TODO - composition & generation
+--->
+
 <h4 id="restricting-with-repeated-and-letter">Restricting with <code class="highlighter-rouge">Repeated</code> and <code class="highlighter-rouge">Letter</code></h4>
 
 <p>But wait! Only 15 letters are allowed for the username portion of the
@@ -97,5 +101,27 @@ handle. Let’s update our specification to include that:</p>
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="kt">Username</span>      <span class="o">=</span> <span class="nc">Repeated</span><span class="o">[</span><span class="err">1</span>, <span class="err">15</span>, <span class="kt">Letter</span><span class="o">]</span>
 <span class="k">type</span> <span class="kt">TwitterHandle</span> <span class="o">=</span> <span class="nc">Literal</span><span class="o">[</span><span class="kt">'@'</span><span class="o">]</span> <span class="nc">Concat</span> <span class="nc">Username</span>
 </code></pre>
+</div>
+
+<p>Being more precise, we’ve stated that the <code class="highlighter-rouge">Username</code> must consist of
+letter characters, repeated 1 to 15 times. It now will not allow
+usernames which are too long or have non-letter characters:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Rope</span><span class="o">.</span><span class="n">parseTo</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">](</span><span class="s">"@TwoManyCharactersForAUsername"</span><span class="o">)</span>
+<span class="c1">// res3: Either[ropes.core.Rope.InvalidValue.type,TwitterHandle] = Left(InvalidValue)
+</span>
+<span class="nc">Rope</span><span class="o">.</span><span class="n">parseTo</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">](</span><span class="s">"@foo&amp;bar"</span><span class="o">)</span>
+<span class="c1">// res4: Either[ropes.core.Rope.InvalidValue.type,TwitterHandle] = Left(InvalidValue)
+</span></code></pre>
+</div>
+<p>It also gives us richer output when parsed. If needed, the username can
+still be accessed as a <code class="highlighter-rouge">String</code> through <code class="highlighter-rouge">write</code>.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="nc">Right</span><span class="o">(</span><span class="n">howy</span><span class="o">)</span> <span class="k">=</span> <span class="nc">Rope</span><span class="o">.</span><span class="n">parseTo</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">](</span><span class="s">"@HowyP"</span><span class="o">)</span>
+<span class="c1">// howy: TwitterHandle = Concat(Literal(@),Repeated(List(Range(H), Range(o), Range(w), Range(y), Range(P))))
+</span>
+<span class="n">howy</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">write</span>
+<span class="c1">// res5: String = HowyP
+</span></code></pre>
 </div>
 </div></div></section><section class="technologies"><div class="container"><div class="row"></div></div></section></main><footer id="site-footer"><div class="container"><div class="row"><div class="col-xs-6"><p>ropes is designed and developed by <a href="" target="_blank">Howard Perrin</a></p></div><div class="col-xs-6"><p class="text-right"><a href="https://github.com/howyp/ropes"><span class="fa fa-github"></span>View on GitHub</a></p></div></div><div class="row"><div class="col-xs-6"><p>Website built with <a href="https://47deg.github.io/sbt-microsites/" target="_blank">Sbt-microsites</a> - © 2016 <a href="https://www.47deg.com/" target="_blank">47 Degrees</a></p></div></div></div></footer></body></html>

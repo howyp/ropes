@@ -113,14 +113,10 @@ Lastly, a feature of all `Rope`s is that they can be generated via
 Scalacheck `Arbitrary`:
 
 ```tut:book
-import org.scalacheck._
+import org.scalacheck.Arbitrary.arbitrary
 import ropes.scalacheck._
 
-val gen = Arbitrary.arbitrary[TwitterHandle]
-gen.sample
-gen.sample
-gen.sample
-gen.sample
+List.fill(5)(arbitrary[TwitterHandle].sample).flatten.map(_.write + '\n')
 ```
 
 #### Restricting with `Repeated` and `Letter`
@@ -139,13 +135,13 @@ letter characters, repeated 1 to 15 times. It now will not allow
 usernames which are too long or have non-letter characters:
 
 ```tut:book
+Rope.parseTo[TwitterHandle]("@HowyP")
 Rope.parseTo[TwitterHandle]("@TwoManyCharactersForAUsername")
 Rope.parseTo[TwitterHandle]("@foo&bar")
 ```
-It also gives us richer output when parsed. If needed, the username can
-still be accessed as a `String` through `write`.
+
+Now, let's try generating some handles again:
 
 ```tut:book
-val Right(howy) = Rope.parseTo[TwitterHandle]("@HowyP")
-howy.suffix.write
+List.fill(5)(arbitrary[TwitterHandle].sample).flatten.map(_.write + '\n')
 ```

@@ -62,12 +62,36 @@ Let's dive straight into some examples.
 
 ### Twitter Handles
 
-We know that a Twitter handle always has to start with an '@' symbol. We
-can define that with:
+We know that (simplistically) a Twitter handle always starts with a
+literal '@' symbol, followed by any string. We can define that with:
 
-```tut
+```tut:silent
 import ropes.core._
-import ropes.dsl._
 
-type TwitterHandle = Literal['@'] +: AnyString
+type TwitterHandle = Literal['@'] Concat AnyString
+```
+Now, we can parse matching strings, and write them back to their
+original form:
+
+```tut:book
+Rope.parseTo[TwitterHandle]("!Bob")
+val Right(howy) = Rope.parseTo[TwitterHandle]("@HowyP")
+howy.write
+```
+
+We can also access their constituent parts:
+
+```tut:book
+howy.suffix.value
+```
+
+#### Restricting with `Repeated` and `Letter`
+
+But wait! Only 15 letters are allowed for the username portion of the
+handle. Let's update our specification to include that:
+
+
+```tut:silent
+type Username      = Repeated[1, 15, Letter]
+type TwitterHandle = Literal['@'] Concat Username
 ```

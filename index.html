@@ -60,17 +60,42 @@ predicates.</p>
 
 <h3 id="twitter-handles">Twitter Handles</h3>
 
-<p>We know that a Twitter handle always has to start with an ‘@’ symbol. We
-can define that with:</p>
+<p>We know that (simplistically) a Twitter handle always starts with a
+literal ‘@’ symbol, followed by any string. We can define that with:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="k">import</span> <span class="nn">ropes.core._</span>
-<span class="k">import</span> <span class="nn">ropes.core._</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">ropes.core._</span>
 
-<span class="n">scala</span><span class="o">&gt;</span> <span class="k">import</span> <span class="nn">ropes.dsl._</span>
-<span class="k">import</span> <span class="nn">ropes.dsl._</span>
+<span class="k">type</span> <span class="kt">TwitterHandle</span> <span class="o">=</span> <span class="nc">Literal</span><span class="o">[</span><span class="kt">'@'</span><span class="o">]</span> <span class="nc">Concat</span> <span class="nc">AnyString</span>
+</code></pre>
+</div>
+<p>Now, we can parse matching strings, and write them back to their
+original form:</p>
 
-<span class="n">scala</span><span class="o">&gt;</span> <span class="k">type</span> <span class="kt">TwitterHandle</span> <span class="o">=</span> <span class="nc">Literal</span><span class="o">[</span><span class="kt">'@'</span><span class="o">]</span> <span class="o">+:</span> <span class="nc">AnyString</span>
-<span class="n">defined</span> <span class="k">type</span> <span class="kt">alias</span> <span class="kt">TwitterHandle</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Rope</span><span class="o">.</span><span class="n">parseTo</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">](</span><span class="s">"!Bob"</span><span class="o">)</span>
+<span class="c1">// res0: Either[ropes.core.Rope.InvalidValue.type,TwitterHandle] = Left(InvalidValue)
+</span>
+<span class="k">val</span> <span class="nc">Right</span><span class="o">(</span><span class="n">howy</span><span class="o">)</span> <span class="k">=</span> <span class="nc">Rope</span><span class="o">.</span><span class="n">parseTo</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">](</span><span class="s">"@HowyP"</span><span class="o">)</span>
+<span class="c1">// howy: TwitterHandle = Concat(Literal(@),AnyString(HowyP))
+</span>
+<span class="n">howy</span><span class="o">.</span><span class="n">write</span>
+<span class="c1">// res1: String = @HowyP
+</span></code></pre>
+</div>
+
+<p>We can also access their constituent parts:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">howy</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">value</span>
+<span class="c1">// res2: String = HowyP
+</span></code></pre>
+</div>
+
+<h4 id="restricting-with-repeated-and-letter">Restricting with <code class="highlighter-rouge">Repeated</code> and <code class="highlighter-rouge">Letter</code></h4>
+
+<p>But wait! Only 15 letters are allowed for the username portion of the
+handle. Let’s update our specification to include that:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="kt">Username</span>      <span class="o">=</span> <span class="nc">Repeated</span><span class="o">[</span><span class="err">1</span>, <span class="err">15</span>, <span class="kt">Letter</span><span class="o">]</span>
+<span class="k">type</span> <span class="kt">TwitterHandle</span> <span class="o">=</span> <span class="nc">Literal</span><span class="o">[</span><span class="kt">'@'</span><span class="o">]</span> <span class="nc">Concat</span> <span class="nc">Username</span>
 </code></pre>
 </div>
 </div></div></section><section class="technologies"><div class="container"><div class="row"></div></div></section></main><footer id="site-footer"><div class="container"><div class="row"><div class="col-xs-6"><p>ropes is designed and developed by <a href="" target="_blank">Howard Perrin</a></p></div><div class="col-xs-6"><p class="text-right"><a href="https://github.com/howyp/ropes"><span class="fa fa-github"></span>View on GitHub</a></p></div></div><div class="row"><div class="col-xs-6"><p>Website built with <a href="https://47deg.github.io/sbt-microsites/" target="_blank">Sbt-microsites</a> - © 2016 <a href="https://www.47deg.com/" target="_blank">47 Degrees</a></p></div></div></div></footer></body></html>

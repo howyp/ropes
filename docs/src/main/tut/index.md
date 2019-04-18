@@ -85,6 +85,10 @@ We can also access their constituent parts:
 howy.suffix.value
 ```
 
+<!---
+TODO - composition & generation
+--->
+
 #### Restricting with `Repeated` and `Letter`
 
 But wait! Only 15 letters are allowed for the username portion of the
@@ -94,4 +98,20 @@ handle. Let's update our specification to include that:
 ```tut:silent
 type Username      = Repeated[1, 15, Letter]
 type TwitterHandle = Literal['@'] Concat Username
+```
+
+Being more precise, we've stated that the `Username` must consist of
+letter characters, repeated 1 to 15 times. It now will not allow
+usernames which are too long or have non-letter characters:
+
+```tut:book
+Rope.parseTo[TwitterHandle]("@TwoManyCharactersForAUsername")
+Rope.parseTo[TwitterHandle]("@foo&bar")
+```
+It also gives us richer output when parsed. If needed, the username can
+still be accessed as a `String` through `write`.
+
+```tut:book
+val Right(howy) = Rope.parseTo[TwitterHandle]("@HowyP")
+howy.suffix.write
 ```

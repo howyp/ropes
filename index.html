@@ -58,16 +58,23 @@ predicates.</p>
 
 <p>Let’s dive straight into some examples.</p>
 
-<h3 id="twitter-handles">Twitter Handles</h3>
+<h3 id="a-basic-rope-twitter-handles">A Basic Rope: Twitter Handles</h3>
 
 <p>We know that (simplistically) a Twitter handle always starts with a
 literal ‘@’ symbol, followed by any string. We can define that with:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">ropes.core._</span>
 
-<span class="k">type</span> <span class="kt">TwitterHandle</span> <span class="o">=</span> <span class="nc">Literal</span><span class="o">[</span><span class="kt">'@'</span><span class="o">]</span> <span class="nc">Concat</span> <span class="nc">AnyString</span>
+<span class="k">type</span> <span class="kt">TwitterHandle</span> <span class="o">=</span> <span class="nc">Concat</span><span class="o">[</span><span class="kt">Literal</span><span class="o">[</span><span class="kt">'@'</span><span class="o">]</span>, <span class="kt">AnyString</span><span class="o">]</span>
 </code></pre>
 </div>
+
+<p>Or you can use Concat as an infix type:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="kt">TwitterHandle</span> <span class="o">=</span> <span class="nc">Literal</span><span class="o">[</span><span class="kt">'@'</span><span class="o">]</span> <span class="nc">Concat</span> <span class="nc">AnyString</span>
+</code></pre>
+</div>
+
 <p>Now, we can parse matching strings, and write them back to their
 original form:</p>
 
@@ -82,21 +89,70 @@ original form:</p>
 </span></code></pre>
 </div>
 
-<p>We can also access their constituent parts:</p>
+<h4 id="composing-and-decomposing">Composing and decomposing</h4>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">howy</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">value</span>
-<span class="c1">// res2: String = HowyP
+<p>After parsing, we can access the parts of the rope based on the
+properties of each individual type. In this case, they are pretty basic.
+A <code class="highlighter-rouge">Concat</code> has a prefix and suffix, and the <code class="highlighter-rouge">Literal</code> and <code class="highlighter-rouge">AnyString</code>
+contain single values:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">howy</span><span class="o">.</span><span class="n">prefix</span>
+<span class="c1">// res2: ropes.core.Literal['@'] = Literal(@)
+</span>
+<span class="n">howy</span><span class="o">.</span><span class="n">prefix</span><span class="o">.</span><span class="n">value</span>
+<span class="c1">// res3: Char = @
+</span>
+<span class="n">howy</span><span class="o">.</span><span class="n">suffix</span>
+<span class="c1">// res4: ropes.core.AnyString = AnyString(HowyP)
+</span>
+<span class="n">howy</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">value</span>
+<span class="c1">// res5: String = HowyP
 </span></code></pre>
 </div>
 
-<!---
-TODO - composition & generation
---->
+<p>We can also create new handles from scratch, or modify existing ones:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">twitter</span><span class="k">:</span> <span class="kt">TwitterHandle</span> <span class="o">=</span> <span class="nc">Concat</span><span class="o">(</span><span class="nc">Literal</span><span class="o">(</span><span class="sc">'@'</span><span class="o">),</span> <span class="nc">AnyString</span><span class="o">(</span><span class="s">"Twitter"</span><span class="o">))</span>
+<span class="c1">// twitter: TwitterHandle = Concat(Literal(@),AnyString(Twitter))
+</span>
+<span class="k">val</span> <span class="n">bob</span><span class="k">:</span> <span class="kt">TwitterHandle</span>     <span class="o">=</span> <span class="n">howy</span><span class="o">.</span><span class="n">copy</span><span class="o">(</span><span class="n">suffix</span> <span class="k">=</span> <span class="nc">AnyString</span><span class="o">(</span><span class="s">"Bob"</span><span class="o">))</span>
+<span class="c1">// bob: TwitterHandle = Concat(Literal(@),AnyString(Bob))
+</span></code></pre>
+</div>
+
+<h4 id="generating">Generating</h4>
+
+<p>Lastly, a feature of all <code class="highlighter-rouge">Rope</code>s is that they can be generated via
+Scalacheck <code class="highlighter-rouge">Arbitrary</code>:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">org.scalacheck._</span>
+<span class="c1">// import org.scalacheck._
+</span>
+<span class="k">import</span> <span class="nn">ropes.scalacheck._</span>
+<span class="c1">// import ropes.scalacheck._
+</span>
+<span class="k">val</span> <span class="n">gen</span> <span class="k">=</span> <span class="nc">Arbitrary</span><span class="o">.</span><span class="n">arbitrary</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">]</span>
+<span class="c1">// gen: org.scalacheck.Gen[TwitterHandle] = org.scalacheck.Gen$$anon$5@466474d7
+</span>
+<span class="n">gen</span><span class="o">.</span><span class="n">sample</span>
+<span class="c1">// res6: Option[TwitterHandle] = Some(Concat(Literal(@),AnyString(ⶽ㚀ᘒﱪ諬堫䅳뺰퐙㼀쩺軣籫뮑飌톧쐪ꭎ쬊肆￑캞ඐꇨ쉔嚭୕鬹点τﲣ終뿸讠誱埨灅荩㯽ﶺ撠䔇致屫䥚㲙ﾣꯏ슍៧ڭ氢젢ड郭鼢ᙆꎡ릁䦧⁏㶮샐킴廒쳋늨弢쁱Ȃ襦̻۝䨝䨺튎훮郥邊٫餿)))
+</span>
+<span class="n">gen</span><span class="o">.</span><span class="n">sample</span>
+<span class="c1">// res7: Option[TwitterHandle] = Some(Concat(Literal(@),AnyString(抲᝸鄆ꁪ怩ᵑ䙎蚜झ᭓렜퇿죢增垲ꐀ숤阱칔⛳菢咐颇ꊩ窱ꃾڜὀ釢牅㮪툧⍔嗩沚冝㜸习⽥넄䚂㺨펌Մ煀竔謷؏ⴈ駩ꅉအꟸ狻싂꡵튪枑⣦쳿픵㔕⼣峝蒿㨖ᖒ)))
+</span>
+<span class="n">gen</span><span class="o">.</span><span class="n">sample</span>
+<span class="c1">// res8: Option[TwitterHandle] = Some(Concat(Literal(@),AnyString(瘶躼꘻碙㑦᣽涼刖뚙ꂽ䞂䱪㠐턛蒽⏷齳鍼ှ⠰퓺鹮㱿㍬鷗룟芅ᠥ⸇匣㯊姅謲桝Ա霔벊꩚샒瞞覜꿰俗쌈仭ꃌ兕ꈄ옗〘)))
+</span>
+<span class="n">gen</span><span class="o">.</span><span class="n">sample</span>
+<span class="c1">// res9: Option[TwitterHandle] = Some(Concat(Literal(@),AnyString(儵撻ꡖꦧ笋迨蓓ⷴ諩倳掼◎奸ⶴ憉☰꧇ꊘᫎ翘柞ﶿ⌼ῖ晻ෝ낦矿螤請꘭뛕ꮧቐ遣菓ᗫ䄸줣‬ن繾嬳)))
+</span></code></pre>
+</div>
 
 <h4 id="restricting-with-repeated-and-letter">Restricting with <code class="highlighter-rouge">Repeated</code> and <code class="highlighter-rouge">Letter</code></h4>
 
-<p>But wait! Only 15 letters are allowed for the username portion of the
-handle. Let’s update our specification to include that:</p>
+<p>But wait! Those handles don’t look very realistic. Only 15 letters are
+allowed for the username portion of the handle. Let’s update our
+specification:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="kt">Username</span>      <span class="o">=</span> <span class="nc">Repeated</span><span class="o">[</span><span class="err">1</span>, <span class="err">15</span>, <span class="kt">Letter</span><span class="o">]</span>
 <span class="k">type</span> <span class="kt">TwitterHandle</span> <span class="o">=</span> <span class="nc">Literal</span><span class="o">[</span><span class="kt">'@'</span><span class="o">]</span> <span class="nc">Concat</span> <span class="nc">Username</span>
@@ -108,10 +164,10 @@ letter characters, repeated 1 to 15 times. It now will not allow
 usernames which are too long or have non-letter characters:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Rope</span><span class="o">.</span><span class="n">parseTo</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">](</span><span class="s">"@TwoManyCharactersForAUsername"</span><span class="o">)</span>
-<span class="c1">// res3: Either[ropes.core.Rope.InvalidValue.type,TwitterHandle] = Left(InvalidValue)
+<span class="c1">// res10: Either[ropes.core.Rope.InvalidValue.type,TwitterHandle] = Left(InvalidValue)
 </span>
 <span class="nc">Rope</span><span class="o">.</span><span class="n">parseTo</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">](</span><span class="s">"@foo&amp;bar"</span><span class="o">)</span>
-<span class="c1">// res4: Either[ropes.core.Rope.InvalidValue.type,TwitterHandle] = Left(InvalidValue)
+<span class="c1">// res11: Either[ropes.core.Rope.InvalidValue.type,TwitterHandle] = Left(InvalidValue)
 </span></code></pre>
 </div>
 <p>It also gives us richer output when parsed. If needed, the username can
@@ -121,7 +177,7 @@ still be accessed as a <code class="highlighter-rouge">String</code> through <co
 <span class="c1">// howy: TwitterHandle = Concat(Literal(@),Repeated(List(Range(H), Range(o), Range(w), Range(y), Range(P))))
 </span>
 <span class="n">howy</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">write</span>
-<span class="c1">// res5: String = HowyP
+<span class="c1">// res12: String = HowyP
 </span></code></pre>
 </div>
 </div></div></section><section class="technologies"><div class="container"><div class="row"></div></div></section></main><footer id="site-footer"><div class="container"><div class="row"><div class="col-xs-6"><p>ropes is designed and developed by <a href="" target="_blank">Howard Perrin</a></p></div><div class="col-xs-6"><p class="text-right"><a href="https://github.com/howyp/ropes"><span class="fa fa-github"></span>View on GitHub</a></p></div></div><div class="row"><div class="col-xs-6"><p>Website built with <a href="https://47deg.github.io/sbt-microsites/" target="_blank">Sbt-microsites</a> - © 2016 <a href="https://www.47deg.com/" target="_blank">47 Degrees</a></p></div></div></div></footer></body></html>

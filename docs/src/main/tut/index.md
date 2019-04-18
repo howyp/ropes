@@ -60,7 +60,7 @@ Getting Started
 
 Let's dive straight into some examples.
 
-### Twitter Handles
+### A Basic Rope: Twitter Handles
 
 We know that (simplistically) a Twitter handle always starts with a
 literal '@' symbol, followed by any string. We can define that with:
@@ -68,8 +68,15 @@ literal '@' symbol, followed by any string. We can define that with:
 ```tut:silent
 import ropes.core._
 
+type TwitterHandle = Concat[Literal['@'], AnyString]
+```
+
+Or you can use Concat as an infix type:
+
+```tut:silent
 type TwitterHandle = Literal['@'] Concat AnyString
 ```
+
 Now, we can parse matching strings, and write them back to their
 original form:
 
@@ -79,21 +86,48 @@ val Right(howy) = Rope.parseTo[TwitterHandle]("@HowyP")
 howy.write
 ```
 
-We can also access their constituent parts:
+#### Composing and decomposing
+
+After parsing, we can access the parts of the rope based on the
+properties of each individual type. In this case, they are pretty basic.
+A `Concat` has a prefix and suffix, and the `Literal` and `AnyString`
+contain single values:
 
 ```tut:book
+howy.prefix
+howy.prefix.value
+howy.suffix
 howy.suffix.value
 ```
 
-<!---
-TODO - composition & generation
---->
+We can also create new handles from scratch, or modify existing ones:
+
+```tut:book
+val twitter: TwitterHandle = Concat(Literal('@'), AnyString("Twitter"))
+val bob: TwitterHandle     = howy.copy(suffix = AnyString("Bob"))
+```
+
+#### Generating
+
+Lastly, a feature of all `Rope`s is that they can be generated via
+Scalacheck `Arbitrary`:
+
+```tut:book
+import org.scalacheck._
+import ropes.scalacheck._
+
+val gen = Arbitrary.arbitrary[TwitterHandle]
+gen.sample
+gen.sample
+gen.sample
+gen.sample
+```
 
 #### Restricting with `Repeated` and `Letter`
 
-But wait! Only 15 letters are allowed for the username portion of the
-handle. Let's update our specification to include that:
-
+But wait! Those handles don't look very realistic. Only 15 letters are
+allowed for the username portion of the handle. Let's update our
+specification:
 
 ```tut:silent
 type Username      = Repeated[1, 15, Letter]

@@ -19,7 +19,7 @@ package ropes
 import ropes.core.instances.{DigitInstances, OptionalInstances}
 
 package object core extends DigitInstances with OptionalInstances {
-  type Letter = Range['A', 'z']
+  type Letter = Letter.Uppercase Or Letter.Lowercase
   object Letter {
     type Uppercase = Range['A', 'Z']
     type Lowercase = Range['a', 'z']

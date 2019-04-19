@@ -133,11 +133,11 @@ Scalacheck <code class="highlighter-rouge">Arbitrary</code>:</p>
 </span>
 <span class="nc">List</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="mi">5</span><span class="o">)(</span><span class="n">arbitrary</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">].</span><span class="n">sample</span><span class="o">).</span><span class="n">flatten</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">write</span> <span class="o">+</span> <span class="sc">'\n'</span><span class="o">)</span>
 <span class="c1">// res6: List[String] =
-// List("@⣪睪㞼䚖՟蹡哼䠯籏⮖궙慚ẑ⊽뼓芡㛭ꮂ嬳ퟛ䁢鷕뢙㎈ꤌ鸧Ň㶎註勉壊ฝ匊㶶䷧見몎裂솲묬⣯헬煎ᶤ鷂ඪ⇘둡ᣥ돳㕺ṙ늸䁐秥加
-// ", "@ᬒ閲ꄐ냫䬃࣓ੜ뮓甌粮먤侇᭕꫶䁷埨퉖鋰鴳랷吤ﴳ뿸嫨妁ბ읽폌ᗴ븳琄摧뜀ᄓ⥀炀扫퓣泿ꋤ䀃ᖆ윱隩ꆜƂ볉鯷ﾡᑏꢔ洈찔蟿冝偿鸥ﺾ∆瓞㓄
-// ", "@㔒ᶯ﹀⯋竦탑ὁ忭鶯㱈쉄౾뢰๸嵳刡⃗蹴ᩦ₼㙌˅㰱䄃消䥂ꊔ㷤ႏ⃁鵆僬貤⤒횱ᴼ鉭ꫜ뗠
-// ", "@ﺉ뼅箉﻿搹屚ࡳ涬튷益ྍ鮬翡쥎깂艡掝뛞㮅谥엲ퟢ㜉䴈뙡楝㊱ꭸ♢ꐚ似퀺䑩ම綋䋅ﱄ䱱嗇牲뙬뷑攫退ẖ⽜ꚞꅿ떼錢姯盒笤䖫5晦虤苌鲂韠ᆬ
-// ", "@富咀鏅陛埵瀶႙㆖夿⺊䰤㊾镙얖⛬䨛諎ᾗ䶄遱漍䖎랖聭ἄ濜⵭鷇콰겮總㴌櫾ᔳ酧긪ꏡ臹ה皩泉㑃᬴㠀቏鰸菉ﱺ凞ș蟼왃鍂逩▻攤稴섀薬ᬊ튫脙෤⨵襛穘箜ザ푡솜㥑罳委邚
+// List("@뷹ᢙᨺ쌉ᦵⷨ栴襲䌛蹹㮿㸿຿햀쯰䗎ᗷ齳贛뷢߭麗䑂듷捸ཌྷᚣ뚀돔剩苃ᙟቒ抸⼴栋㐔懡灪椠馶↥뜢彆儃营㊮룫쐧辏ኘ❂ᚘ噝䦄㨝炾뚉㒅河꬈ၭⷡ糱બꗵ
+// ", "@瘓䒫荫ㄩ枰㊒ᴼ텉烗紓뭣톁溺扡톖엶䌛㥴ᮒܞ䈾ຢ㎳몽㙕䫔ꬿ햞蚶紣ш縖凛蠔恄굚⌀
+// ", "@땮ꊷ䙟蟮䪝ﾧ攢锽綨ᚣ䝾璜可搸
+// ", "@抠☥ᩤ䊲狸ڰ碮朶┢擉ᯆ劵托䅺㘑ⵦ뚋岏楪澄衁㺤咦櫓蟮⯂Ᵹ㡜࿋蠃䥰䓚各⌧䚞녎Ṗ
+// ", "@촃㻙⹐畍폖㫅ᵞ邃巊⫖⻀ퟥ侱쉸劄䘊濜㓣南鲰ஒऎᾰゟ⣒揱⇜뵚Ɯ韣ㆿ맬池燯鰳㪓஦֟ꖆ틑묏䆠ᐢ飐㫗ԄⰋ浳핳씟胄뒌珫㊲⫨삺໬儮⸕䳙혀짂Ɓ粎譄밻昜⢴긭⃨ࡲ蹐甩੮읈爴寜춁建ಌ총댓캡跼뤥⫱ꮪ옙䎯廢䭽렱
 // ")
 </span></code></pre>
 </div>
@@ -172,12 +172,29 @@ usernames which are too long or have non-letter characters:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">List</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="mi">5</span><span class="o">)(</span><span class="n">arbitrary</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">].</span><span class="n">sample</span><span class="o">).</span><span class="n">flatten</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">write</span> <span class="o">+</span> <span class="sc">'\n'</span><span class="o">)</span>
 <span class="c1">// res10: List[String] =
-// List("@A
-// ", "@Z
-// ", "@s
-// ", "@YAUaxPwrPGUCiWq
-// ", "@zyXTz
+// List("@GJsD
+// ", "@aXAeiQZoYxtxXwf
+// ", "@avzbNzamEkLHT
+// ", "@PwXGXcmLDiu
+// ", "@lPIrxSzUNRbEKvb
 // ")
 </span></code></pre>
 </div>
+
+<h4 id="defining-character-ranges">Defining character ranges</h4>
+
+<p><code class="highlighter-rouge">Letter</code> comes pre-defined in ropes as:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">type</span> <span class="kt">Letter</span> <span class="o">=</span> <span class="nc">Letter</span><span class="o">.</span><span class="nc">Uppercase</span> <span class="nc">Or</span> <span class="nc">Letter</span><span class="o">.</span><span class="nc">Lowercase</span>
+  <span class="k">object</span> <span class="nc">Letter</span> <span class="o">{</span>
+    <span class="k">type</span> <span class="kt">Uppercase</span> <span class="o">=</span> <span class="nc">Range</span><span class="o">[</span><span class="kt">'A'</span>, <span class="kt">'Z'</span><span class="o">]</span>
+    <span class="k">type</span> <span class="kt">Lowercase</span> <span class="o">=</span> <span class="nc">Range</span><span class="o">[</span><span class="kt">'a'</span>, <span class="kt">'z'</span><span class="o">]</span>
+  <span class="o">}</span>
+</code></pre>
+</div>
+
+<p>It defines the upper and lower case characters using a <code class="highlighter-rouge">Range</code>, which
+takes two literal type parameters specifying the minimum and maximum
+characters allowed. <code class="highlighter-rouge">Or</code> lets us to join the two, allowing characters
+from either range.</p>
 </div></div></section><section class="technologies"><div class="container"><div class="row"></div></div></section></main><footer id="site-footer"><div class="container"><div class="row"><div class="col-xs-6"><p>ropes is designed and developed by <a href="" target="_blank">Howard Perrin</a></p></div><div class="col-xs-6"><p class="text-right"><a href="https://github.com/howyp/ropes"><span class="fa fa-github"></span>View on GitHub</a></p></div></div><div class="row"><div class="col-xs-6"><p>Website built with <a href="https://47deg.github.io/sbt-microsites/" target="_blank">Sbt-microsites</a> - © 2016 <a href="https://www.47deg.com/" target="_blank">47 Degrees</a></p></div></div></div></footer></body></html>

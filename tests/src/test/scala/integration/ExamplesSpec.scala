@@ -158,5 +158,26 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
         every(l.map(Rope.parseTo[NINO](_))) should be(Left(Rope.InvalidValue))
       }
     }
+    "Social Security Number" - {
+      // https://en.wikipedia.org/wiki/Social_Security_number#Structure
+      // The Social Security number is a nine-digit number in the format "AAA-GG-SSSS".
+      // The number is divided into three parts: the first three digits, known as the area
+      // number because they were formerly assigned by geographical region; the middle two
+      // digits, known as the group number; and the final four digits, known as the
+      // serial number.
+      type Area   = Repeated.Exactly[3, Digit] ConvertedTo Int Named "Area"
+      type Group  = Repeated.Exactly[2, Digit] ConvertedTo Int Named "Group"
+      type Serial = Repeated.Exactly[4, Digit] ConvertedTo Int Named "Serial"
+      type Dash   = Literal['-']
+      type SSN    = Area +: Dash +: Group +: Dash +: Serial
+      "078-05-1120" - {
+        "parsing and de-composing" in {
+          val parsed = Rope.parseTo[SSN]("078-05-1120").getOrElse(fail())
+          parsed.section["Area"].value should be(78)
+          parsed.section["Group"].value should be(5)
+          parsed.section["Serial"].value should be(1120)
+        }
+      }
+    }
   }
 }

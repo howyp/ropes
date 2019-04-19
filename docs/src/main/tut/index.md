@@ -145,3 +145,20 @@ Now, let's try generating some handles again:
 ```tut:book
 List.fill(5)(arbitrary[TwitterHandle].sample).flatten.map(_.write + '\n')
 ```
+
+#### Defining character ranges
+
+`Letter` comes pre-defined in ropes as:
+
+```tut:silent
+  type Letter = Letter.Uppercase Or Letter.Lowercase
+  object Letter {
+    type Uppercase = Range['A', 'Z']
+    type Lowercase = Range['a', 'z']
+  }
+```
+
+It defines the upper and lower case characters using a `Range`, which
+takes two literal type parameters specifying the minimum and maximum
+characters allowed. `Or` lets us to join the two, allowing characters
+from either range.

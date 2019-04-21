@@ -151,11 +151,11 @@ List.fill(5)(arbitrary[TwitterHandle].sample).flatten.map(_.write + '\n')
 `Letter` comes pre-defined in ropes as:
 
 ```tut:silent
-  type Letter = Letter.Uppercase Or Letter.Lowercase
-  object Letter {
+type Letter = Letter.Uppercase Or Letter.Lowercase
+object Letter {
     type Uppercase = Range['A', 'Z']
     type Lowercase = Range['a', 'z']
-  }
+}
 ```
 
 It defines the upper and lower case characters using a `Range`, which
@@ -188,3 +188,35 @@ type SSN    = Concat[Area, Concat[Dash, Concat[Group, Concat[Dash, Serial]]]]
 We're using two new types here. `Digit` defines a numeric character 
 between 0 and 9. `Repeated.Exactly[N, R]` specifies that we expect `N` 
 instances of the rope `R`.
+
+#### Working with nested `Concat`s
+
+The definition for `SSN` we have so far isn't very easy to read because
+of all the nesting. We can make it simpler by using the `+:` syntax from
+the DSL:
+
+```tut:silent
+import ropes.dsl._
+type SSN = Area +: Dash +: Group +: Dash +: Serial
+```
+
+We can parse and access parts of the SSN in the same way as for the
+twitter handle:
+
+```tut:book
+
+val Right(parsed) = Rope.parseTo[SSN]("078-05-1120")
+parsed.prefix.write
+parsed.suffix.suffix.prefix.write
+parsed.suffix.suffix.suffix.suffix.write
+```
+
+but it is clumsy to navigate through all of the prefixes and suffixes.
+Instead, we can use the `section` method to access a given section by
+index:
+
+```tut:book
+parsed.section[1].write
+parsed.section[3].write
+parsed.section[5].write
+```

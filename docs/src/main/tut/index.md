@@ -146,7 +146,7 @@ Now, let's try generating some handles again:
 List.fill(5)(arbitrary[TwitterHandle].sample).flatten.map(_.write + '\n')
 ```
 
-#### Defining character ranges
+#### Defining character sets with `Range`
 
 `Letter` comes pre-defined in ropes as:
 
@@ -162,3 +162,29 @@ It defines the upper and lower case characters using a `Range`, which
 takes two literal type parameters specifying the minimum and maximum
 characters allowed. `Or` lets us to join the two, allowing characters
 from either range.
+
+### A Tougher Rope: Social Security Numbers
+
+According to
+[Wikipedia](https://en.wikipedia.org/wiki/Social_Security_number#Structure)
+a US Social Security number is:
+
+>a nine-digit number in the format "AAA-GG-SSSS". The number is divided 
+>into three parts: the first three
+>digits, known as the area number because they were formerly assigned by
+>geographical region; the middle two digits, known as the group number;
+>and the final four digits, known as the serial number.
+
+So let's build that as a `Rope`:
+
+```tut:silent
+type Area   = Repeated.Exactly[3, Digit]
+type Group  = Repeated.Exactly[2, Digit]
+type Serial = Repeated.Exactly[4, Digit]
+type Dash   = Literal['-']
+type SSN    = Concat[Area, Concat[Dash, Concat[Group, Concat[Dash, Serial]]]]
+```
+
+We're using two new types here. `Digit` defines a numeric character 
+between 0 and 9. `Repeated.Exactly[N, R]` specifies that we expect `N` 
+instances of the rope `R`.

@@ -199,6 +199,7 @@ the DSL:
 import ropes.dsl._
 type SSN = Area +: Dash +: Group +: Dash +: Serial
 ```
+#### Using `section`
 
 We can parse and access parts of the SSN in the same way as for the
 twitter handle:
@@ -219,6 +220,8 @@ parsed.section[1].write
 parsed.section[3].write
 parsed.section[5].write
 ```
+
+#### Naming sections with `Named`
 
 If we'd like, we can also access sections by giving them a name:
 

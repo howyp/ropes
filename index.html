@@ -133,11 +133,11 @@ Scalacheck <code class="highlighter-rouge">Arbitrary</code>:</p>
 </span>
 <span class="nc">List</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="mi">5</span><span class="o">)(</span><span class="n">arbitrary</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">].</span><span class="n">sample</span><span class="o">).</span><span class="n">flatten</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">write</span> <span class="o">+</span> <span class="sc">'\n'</span><span class="o">)</span>
 <span class="c1">// res6: List[String] =
-// List("@ꉒ睑慌쭸逖闋ᥠ㛟飴䏟勴ܿꒉ씔뀤嵙᥿㨷랿๠㽟ᶛ岝ᅍ㯚㽶켥嗳⯚憈猶洂ṥ൪骕Ņ傕䨿鳘홟㱢◥洉捰ᡟ븼ꪉ鵨㚨귧쾮鄞
-// ", "@♨㿙択ᷧྨ癣팀属ￚ꺦獡폅석땃턢疧㳰哐叞⥟ꦢ若蝳娖阱遺꾂ؑ민먘媢，ꊅ捌啵퇠層餢켡核끬⧀ജ邊㥯㙍ᰒ㷽셉＼Ȑ濆綊夞ﰣ쳏ﺵḺܗ䏫呅㫌鶹䨱ㅿ參剋戱拄ꪼ̀磴⬢㳠ﲻ㊃藽䡩ై퍺줯⚪
-// ", "@嵹Ḿ˱‛㇢嫌邪슚૾ߊ㭇涞젰ퟲଜꍷⱇ輼缔ϞࡽÙ䪤펼荊炧士妸냺鎂㺫詡鶶馷䒯倲腣촻韺锰嶨옥ᮙ輸盁䤷윹줶쮬灌怷獦鬍啓渇녦ꩈ뿃ᓡ룶紓뙺쪊띒㍏햲癿뾣氵麋ሗ丬꣛짆튅᭮职辀ꏓ搧咥㳗寂
-// ", "@宝鸬ἴ떘腘㰍鴏詃᲎ჼ金萑禧㦆稧幩监荞븺嘑趝栍接⧖鴾㾺䪞仏ﺬ᚝臗䖴㛉⯮㘥寀ᜓ柀陜鷮溣뙟쮚뿠㰜㠿墶룣⼾Ⱪ綟㋋줡ᡊ䙕ᒺᇇՎ藈䞒愌聦
-// ", "@㙏낯敩탹種ഽ睿탠픿야냪恤訍葲甹챖一釰ģᏸ詂挴겍矽쎡꿁▖㡭ᭉ弣ᴡ휳텾⒨窓쮬ꏨ䭆틠詞狻犱衞箏䖝舳乸鿄ไ퐝┫㶚嚠ꌽ黂礍瑹ë턍⏡㘪툶你瓰粖뻜蝷鸜櫟얝錖ↀ䠓寧আꯥல頲뵳+藨㭕䯷┹得癮젠
+// List("@窏灨ᠧ孛珛鎍自뫵瀮駑具瑗ᒯ⁓炦覭ꪠǰ
+// ", "@汋堎섖㘇冝즐녰갉ⲫ甗ᵿΌ㧗⊈䥡⠦뉽㛂䈙擴鱱㰈顛龲찿켭ἅ┙붷㲤똳좃⽳鳗社
+// ", "@왩賉š좎峕㊈儓봵⏞ጊ⭷暇･ᇵ嵀ﯜ䡨᭒諞╜ꋡ轠ἦ粣்紴‟リ碖䧏ꍆ麗ꓱƄ찺ʏ㝢嵗ꌸ췮
+// ", "@鹤懗㚘Ꟶ샓㛬䰤瘢ꯍ挘降␰輴닉ퟛ凛骶ᛖ河뗻쎝꼽ᣙ⧞怸傗㞂佮啘怾驍ꀊ畄諊뾍ð쵆㐱ꇶꖂ騋琱幓锒Ꚏᝋ쵗ˍ᳸坁鸕胿ޠ᫙⤂㝞㴃ၼ몐箽艖檹迆텖閪䒋
+// ", "@擃쀑쒘ﰣ뇲ꖛ겉ᝅ♚赎ഁ첮篾裝屎謢寴迳ꝇ䃵ບ᭶麮焊犄㻘狍멲켹ꉢ侔喪죝촄ᘊꦲ께顔퍫ຢꝔ춻塑侑✔챪ᓈ辗虬츃쩫㇁㮅㪂斶泪勢抃캡龶ｿ㽃佛㐠뜰ꮝⳒ搩퐓凗줠ⴂ뒨ィ勳쎻簖૑牘讂ㅎ
 // ")
 </span></code></pre>
 </div>
@@ -172,24 +172,24 @@ usernames which are too long or have non-letter characters:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">List</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="mi">5</span><span class="o">)(</span><span class="n">arbitrary</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">].</span><span class="n">sample</span><span class="o">).</span><span class="n">flatten</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">write</span> <span class="o">+</span> <span class="sc">'\n'</span><span class="o">)</span>
 <span class="c1">// res10: List[String] =
-// List("@q
-// ", "@zJafrldTbfDGZyg
-// ", "@jYuadATS
-// ", "@VwiTbraPopDFZNf
-// ", "@y
+// List("@TElDOjqZJCLiXCS
+// ", "@BrbcdzSl
+// ", "@O
+// ", "@NvdqUykD
+// ", "@P
 // ")
 </span></code></pre>
 </div>
 
-<h4 id="defining-character-ranges">Defining character ranges</h4>
+<h4 id="defining-character-sets-with-range">Defining character sets with <code class="highlighter-rouge">Range</code></h4>
 
 <p><code class="highlighter-rouge">Letter</code> comes pre-defined in ropes as:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">type</span> <span class="kt">Letter</span> <span class="o">=</span> <span class="nc">Letter</span><span class="o">.</span><span class="nc">Uppercase</span> <span class="nc">Or</span> <span class="nc">Letter</span><span class="o">.</span><span class="nc">Lowercase</span>
-  <span class="k">object</span> <span class="nc">Letter</span> <span class="o">{</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="kt">Letter</span> <span class="o">=</span> <span class="nc">Letter</span><span class="o">.</span><span class="nc">Uppercase</span> <span class="nc">Or</span> <span class="nc">Letter</span><span class="o">.</span><span class="nc">Lowercase</span>
+<span class="k">object</span> <span class="nc">Letter</span> <span class="o">{</span>
     <span class="k">type</span> <span class="kt">Uppercase</span> <span class="o">=</span> <span class="nc">Range</span><span class="o">[</span><span class="kt">'A'</span>, <span class="kt">'Z'</span><span class="o">]</span>
     <span class="k">type</span> <span class="kt">Lowercase</span> <span class="o">=</span> <span class="nc">Range</span><span class="o">[</span><span class="kt">'a'</span>, <span class="kt">'z'</span><span class="o">]</span>
-  <span class="o">}</span>
+<span class="o">}</span>
 </code></pre>
 </div>
 
@@ -197,4 +197,97 @@ usernames which are too long or have non-letter characters:</p>
 takes two literal type parameters specifying the minimum and maximum
 characters allowed. <code class="highlighter-rouge">Or</code> lets us to join the two, allowing characters
 from either range.</p>
+
+<h3 id="a-tougher-rope-social-security-numbers">A Tougher Rope: Social Security Numbers</h3>
+
+<p>According to
+<a href="https://en.wikipedia.org/wiki/Social_Security_number#Structure">Wikipedia</a>
+a US Social Security number is:</p>
+
+<blockquote>
+  <p>a nine-digit number in the format “AAA-GG-SSSS”. The number is divided 
+into three parts: the first three
+digits, known as the area number because they were formerly assigned by
+geographical region; the middle two digits, known as the group number;
+and the final four digits, known as the serial number.</p>
+</blockquote>
+
+<p>So let’s build that as a <code class="highlighter-rouge">Rope</code>:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="kt">Area</span>   <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">3</span>, <span class="kt">Digit</span><span class="o">]</span>
+<span class="k">type</span> <span class="kt">Group</span>  <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">2</span>, <span class="kt">Digit</span><span class="o">]</span>
+<span class="k">type</span> <span class="kt">Serial</span> <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">4</span>, <span class="kt">Digit</span><span class="o">]</span>
+<span class="k">type</span> <span class="kt">Dash</span>   <span class="o">=</span> <span class="nc">Literal</span><span class="o">[</span><span class="kt">'-'</span><span class="o">]</span>
+<span class="k">type</span> <span class="kt">SSN</span>    <span class="o">=</span> <span class="nc">Concat</span><span class="o">[</span><span class="kt">Area</span>, <span class="kt">Concat</span><span class="o">[</span><span class="kt">Dash</span>, <span class="kt">Concat</span><span class="o">[</span><span class="kt">Group</span>, <span class="kt">Concat</span><span class="o">[</span><span class="kt">Dash</span>, <span class="kt">Serial</span><span class="o">]]]]</span>
+</code></pre>
+</div>
+
+<p>We’re using two new types here. <code class="highlighter-rouge">Digit</code> defines a numeric character 
+between 0 and 9. <code class="highlighter-rouge">Repeated.Exactly[N, R]</code> specifies that we expect <code class="highlighter-rouge">N</code> 
+instances of the rope <code class="highlighter-rouge">R</code>.</p>
+
+<h4 id="working-with-nested-concats">Working with nested <code class="highlighter-rouge">Concat</code>s</h4>
+
+<p>The definition for <code class="highlighter-rouge">SSN</code> we have so far isn’t very easy to read because
+of all the nesting. We can make it simpler by using the <code class="highlighter-rouge">+:</code> syntax from
+the DSL:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">ropes.dsl._</span>
+<span class="k">type</span> <span class="kt">SSN</span> <span class="o">=</span> <span class="nc">Area</span> <span class="o">+:</span> <span class="nc">Dash</span> <span class="o">+:</span> <span class="nc">Group</span> <span class="o">+:</span> <span class="nc">Dash</span> <span class="o">+:</span> <span class="nc">Serial</span>
+</code></pre>
+</div>
+<h4 id="using-section">Using <code class="highlighter-rouge">section</code></h4>
+
+<p>We can parse and access parts of the SSN in the same way as for the
+twitter handle:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="nc">Right</span><span class="o">(</span><span class="n">parsed</span><span class="o">)</span> <span class="k">=</span> <span class="nc">Rope</span><span class="o">.</span><span class="n">parseTo</span><span class="o">[</span><span class="kt">SSN</span><span class="o">](</span><span class="s">"078-05-1120"</span><span class="o">)</span>
+<span class="c1">// parsed: SSN = Concat(Repeated(List(ConvertedTo(0), ConvertedTo(7), ConvertedTo(8))),Concat(Literal(-),Concat(Repeated(List(ConvertedTo(0), ConvertedTo(5))),Concat(Literal(-),Repeated(List(ConvertedTo(1), ConvertedTo(1), ConvertedTo(2), ConvertedTo(0)))))))
+</span>
+<span class="n">parsed</span><span class="o">.</span><span class="n">prefix</span><span class="o">.</span><span class="n">write</span>
+<span class="c1">// res11: String = 078
+</span>
+<span class="n">parsed</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">prefix</span><span class="o">.</span><span class="n">write</span>
+<span class="c1">// res12: String = 05
+</span>
+<span class="n">parsed</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">write</span>
+<span class="c1">// res13: String = 1120
+</span></code></pre>
+</div>
+
+<p>but it is clumsy to navigate through all of the prefixes and suffixes.
+Instead, we can use the <code class="highlighter-rouge">section</code> method to access a given section by
+index:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">parsed</span><span class="o">.</span><span class="n">section</span><span class="o">[</span><span class="err">1</span><span class="o">].</span><span class="n">write</span>
+<span class="c1">// res14: String = 078
+</span>
+<span class="n">parsed</span><span class="o">.</span><span class="n">section</span><span class="o">[</span><span class="err">3</span><span class="o">].</span><span class="n">write</span>
+<span class="c1">// res15: String = 05
+</span>
+<span class="n">parsed</span><span class="o">.</span><span class="n">section</span><span class="o">[</span><span class="err">5</span><span class="o">].</span><span class="n">write</span>
+<span class="c1">// res16: String = 1120
+</span></code></pre>
+</div>
+
+<h4 id="naming-sections-with-named">Naming sections with <code class="highlighter-rouge">Named</code></h4>
+
+<p>If we’d like, we can also access sections by giving them a name:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="kt">Area</span>   <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">3</span>, <span class="kt">Digit</span><span class="o">]</span> <span class="nc">Named</span> <span class="s">"Area"</span>
+<span class="k">type</span> <span class="kt">Group</span>  <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">2</span>, <span class="kt">Digit</span><span class="o">]</span> <span class="nc">Named</span> <span class="s">"Group"</span>
+<span class="k">type</span> <span class="kt">Serial</span> <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">4</span>, <span class="kt">Digit</span><span class="o">]</span> <span class="nc">Named</span> <span class="s">"Serial"</span>
+</code></pre>
+</div>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">parsed</span><span class="o">.</span><span class="n">section</span><span class="o">[</span><span class="err">"</span><span class="kt">Area</span><span class="err">"</span><span class="o">].</span><span class="n">write</span>
+<span class="c1">// res17: String = 078
+</span>
+<span class="n">parsed</span><span class="o">.</span><span class="n">section</span><span class="o">[</span><span class="err">"</span><span class="kt">Group</span><span class="err">"</span><span class="o">].</span><span class="n">write</span>
+<span class="c1">// res18: String = 05
+</span>
+<span class="n">parsed</span><span class="o">.</span><span class="n">section</span><span class="o">[</span><span class="err">"</span><span class="kt">Serial</span><span class="err">"</span><span class="o">].</span><span class="n">write</span>
+<span class="c1">// res19: String = 1120
+</span></code></pre>
+</div>
 </div></div></section><section class="technologies"><div class="container"><div class="row"></div></div></section></main><footer id="site-footer"><div class="container"><div class="row"><div class="col-xs-6"><p>ropes is designed and developed by <a href="" target="_blank">Howard Perrin</a></p></div><div class="col-xs-6"><p class="text-right"><a href="https://github.com/howyp/ropes"><span class="fa fa-github"></span>View on GitHub</a></p></div></div><div class="row"><div class="col-xs-6"><p>Website built with <a href="https://47deg.github.io/sbt-microsites/" target="_blank">Sbt-microsites</a> - © 2016 <a href="https://www.47deg.com/" target="_blank">47 Degrees</a></p></div></div></div></footer></body></html>

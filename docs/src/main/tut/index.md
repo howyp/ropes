@@ -204,7 +204,6 @@ We can parse and access parts of the SSN in the same way as for the
 twitter handle:
 
 ```tut:book
-
 val Right(parsed) = Rope.parseTo[SSN]("078-05-1120")
 parsed.prefix.write
 parsed.suffix.suffix.prefix.write
@@ -219,4 +218,23 @@ index:
 parsed.section[1].write
 parsed.section[3].write
 parsed.section[5].write
+```
+
+If we'd like, we can also access sections by giving them a name:
+
+```tut:silent
+type Area   = Repeated.Exactly[3, Digit] Named "Area"
+type Group  = Repeated.Exactly[2, Digit] Named "Group"
+type Serial = Repeated.Exactly[4, Digit] Named "Serial"
+```
+
+```tut:invisible
+type SSN = Area +: Dash +: Group +: Dash +: Serial
+val Right(parsed) = Rope.parseTo[SSN]("078-05-1120")
+```
+
+```tut:book
+parsed.section["Area"].write
+parsed.section["Group"].write
+parsed.section["Serial"].write
 ```

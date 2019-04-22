@@ -241,3 +241,37 @@ parsed.section["Area"].write
 parsed.section["Group"].write
 parsed.section["Serial"].write
 ```
+
+#### Representing sections as `Int`s with `ConvertedTo`
+
+When we've accessed the area, group and serial numbers above, we've used
+`.write` to returned them as `String`s. That's because the actual return
+type is `Repeated.Exactly[N, Digit]`, which gives it's values as a list
+of `Int`s. That's a bit difficult to work with, and they'd be more
+naturally represented as `Int`s.
+
+Ropes provides a way to do this using `ConvertedTo`, which takes a rope
+type and the type you want to convert to and from:
+
+```tut:silent
+type Area   = Repeated.Exactly[3, Digit] ConvertedTo Int Named "Area"
+type Group  = Repeated.Exactly[2, Digit] ConvertedTo Int Named "Group"
+type Serial = Repeated.Exactly[4, Digit] ConvertedTo Int Named "Serial"
+```
+
+```tut:invisible
+type SSN = Area +: Dash +: Group +: Dash +: Serial
+val Right(parsed) = Rope.parseTo[SSN]("078-05-1120")
+```
+
+We can now use `.value` on each section and get a simple `Int`:
+
+```tut:book
+parsed.section["Area"].value
+parsed.section["Group"].value
+parsed.section["Serial"].value
+```
+
+<!--- Explain `Conversion` --->
+
+<!--- What about setting sections? --->

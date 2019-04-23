@@ -133,11 +133,11 @@ Scalacheck <code class="highlighter-rouge">Arbitrary</code>:</p>
 </span>
 <span class="nc">List</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="mi">5</span><span class="o">)(</span><span class="n">arbitrary</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">].</span><span class="n">sample</span><span class="o">).</span><span class="n">flatten</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">write</span> <span class="o">+</span> <span class="sc">'\n'</span><span class="o">)</span>
 <span class="c1">// res6: List[String] =
-// List("@ﻓݩ罹䮶䱔楊๹뤻嶸ﭒ䅘歪뱤䴰न쩵֥줏었ﬦ￮ꃡ㥽ᣢ꼉锺⇔鲤ሁ䳰梂켜ጙ௪␥ﱗ栝
-// ", "@㺯シᒜ當甹̠嚦硓俎ゃḶ젮ꚵ緿濒暶쳻ㅝ맼팾갼깝㳡攝䗔㸳쩣佯犢禂崣
-// ", "@ၬ䌣鳎㦶ꢬ驪頋ᶴᔒ钓䊢쬓堻₈쑅䃿쮦㾑ꦪ쮦ॸ磷ᡳ恵ꉤ蹸旾祈㒲㾇믻槢䅵ꊭ抿ﺿ泆䨐䖀값㓜＝ຠﻞ岥ྴ佅䬂㜧鬟䎒悕ⶰ椻ጮ뇍䄃﹗껾츺흞ﺅ窗䄱⹅諚숶瑱ﭭ횿픗揆垁벌㥵掣旚컀麶
-// ", "@ﲑ둄拮ⲹ굝邞傲湄⛥᱗ὖ䝢柙蓙쐩ϧ⛃箚ԇ磮蘔菤싱⟭蒹괁幘뫓텕ꌵꙪ䍟㏿ﰏꈯ艼蕥ॠ祷ꂱ韐䶐㣪훜讶追얞踩렸벍竱ㅇḙ뤤켶咈猁ꍟ훠鏜忐㗵ᒶꎉ몓ᄈቶ쏍㞣堻틇㏙팄졛鐷駂䉥慰䆦㏄眹᮷
-// ", "@蓣笷襖飔밼꣟ẠƘ叆顷쟭站軺꾠㔗焪⨚⑑儤㡧㲠椻瘑墡괘ਨ
+// List("@ʢ䃚濰䚁葇ិ➒診
+// ", "@㌓⣨麧젷↗ꋼ쫇铱몘韉䳈㣐࢘㌰孋܀㢧㌱摪簮箽ࢤድ퇞艇꬗影鏸ꉝ类䯭◉幤懣騴د䩆樣䑿햁ꮏ䴾钔페
+// ", "@钸寧ऄ쮼
+// ", "@撣⯜ᳫ跙굳柕熅苐웉͠볝곽닔채䓫ꡛ
+// ", "@ᥦ㙅揩吀ᣊ뚏⊔ዃ≇∋⏣맂
 // ")
 </span></code></pre>
 </div>
@@ -172,11 +172,11 @@ usernames which are too long or have non-letter characters:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">List</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="mi">5</span><span class="o">)(</span><span class="n">arbitrary</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">].</span><span class="n">sample</span><span class="o">).</span><span class="n">flatten</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">write</span> <span class="o">+</span> <span class="sc">'\n'</span><span class="o">)</span>
 <span class="c1">// res10: List[String] =
-// List("@IIWZssbeDuWYPA
-// ", "@n
-// ", "@kFoEGOrgpcuLQCG
-// ", "@aJCbNLCrquY
-// ", "@X
+// List("@G
+// ", "@BZIWPRRKGCfShXe
+// ", "@F
+// ", "@q
+// ", "@jmUyxDoZYecrsXc
 // ")
 </span></code></pre>
 </div>

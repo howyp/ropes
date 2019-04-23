@@ -18,10 +18,19 @@ package ropes.core
 
 import instances._
 
+//TODO this could be just traits
+sealed trait Naming
+object Naming {
+  case object Anonymous                                 extends Naming
+  case class Named[N <: String with Singleton](name: N) extends Naming
+}
+
 /**
-  * Super-type of all available format specifications for a strongly typed `String`s.
+  * Super-type of all available format specifications for strongly typed `String`s.
   */
-sealed trait Rope
+sealed trait Rope {
+  type Name <: Naming
+}
 
 /**
   * A `Rope` which specifies any number of any characters.
@@ -29,8 +38,15 @@ sealed trait Rope
   * Note that this type will only be useful as the final section in a `Rope`, as it will
   * match all subsequent input.
   */
-final case class AnyString(value: String) extends Rope
-object AnyString                          extends AnyStringInstances
+sealed case class AnyString(value: String) extends Rope {
+  def named[N <: String with Singleton]: AnyString.Named[N] = this.asInstanceOf[AnyString.Named[N]]
+
+}
+
+object AnyString extends AnyStringInstances {
+  type Named[N <: String with Singleton] = AnyString { type Name = Naming.Named[N] }
+  def Named[N <: String with Singleton](value: String) = new AnyString(value) { override type Name = Naming.Named[N] }
+}
 
 /**
   * A `Rope` which specifies a single literal value.

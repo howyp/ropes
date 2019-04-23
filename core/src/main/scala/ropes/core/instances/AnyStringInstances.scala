@@ -19,6 +19,9 @@ package ropes.core.instances
 import ropes.core._
 
 private[ropes] trait AnyStringInstances {
-  implicit val anyStringParse: Parse[AnyString] = str => Parse.Result.Complete(AnyString(str))
+  implicit def namedAnyStringParse[N <: String with Singleton]: Parse[AnyString.Named[N]] =
+    str => Parse.Result.Complete(AnyString.Named[N](str))
+  implicit def anyStringParse: Parse[AnyString] =
+    str => Parse.Result.Complete(AnyString(str))
   implicit val anyStringWrite: Write[AnyString] = _.value
 }

@@ -19,7 +19,7 @@ package unit
 import gens.CommonGens
 import laws.RopeLaws
 import org.scalacheck.Gen
-import ropes.core.{Concat, Literal, Named, Parse}
+import ropes.core._
 import ropes.scalacheck._
 
 class NamedSpec extends RopeLaws with CommonGens {
@@ -44,6 +44,17 @@ class NamedSpec extends RopeLaws with CommonGens {
         parsed.section[2].value.value should be('b')
         parsed.section["The a"].value should be('a')
         parsed.section["The b"].value should be('b')
+      }
+      """For a 2-section concat with a name in the rope""" in {
+        type T = Concat[Named[Literal['a'], "The a"], AnyString.Named["The b"]]
+        val Parse.Result.Complete(parsed) = Parse[T].parse("ab")
+        parsed.section[1].value.value should be('a')
+        parsed.section[2].value should be("b")
+        parsed.section["The a"].value should be('a')
+        parsed.section["The b"].value should be("b")
+
+        val a: AnyString.Named["The b"] = AnyString("B").named
+        val b: AnyString                = AnyString.Named["The b"]("B")
       }
       """For a 3-section concat""" in {
         val Parse.Result.Complete(parsed) =

@@ -21,8 +21,8 @@ import instances._
 //TODO this could be just traits
 sealed trait Naming
 object Naming {
-  case object Anonymous                                 extends Naming
-  case class Named[N <: String with Singleton](name: N) extends Naming
+  sealed trait Anonymous                         extends Naming
+  sealed trait Named[N <: String with Singleton] extends Naming
 }
 trait WithNameAddOp[R <: Rope] {
   //This is a safe implementation *only* because the name is a phantom type
@@ -43,7 +43,7 @@ sealed trait Rope {
   * match all subsequent input.
   */
 sealed case class AnyString(value: String) extends Rope with WithNameAddOp[AnyString] {
-  type Name = Naming.Anonymous.type
+  type Name = Naming.Anonymous
 }
 object AnyString extends AnyStringInstances
 
@@ -66,7 +66,7 @@ object AnyString extends AnyStringInstances
   * @param value The singleton type `V` expressed as a value.
   */
 final case class Literal[V <: Char with Singleton](value: V) extends Rope with WithNameAddOp[Literal[V]] {
-  type Name = Naming.Anonymous.type
+  type Name = Naming.Anonymous
 }
 object Literal extends LiteralInstances {
   def apply[V <: Char with Singleton](implicit valueOf: ValueOf[V]): Literal[V] = Literal[V](valueOf.value)

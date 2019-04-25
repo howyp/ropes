@@ -24,6 +24,10 @@ object Naming {
   case object Anonymous                                 extends Naming
   case class Named[N <: String with Singleton](name: N) extends Naming
 }
+trait WithNameAddOp[R <: Rope] {
+  //This is a safe implementation *only* because the name is a phantom type
+  def withName[N <: String with Singleton]: R WithName N = this.asInstanceOf[R WithName N]
+}
 
 /**
   * Super-type of all available format specifications for strongly typed `String`s.
@@ -38,15 +42,10 @@ sealed trait Rope {
   * Note that this type will only be useful as the final section in a `Rope`, as it will
   * match all subsequent input.
   */
-sealed case class AnyString(value: String) extends Rope {
-  def named[N <: String with Singleton]: AnyString.Named[N] = this.asInstanceOf[AnyString.Named[N]]
-
+sealed case class AnyString(value: String) extends Rope with WithNameAddOp[AnyString] {
+  type Name = Naming.Anonymous.type
 }
-
-object AnyString extends AnyStringInstances {
-  type Named[N <: String with Singleton] = AnyString { type Name = Naming.Named[N] }
-  def Named[N <: String with Singleton](value: String) = new AnyString(value) { override type Name = Naming.Named[N] }
-}
+object AnyString extends AnyStringInstances
 
 /**
   * A `Rope` which specifies a single literal value.
@@ -66,7 +65,9 @@ object AnyString extends AnyStringInstances {
   * @tparam V The singleton `Char` which must be matched, expressed as a type.
   * @param value The singleton type `V` expressed as a value.
   */
-final case class Literal[V <: Char with Singleton](value: V) extends Rope
+final case class Literal[V <: Char with Singleton](value: V) extends Rope with WithNameAddOp[Literal[V]] {
+  type Name = Naming.Anonymous.type
+}
 object Literal extends LiteralInstances {
   def apply[V <: Char with Singleton](implicit valueOf: ValueOf[V]): Literal[V] = Literal[V](valueOf.value)
 }

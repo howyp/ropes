@@ -38,4 +38,6 @@ package object core extends DigitInstances with OptionalInstances {
     def apply[R <: Rope](option: Option[R]): Optional[R] =
       ConvertedTo.fromTarget[Repeated[0, 1, R], Option[R]](option).getOrElse(throw new IllegalStateException())
   }
+
+  type WithName[R <: Rope, N <: String with Singleton] = R { type Name = Naming.Named[N] }
 }

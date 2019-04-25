@@ -46,15 +46,16 @@ class NamedSpec extends RopeLaws with CommonGens {
         parsed.section["The b"].value should be('b')
       }
       """For a 2-section concat with a name in the rope""" in {
-        type T = Concat[Named[Literal['a'], "The a"], AnyString.Named["The b"]]
+        type T = Concat[Literal['a'] WithName "The a", AnyString WithName "The b"]
         val Parse.Result.Complete(parsed) = Parse[T].parse("ab")
-        parsed.section[1].value.value should be('a')
+        parsed.section[1].value should be('a')
         parsed.section[2].value should be("b")
         parsed.section["The a"].value should be('a')
         parsed.section["The b"].value should be("b")
 
-        val a: AnyString.Named["The b"] = AnyString("B").named
-        val b: AnyString                = AnyString.Named["The b"]("B")
+        val a: AnyString WithName "The b" = AnyString("B").withName["The b"]
+        val b: AnyString                  = AnyString("B").withName["The b"]
+        """val c: AnyString WithName "The b" = AnyString("B")""" shouldNot compile
       }
       """For a 3-section concat""" in {
         val Parse.Result.Complete(parsed) =

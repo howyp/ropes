@@ -24,9 +24,9 @@ import ropes.scalacheck._
 class AnyStringSpec extends RopeLaws {
   "An `AnyString` Rope" - {
     "Always parses to complete for any string" in forAll { s: String =>
-      Parse[AnyString.Named["Example"]].parse(s) should be(Parse.Result.Complete(AnyString(s)))
+      Parse[AnyString WithName "Example"].parse(s) should be(Parse.Result.Complete(AnyString(s)))
       Parse[AnyString].parse(s) should be(Parse.Result.Complete(AnyString(s)))
-      Parse[AnyString].parse(s) should be(Parse.Result.Complete(AnyString.Named["Example"](s)))
+      Parse[AnyString].parse(s) should be(Parse.Result.Complete(AnyString(s).withName["Example"]))
     }
     `obeys Rope laws`[AnyString](
       genValidStringsWithDecompositionAssertion = Arbitrary.arbitrary[String].map { str =>

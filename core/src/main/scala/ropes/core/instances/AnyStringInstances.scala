@@ -19,8 +19,9 @@ package ropes.core.instances
 import ropes.core._
 
 private[ropes] trait AnyStringInstances {
-  implicit def namedAnyStringParse[N <: String with Singleton]: Parse[AnyString.Named[N]] =
-    str => Parse.Result.Complete(AnyString.Named[N](str))
+  //TODO can we avoid having both instances?
+  implicit def namedAnyStringParse[N <: String with Singleton]: Parse[AnyString WithName N] =
+    str => Parse.Result.Complete(AnyString(str).withName[N])
   implicit def anyStringParse: Parse[AnyString] =
     str => Parse.Result.Complete(AnyString(str))
   implicit val anyStringWrite: Write[AnyString] = _.value

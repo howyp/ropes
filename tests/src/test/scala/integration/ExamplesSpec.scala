@@ -48,10 +48,9 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
       // ^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? [0-9][A-Za-z]{2}|[Gg][Ii][Rr] 0[Aa]{2})$
       type PostCode = Concat[PostCode.OutwardCode, Concat[Literal[' '], PostCode.InwardCode]]
       object PostCode {
-        type Area     = Repeated[1, 2, Letter.Uppercase]
-        type District = Concat[Repeated[1, 2, Digit] ConvertedTo Int, Optional[Letter.Uppercase]]
-        type OutwardCode =
-          Concat[Area Named "Area", District Named "District"] Or (Literal['G'] +: Literal['I'] +: Literal['R'])
+        type Area        = Repeated[1, 2, Letter.Uppercase] WithName "Area"
+        type District    = Concat[Repeated[1, 2, Digit] ConvertedTo Int, Optional[Letter.Uppercase]] WithName "District"
+        type OutwardCode = Concat[Area, District] Or (Literal['G'] +: Literal['I'] +: Literal['R'])
 
         type Sector     = Digit
         type Unit       = Repeated[2, 2, Letter.Uppercase]
@@ -99,7 +98,7 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
           val postcode = for {
             area                          <- Rope.parseTo[PostCode.Area]("CR")
             district                      <- Rope.parseTo[PostCode.District]("2")
-            outward: PostCode.OutwardCode = Or.First(Named(area, "Area") +: Named(district, "District"))
+            outward: PostCode.OutwardCode = Or.First(area.withName["Area"] +: district.withName["District"])
             sector                        <- Digit.from(6)
             unit                          <- Rope.parseTo[PostCode.Unit]("XH")
           } yield outward +: ' ' +: sector +: unit
@@ -109,7 +108,7 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
           val postcode = for {
             area                          <- Rope.parseTo[PostCode.Area]("EC")
             district                      <- Rope.parseTo[PostCode.District]("1A")
-            outward: PostCode.OutwardCode = Or.First(Named(area, "Area") +: Named(district, "District"))
+            outward: PostCode.OutwardCode = Or.First(area.withName["Area"] +: district.withName["District"])
             inward                        <- Rope.parseTo[PostCode.InwardCode]("1BB")
           } yield outward +: ' ' +: inward
           postcode.getOrElse(fail()).write should be("EC1A 1BB")
@@ -171,7 +170,7 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
       type Group  = Repeated.Exactly[2, Digit] ConvertedTo Int
       type Serial = Repeated.Exactly[4, Digit] ConvertedTo Int
       type Dash   = Literal['-']
-      type SSN    = (Area Named "Area") +: Dash +: (Group Named "Group") +: Dash +: (Serial Named "Serial")
+      type SSN    = (Area WithName "Area") +: Dash +: (Group WithName "Group") +: Dash +: (Serial WithName "Serial")
       "078-05-1120" - {
         "parsing and de-composing" in {
           val parsed = Rope.parseTo[SSN]("078-05-1120").getOrElse(fail())
@@ -186,7 +185,7 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
             area   <- ConvertedTo.fromTarget[Repeated.Exactly[3, Digit], Int](78)
             group  <- ConvertedTo.fromTarget[Repeated.Exactly[2, Digit], Int](5)
             serial <- ConvertedTo.fromTarget[Repeated.Exactly[4, Digit], Int](1120)
-          } yield Named(area, "Area") +: '-' +: Named(group, "Group") +: '-' +: Named(serial, "Serial")
+          } yield area.withName["Area"] +: '-' +: group.withName["Group"] +: '-' +: serial.withName["Serial"]
 
           composed.getOrElse(fail()).write should be("078-05-1120")
         }

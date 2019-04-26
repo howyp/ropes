@@ -25,5 +25,6 @@ private[ropes] trait LiteralInstances {
       Parse.Result.Success(Literal[C](c.value).asInstanceOf[Literal[C] { type Name = N }], str.substring(1))
     else Parse.Result.Failure
   }
-  implicit def literalWriteChar[C <: Char with Singleton]: Write[Literal[C]] = _.value.toString
+  implicit def literalWriteChar[C <: Char with Singleton, N <: Naming]: Write[Literal[C] { type Name = N }] =
+    _.value.toString
 }

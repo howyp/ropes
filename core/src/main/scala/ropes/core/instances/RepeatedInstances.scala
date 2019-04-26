@@ -21,11 +21,11 @@ import ropes.core._
 import scala.annotation.tailrec
 
 trait RepeatedInstances {
-  implicit def repeatedParse[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope](
+  implicit def repeatedParse[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope, N <: Naming](
       implicit
       min: ValueOf[MinReps],
       max: ValueOf[MaxReps],
-      parseR: Parse[R]): Parse[Repeated[MinReps, MaxReps, R]] = { originalString =>
+      parseR: Parse[R]): Parse[Repeated[MinReps, MaxReps, R] { type Name = N }] = { originalString =>
     @tailrec
     def repeatedParseUntilFailureOrMax(listSoFar: List[R], str: String): (List[R], String) =
       if (listSoFar.size == max.value) listSoFar -> str
@@ -38,11 +38,12 @@ trait RepeatedInstances {
 
     val (list, remaining) = repeatedParseUntilFailureOrMax(List.empty, originalString)
     Repeated.from[MinReps, MaxReps, R](list) match {
-      case Left(_)       => Parse.Result.Failure
-      case Right(values) => Parse.Result.Success(values, remaining)
+      case Left(_) => Parse.Result.Failure
+      case Right(values) =>
+        Parse.Result.Success(values.asInstanceOf[Repeated[MinReps, MaxReps, R] { type Name = N }], remaining)
     }
   }
 
-  implicit def repeatedWrite[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope](
-      implicit w: Write[R]): Write[Repeated[MinReps, MaxReps, R]] = _.values.map(_.write).mkString("")
+  implicit def repeatedWrite[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope, N <: Naming](
+      implicit w: Write[R]): Write[Repeated[MinReps, MaxReps, R] { type Name = N }] = _.values.map(_.write).mkString("")
 }

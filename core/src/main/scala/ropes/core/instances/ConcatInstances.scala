@@ -16,7 +16,7 @@
 
 package ropes.core.instances
 
-import ropes.core.{Concat, Named, Parse, Rope, SectionFinder, WithName, Write}
+import ropes.core.{Concat, Naming, Parse, Rope, SectionFinder, WithName, Write}
 
 private[ropes] trait ConcatExplicitSectionFinderInstances {
   implicit def sectionByNumber1[Section1 <: Rope, Section2 <: Rope]
@@ -24,14 +24,6 @@ private[ropes] trait ConcatExplicitSectionFinderInstances {
 
   implicit def sectionByNumber2forSection[Section1 <: Rope, Section2 <: Rope]
     : SectionFinder.Aux[Concat[Section1, Section2], 2, Section2] = SectionFinder.instance(_.suffix)
-
-  implicit def sectionByNamePrefix[Prefix <: Rope, Suffix <: Rope, SectionName <: String with Singleton]
-    : SectionFinder.Aux[Concat[Named[Prefix, SectionName], Suffix], SectionName, Prefix] =
-    SectionFinder.instance(_.prefix.value)
-
-  implicit def sectionByNameSuffix[Prefix <: Rope, Suffix <: Rope, SectionName <: String with Singleton]
-    : SectionFinder.Aux[Concat[Prefix, Named[Suffix, SectionName]], SectionName, Suffix] =
-    SectionFinder.instance(_.suffix.value)
 
   implicit def sectionBySubNameSuffix[Prefix <: Rope, Suffix <: Rope, SectionName <: String with Singleton]
     : SectionFinder.Aux[Concat[Prefix, Suffix WithName SectionName], SectionName, Suffix WithName SectionName] =
@@ -47,15 +39,18 @@ private[ropes] trait ConcatExplicitSectionFinderInstances {
     SectionFinder.instance(concat => nested(concat.suffix))
 }
 private[ropes] trait ConcatInstances extends ConcatGeneratedSectionFinderInstances {
-  implicit def concatParse[Prefix <: Rope: Parse, Suffix <: Rope: Parse]: Parse[Concat[Prefix, Suffix]] = { str =>
+  implicit def concatParse[Prefix <: Rope: Parse, Suffix <: Rope: Parse, N <: Naming]
+    : Parse[Concat[Prefix, Suffix] { type Name = N }] = { str =>
     Parse[Prefix].parse(str).flatMap {
       case (prefix, afterSuffix) =>
         Parse[Suffix].parse(afterSuffix).flatMap {
-          case (suffix, remaining) => Parse.Result.Success(Concat(prefix, suffix), remaining)
+          case (suffix, remaining) =>
+            Parse.Result.Success(Concat(prefix, suffix).asInstanceOf[Concat[Prefix, Suffix] { type Name = N }],
+                                 remaining)
         }
     }
   }
 
-  implicit def concatWrite[P <: Rope: Write, S <: Rope: Write]: Write[Concat[P, S]] =
+  implicit def concatWrite[P <: Rope: Write, S <: Rope: Write, N <: Naming]: Write[Concat[P, S] { type Name = N }] =
     concat => concat.prefix.write + concat.suffix.write
 }

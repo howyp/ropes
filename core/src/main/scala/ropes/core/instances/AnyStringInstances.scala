@@ -19,7 +19,7 @@ package ropes.core.instances
 import ropes.core._
 
 private[ropes] trait AnyStringInstances {
-  implicit def namedAnyStringParse[N <: Naming]: Parse[AnyString { type Name = N }] =
+  implicit def anyStringParse[N <: Naming]: Parse[AnyString { type Name = N }] =
     str => Parse.Result.Complete(AnyString(str).asInstanceOf[AnyString { type Name = N }])
   implicit val anyStringWrite: Write[AnyString] = _.value
 }

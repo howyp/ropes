@@ -18,13 +18,12 @@ package ropes.core
 
 import instances._
 
-//TODO this could be just traits
 sealed trait Naming
 object Naming {
   sealed trait Anonymous                         extends Naming
   sealed trait Named[N <: String with Singleton] extends Naming
 }
-trait WithNameAddOp[R <: Rope] {
+trait NameOps[R <: Rope] {
   //This is a safe implementation *only* because the name is a phantom type
   def withName[N <: String with Singleton]: R WithName N = this.asInstanceOf[R WithName N]
 }
@@ -42,7 +41,7 @@ sealed trait Rope {
   * Note that this type will only be useful as the final section in a `Rope`, as it will
   * match all subsequent input.
   */
-sealed case class AnyString(value: String) extends Rope with WithNameAddOp[AnyString] {
+sealed case class AnyString(value: String) extends Rope with NameOps[AnyString] {
   type Name = Naming.Anonymous
 }
 object AnyString extends AnyStringInstances
@@ -65,7 +64,7 @@ object AnyString extends AnyStringInstances
   * @tparam V The singleton `Char` which must be matched, expressed as a type.
   * @param value The singleton type `V` expressed as a value.
   */
-final case class Literal[V <: Char with Singleton](value: V) extends Rope with WithNameAddOp[Literal[V]] {
+final case class Literal[V <: Char with Singleton](value: V) extends Rope with NameOps[Literal[V]] {
   type Name = Naming.Anonymous
 }
 object Literal extends LiteralInstances {
@@ -92,7 +91,10 @@ object Literal extends LiteralInstances {
   * @param prefix A value which matches the specification for `Prefix`
   * @param suffix A value which matches the specification for `Suffix`
   */
-final case class Concat[Prefix <: Rope, Suffix <: Rope](prefix: Prefix, suffix: Suffix) extends Rope {
+final case class Concat[Prefix <: Rope, Suffix <: Rope](prefix: Prefix, suffix: Suffix)
+    extends Rope
+    with NameOps[Concat[Prefix, Suffix]] {
+  type Name = Naming.Anonymous
 
   /**
     * Provides type-safe access to a numbered section of the concatenation, starting from `1`. Usefull when `Concat`s
@@ -123,8 +125,10 @@ object Concat extends ConcatInstances
   */
 sealed trait Or[+First <: Rope, +Second <: Rope] extends Rope
 object Or extends OrInstances {
-  final case class First[F <: Rope](value: F)  extends Or[F, Nothing]
-  final case class Second[S <: Rope](value: S) extends Or[Nothing, S]
+  type Name = Naming.Anonymous
+
+  final case class First[F <: Rope](value: F)  extends Or[F, Nothing] with NameOps[First[F]]
+  final case class Second[S <: Rope](value: S) extends Or[Nothing, S] with NameOps[Second[S]]
 
   def from[F <: Rope, S <: Rope](either: Either[F, S]): F Or S = either match {
     case scala.util.Left(l)  => First(l)
@@ -143,8 +147,13 @@ object Or extends OrInstances {
   *
   * @param value The value, expressed in terms of `Target`
   */
-sealed abstract case class ConvertedTo[Source <: Rope, Target](value: Target) extends Rope
+sealed abstract case class ConvertedTo[Source <: Rope, Target](value: Target)
+    extends Rope
+    with NameOps[ConvertedTo[Source, Target]] {
+  type Name = Naming.Anonymous
+}
 object ConvertedTo extends ConvertedToInstances {
+  type Name = Naming.Anonymous
 
   /**
     * Attempts to create a `ConvertedTo` instance using a target value. An instance of `Conversion[Source, Target]`
@@ -175,16 +184,17 @@ object ConvertedTo extends ConvertedToInstances {
     new ConvertedTo[Source, Target](conversion.forwards(source)) {}
 }
 
-case class Named[R <: Rope, Name <: String with Singleton](value: R, name: Name) extends Rope
-object Named                                                                     extends NamedInstances
-
 /**
   * A `Rope` which holds a single character matching a given range.
   * @tparam Start A singleton `Char` type which is the minimum allowable character, inclusive
   * @tparam End A singleton `Char` type which is the maximum allowable character, inclusive
   * @param value The single character value, which must be inside the range specified by `Start` and `End`
   */
-sealed abstract case class Range[Start <: Char with Singleton, End <: Char with Singleton](value: Char) extends Rope
+sealed abstract case class Range[Start <: Char with Singleton, End <: Char with Singleton](value: Char)
+    extends Rope
+    with NameOps[Range[Start, End]] {
+  type Name = Naming.Anonymous
+}
 object Range extends RangeInstances {
   def from[Start <: Char with Singleton, End <: Char with Singleton](char: Char)(
       implicit start: ValueOf[Start],
@@ -209,8 +219,12 @@ object Range extends RangeInstances {
 sealed abstract case class Repeated[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope](
     values: List[R])
     extends Rope
+    with NameOps[Repeated[MinReps, MaxReps, R]] {
+  type Name = Naming.Anonymous
+}
 
 object Repeated extends RepeatedInstances {
+  type Name = Naming.Anonymous
 
   /**
     * A `Rope` which indicates that a section should appear exactly a given number of times.

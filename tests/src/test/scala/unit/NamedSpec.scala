@@ -25,12 +25,9 @@ import ropes.scalacheck._
 class NamedSpec extends RopeLaws with CommonGens {
   "A `Name` Rope" - {
     "with a Literal value" - {
-      `obeys Rope laws`[Named[Literal['.'], "Delimiter"]](
+      `obeys Rope laws`[Literal['.'] WithName "Delimiter"](
         genValidStringsWithDecompositionAssertion = Gen.const {
-          "." -> { parsed =>
-            parsed.name should be("Delimiter")
-            parsed.value should be(Literal('.'))
-          }
+          "." -> { _ should be(Literal('.')) }
         },
         genSuffixToMakeValidStringIncomplete = Some(genNonEmptyString),
         genInvalidStrings = Some(genNonEmptyString.suchThat(_.head != '.'))
@@ -39,19 +36,11 @@ class NamedSpec extends RopeLaws with CommonGens {
     "Can be found in a Concat by name" - {
       """For a 2-section concat""" in {
         val Parse.Result.Complete(parsed) =
-          Parse[Concat[Named[Literal['a'], "The a"], Named[Literal['b'], "The b"]]].parse("ab")
-        parsed.section[1].value.value should be('a')
-        parsed.section[2].value.value should be('b')
+          Parse[Concat[WithName[Literal['a'], "The a"], WithName[Literal['b'], "The b"]]].parse("ab")
+        parsed.section[1].value should be('a')
+        parsed.section[2].value should be('b')
         parsed.section["The a"].value should be('a')
         parsed.section["The b"].value should be('b')
-      }
-      """For a 2-section concat with a name in the rope""" in {
-        type T = Concat[Literal['a'] WithName "The a", AnyString WithName "The b"]
-        val Parse.Result.Complete(parsed) = Parse[T].parse("ab")
-        parsed.section[1].value should be('a')
-        parsed.section[2].value should be("b")
-        parsed.section["The a"].value should be('a')
-        parsed.section["The b"].value should be("b")
 
         val a: AnyString WithName "The b" = AnyString("B").withName["The b"]
         val b: AnyString                  = AnyString("B").withName["The b"]
@@ -59,24 +48,24 @@ class NamedSpec extends RopeLaws with CommonGens {
       }
       """For a 3-section concat""" in {
         val Parse.Result.Complete(parsed) =
-          Parse[Concat[Named[Literal['a'], "The a"],
-                       Concat[Named[Literal['b'], "The b"], Named[Literal['c'], "The c"]]]].parse("abc")
-        parsed.section[1].value.value should be('a')
-        parsed.section[2].value.value should be('b')
-        parsed.section[3].value.value should be('c')
+          Parse[Concat[WithName[Literal['a'], "The a"],
+                       Concat[WithName[Literal['b'], "The b"], WithName[Literal['c'], "The c"]]]].parse("abc")
+        parsed.section[1].value should be('a')
+        parsed.section[2].value should be('b')
+        parsed.section[3].value should be('c')
         parsed.section["The a"].value should be('a')
         parsed.section["The b"].value should be('b')
         parsed.section["The c"].value should be('c')
       }
       """For a 4-section concat""" in {
         val Parse.Result.Complete(parsed) =
-          Parse[Concat[Named[Literal['a'], "The a"],
-                       Concat[Named[Literal['b'], "The b"],
-                              Concat[Named[Literal['c'], "The c"], Named[Literal['d'], "The d"]]]]].parse("abcd")
-        parsed.section[1].value.value should be('a')
-        parsed.section[2].value.value should be('b')
-        parsed.section[3].value.value should be('c')
-        parsed.section[4].value.value should be('d')
+          Parse[Concat[WithName[Literal['a'], "The a"],
+                       Concat[WithName[Literal['b'], "The b"],
+                              Concat[WithName[Literal['c'], "The c"], WithName[Literal['d'], "The d"]]]]].parse("abcd")
+        parsed.section[1].value should be('a')
+        parsed.section[2].value should be('b')
+        parsed.section[3].value should be('c')
+        parsed.section[4].value should be('d')
         parsed.section["The a"].value should be('a')
         parsed.section["The b"].value should be('b')
         parsed.section["The c"].value should be('c')
@@ -84,12 +73,12 @@ class NamedSpec extends RopeLaws with CommonGens {
       }
       """Does not compile if the name cannot be found""" in {
         val Parse.Result.Complete(parsed @ _) =
-          Parse[Concat[Named[Literal['a'], "The a"], Named[Literal['b'], "The b"]]].parse("ab")
+          Parse[Concat[WithName[Literal['a'], "The a"], WithName[Literal['b'], "The b"]]].parse("ab")
         """parsed.section["The c"]""" shouldNot typeCheck
       }
       """Does not compile if the name is duplicated""" in {
         val Parse.Result.Complete(parsed @ _) =
-          Parse[Concat[Named[Literal['a'], "Same"], Named[Literal['b'], "Same"]]].parse("ab")
+          Parse[Concat[WithName[Literal['a'], "Same"], WithName[Literal['b'], "Same"]]].parse("ab")
         """parsed.section["Same"]""" shouldNot typeCheck
       }
     }

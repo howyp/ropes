@@ -133,11 +133,11 @@ Scalacheck <code class="highlighter-rouge">Arbitrary</code>:</p>
 </span>
 <span class="nc">List</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="mi">5</span><span class="o">)(</span><span class="n">arbitrary</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">].</span><span class="n">sample</span><span class="o">).</span><span class="n">flatten</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">write</span> <span class="o">+</span> <span class="sc">'\n'</span><span class="o">)</span>
 <span class="c1">// res6: List[String] =
-// List("@ᐡ옼ཆຑꝻ坝摭폋㡵ዛꍐ嫁졙穦黔舅퇱베觲뒦皆⛻ⱇᯠᱲ㠫鎳ꠚ뷉캂妩ퟸ⠰ⱚ묿
-// ", "@ꆦ⨋ᕻꤚẗ궨ﺉ秞䖶꾚繑㣓Ĵ쥆ﴥḃ軗蝼ങ劄䆷涭ꎲ稹﷠洨䘇Ⳋ㧗ꞗ꧆첄툵榼춫뇝ꢮ亅㎣꠫끩쎟ꛊﻵ捧ǽ￼翎쳧쯬꜏ᕰ璃沇짣ꥍ薇鿥䮎卺☂쀴⸂霌諸佨䛇瑤쀦⋈㳠墍駧ఙꃻ銐ᨢՐ햇ắ䱳儕憷険厨䠎일
-// ", "@饒㞘ᨩ맪碔ස哱큌ﴎꋑĤ㛛万헋슚挌榎ᗐꂃ꒒殢틜垻娓쬭ຒḧ䳾⨞찙欆澮ಐ腦뒡䃺⬅䬻鴯⮆틮̭瘞ꎳ㺀䩌磷옔룉捶ↈ笒蘆핔椧搹࿾蠬㙂Ὄ觸舤庉柒꟔
-// ", "@讔㨈ᯆⲉ巗鱏帇惙芾왿ᅢঅ䕰鐯᭶探
-// ", "@薅ﭖ䪐墔來兿䎽嚌␪뺱퉫苝흝ꃢ墉⬦뽚耦ΐ陝ﰼ⹚돡ᔩ䵉Ê໺臘ͅ좟ꐳ⡛𢡄䚲끰ꂶ瀻ᖊ㶥泗퓆릤覝⮭䠳힎़勸쌞Ṃ鮿䄇툋黩ஸ਱톡େ蘛椔ᓰ蔞ᬳ⮅槢槰褎鸬빱
+// List("@᱕굅ᗩ꽦텏ਔ萞丠젣詳뷟꾚蘆퉣酌駷舀䮁鼼丣톣๊᫻囗룽ṁ鷯欳퉴渵쀇ୠ塎氒鵸䉹䱼㓒횗釅탒뵊죣彃ￃ〶ᖅ
+// ", "@Ღ㷠戋ᷡ耐塵㶈怽꜌왂晻˲㰄붥弡ᩘ〈䰔눝첣娴馍Ԥ縙䦯Ȇ邈ệ㋬
+// ", "@ఱꞈ稌璉䂧얳䲟昢轕⥭쁬ᓛ称麎点仃㟚⺄⥹볬ㅵ裫ሓ욖今옳᷺챙㬿琝巾玥
+// ", "@譒総㑿䓆ષ扬豮蝗ᗋ⩏多珫鱵鸋巳䬪ꧼ썚偅죳낡羅냫받弖쉓㊌ꎹ͐鄃◼ၢ䯔嚍桄㮪㣖霓╯ᾥង螼ᷰ珑䟼砸엽䍊룱쫙ꃌ삦迳쀋ᬹ㦋븰푂㔦磿⋼鷰홇ʷ䢒鲩
+// ", "@爸䴀ܘ눳ⱚ㐑
 // ")
 </span></code></pre>
 </div>
@@ -172,11 +172,11 @@ usernames which are too long or have non-letter characters:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">List</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="mi">5</span><span class="o">)(</span><span class="n">arbitrary</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">].</span><span class="n">sample</span><span class="o">).</span><span class="n">flatten</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">write</span> <span class="o">+</span> <span class="sc">'\n'</span><span class="o">)</span>
 <span class="c1">// res10: List[String] =
-// List("@kgsaoienyGItbTL
-// ", "@i
-// ", "@SPkBQyN
-// ", "@hvwOYIy
-// ", "@IqjzBzZnaq
+// List("@OzBLKpUyE
+// ", "@RIxZgWSiKexrPP
+// ", "@kldoa
+// ", "@Yxt
+// ", "@V
 // ")
 </span></code></pre>
 </div>
@@ -274,9 +274,9 @@ index:</p>
 
 <p>If we’d like, we can also access sections by giving them a name:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="kt">Area</span>   <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">3</span>, <span class="kt">Digit</span><span class="o">]</span> <span class="nc">Named</span> <span class="s">"Area"</span>
-<span class="k">type</span> <span class="kt">Group</span>  <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">2</span>, <span class="kt">Digit</span><span class="o">]</span> <span class="nc">Named</span> <span class="s">"Group"</span>
-<span class="k">type</span> <span class="kt">Serial</span> <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">4</span>, <span class="kt">Digit</span><span class="o">]</span> <span class="nc">Named</span> <span class="s">"Serial"</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="kt">Area</span>   <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">3</span>, <span class="kt">Digit</span><span class="o">]</span> <span class="nc">WithName</span> <span class="s">"Area"</span>
+<span class="k">type</span> <span class="kt">Group</span>  <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">2</span>, <span class="kt">Digit</span><span class="o">]</span> <span class="nc">WithName</span> <span class="s">"Group"</span>
+<span class="k">type</span> <span class="kt">Serial</span> <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">4</span>, <span class="kt">Digit</span><span class="o">]</span> <span class="nc">WithName</span> <span class="s">"Serial"</span>
 </code></pre>
 </div>
 
@@ -302,9 +302,9 @@ naturally represented as <code class="highlighter-rouge">Int</code>s.</p>
 <p>Ropes provides a way to do this using <code class="highlighter-rouge">ConvertedTo</code>, which takes a rope
 type and the type you want to convert to and from:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="kt">Area</span>   <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">3</span>, <span class="kt">Digit</span><span class="o">]</span> <span class="nc">ConvertedTo</span> <span class="nc">Int</span> <span class="nc">Named</span> <span class="s">"Area"</span>
-<span class="k">type</span> <span class="kt">Group</span>  <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">2</span>, <span class="kt">Digit</span><span class="o">]</span> <span class="nc">ConvertedTo</span> <span class="nc">Int</span> <span class="nc">Named</span> <span class="s">"Group"</span>
-<span class="k">type</span> <span class="kt">Serial</span> <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">4</span>, <span class="kt">Digit</span><span class="o">]</span> <span class="nc">ConvertedTo</span> <span class="nc">Int</span> <span class="nc">Named</span> <span class="s">"Serial"</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="kt">Area</span>   <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">3</span>, <span class="kt">Digit</span><span class="o">]</span> <span class="nc">ConvertedTo</span> <span class="nc">Int</span> <span class="nc">WithName</span> <span class="s">"Area"</span>
+<span class="k">type</span> <span class="kt">Group</span>  <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">2</span>, <span class="kt">Digit</span><span class="o">]</span> <span class="nc">ConvertedTo</span> <span class="nc">Int</span> <span class="nc">WithName</span> <span class="s">"Group"</span>
+<span class="k">type</span> <span class="kt">Serial</span> <span class="o">=</span> <span class="nc">Repeated</span><span class="o">.</span><span class="nc">Exactly</span><span class="o">[</span><span class="err">4</span>, <span class="kt">Digit</span><span class="o">]</span> <span class="nc">ConvertedTo</span> <span class="nc">Int</span> <span class="nc">WithName</span> <span class="s">"Serial"</span>
 </code></pre>
 </div>
 

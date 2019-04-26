@@ -18,16 +18,6 @@ package ropes.core
 
 import instances._
 
-sealed trait Naming
-object Naming {
-  sealed trait Anonymous                         extends Naming
-  sealed trait Named[N <: String with Singleton] extends Naming
-}
-trait NameOps[R <: Rope] {
-  //This is a safe implementation *only* because the name is a phantom type
-  def withName[N <: String with Singleton]: R WithName N = this.asInstanceOf[R WithName N]
-}
-
 /**
   * Super-type of all available format specifications for strongly typed `String`s.
   */

@@ -226,9 +226,9 @@ parsed.section[5].write
 If we'd like, we can also access sections by giving them a name:
 
 ```tut:silent
-type Area   = Repeated.Exactly[3, Digit] WithName "Area"
-type Group  = Repeated.Exactly[2, Digit] WithName "Group"
-type Serial = Repeated.Exactly[4, Digit] WithName "Serial"
+type Area   = Repeated.Exactly[3, Digit] Named "Area"
+type Group  = Repeated.Exactly[2, Digit] Named "Group"
+type Serial = Repeated.Exactly[4, Digit] Named "Serial"
 ```
 
 ```tut:invisible
@@ -254,9 +254,9 @@ Ropes provides a way to do this using `ConvertedTo`, which takes a rope
 type and the type you want to convert to and from:
 
 ```tut:silent
-type Area   = Repeated.Exactly[3, Digit] ConvertedTo Int WithName "Area"
-type Group  = Repeated.Exactly[2, Digit] ConvertedTo Int WithName "Group"
-type Serial = Repeated.Exactly[4, Digit] ConvertedTo Int WithName "Serial"
+type Area   = Repeated.Exactly[3, Digit] ConvertedTo Int Named "Area"
+type Group  = Repeated.Exactly[2, Digit] ConvertedTo Int Named "Group"
+type Serial = Repeated.Exactly[4, Digit] ConvertedTo Int Named "Serial"
 ```
 
 ```tut:invisible

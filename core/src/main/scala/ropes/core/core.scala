@@ -39,5 +39,5 @@ package object core extends DigitInstances with OptionalInstances {
       ConvertedTo.fromTarget[Repeated[0, 1, R], Option[R]](option).getOrElse(throw new IllegalStateException())
   }
 
-  type WithName[R <: Rope, N <: String with Singleton] = R { type Name = Naming.Named[N] }
+  type Named[R <: Rope, N <: String with Singleton] = R { type Name = Naming.Assigned[N] }
 }

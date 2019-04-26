@@ -16,7 +16,7 @@
 
 package ropes.core.instances
 
-import ropes.core.{Concat, Naming, Parse, Rope, SectionFinder, WithName, Write}
+import ropes.core.{Concat, Naming, Parse, Rope, SectionFinder, Named, Write}
 
 private[ropes] trait ConcatExplicitSectionFinderInstances {
   implicit def sectionByNumber1[Section1 <: Rope, Section2 <: Rope]
@@ -26,11 +26,11 @@ private[ropes] trait ConcatExplicitSectionFinderInstances {
     : SectionFinder.Aux[Concat[Section1, Section2], 2, Section2] = SectionFinder.instance(_.suffix)
 
   implicit def sectionBySubNameSuffix[Prefix <: Rope, Suffix <: Rope, SectionName <: String with Singleton]
-    : SectionFinder.Aux[Concat[Prefix, Suffix WithName SectionName], SectionName, Suffix WithName SectionName] =
+    : SectionFinder.Aux[Concat[Prefix, Suffix Named SectionName], SectionName, Suffix Named SectionName] =
     SectionFinder.instance(_.suffix)
 
   implicit def sectionBySubNamePrefix[Prefix <: Rope, Suffix <: Rope, SectionName <: String with Singleton]
-    : SectionFinder.Aux[Concat[Prefix WithName SectionName, Suffix], SectionName, Prefix WithName SectionName] =
+    : SectionFinder.Aux[Concat[Prefix Named SectionName, Suffix], SectionName, Prefix Named SectionName] =
     SectionFinder.instance(_.prefix)
 
   implicit def sectionByName2ForConcat[Prefix <: Rope, Suffix <: Rope, SectionName <: String with Singleton](

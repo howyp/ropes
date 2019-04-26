@@ -18,11 +18,12 @@ package ropes.core
 
 sealed trait Naming
 object Naming {
-  sealed trait Anonymous                         extends Naming
-  sealed trait Named[N <: String with Singleton] extends Naming
+  sealed trait Unassigned                           extends Naming
+  sealed trait Assigned[N <: String with Singleton] extends Naming
 }
 
 trait NameOps[R <: Rope] {
   //This is a safe implementation *only* because the name is a phantom type
-  def withName[N <: String with Singleton]: R WithName N = this.asInstanceOf[R WithName N]
+  def assignName[N <: String with Singleton]: R Named N = this.asInstanceOf[R Named N]
+  def unassignName: R                                   = this.asInstanceOf[R]
 }

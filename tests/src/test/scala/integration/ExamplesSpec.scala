@@ -48,12 +48,12 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
       // ^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? [0-9][A-Za-z]{2}|[Gg][Ii][Rr] 0[Aa]{2})$
       type PostCode = Concat[PostCode.OutwardCode, Concat[Literal[' '], PostCode.InwardCode]]
       object PostCode {
-        type Area        = Repeated[1, 2, Letter.Uppercase] WithName "Area"
-        type District    = Concat[Repeated[1, 2, Digit] ConvertedTo Int, Optional[Letter.Uppercase]] WithName "District"
+        type Area        = Repeated[1, 2, Letter.Uppercase] Named "Area"
+        type District    = Concat[Repeated[1, 2, Digit] ConvertedTo Int, Optional[Letter.Uppercase]] Named "District"
         type OutwardCode = Concat[Area, District] Or (Literal['G'] +: Literal['I'] +: Literal['R'])
 
-        type Sector     = Digit
-        type Unit       = Repeated[2, 2, Letter.Uppercase]
+        type Sector     = Digit Named "Sector"
+        type Unit       = Repeated[2, 2, Letter.Uppercase] Named "Unit"
         type InwardCode = Sector +: Unit
       }
       "parsing and de-composing" - {
@@ -94,11 +94,10 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
       "composing and writing" - {
         "CR2 6XH" in {
 //          TODO Can we do this better? For instance allow the ' ' char to be implicit
-//          TODO should we change the variance of rope subclasses to avoid the explicity typing for Optional?
           val postcode = for {
             area                          <- Rope.parseTo[PostCode.Area]("CR")
             district                      <- Rope.parseTo[PostCode.District]("2")
-            outward: PostCode.OutwardCode = Or.First(area.withName["Area"] +: district.withName["District"])
+            outward: PostCode.OutwardCode = Or.First(area +: district)
             sector                        <- Digit.from(6)
             unit                          <- Rope.parseTo[PostCode.Unit]("XH")
           } yield outward +: ' ' +: sector +: unit
@@ -108,7 +107,7 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
           val postcode = for {
             area                          <- Rope.parseTo[PostCode.Area]("EC")
             district                      <- Rope.parseTo[PostCode.District]("1A")
-            outward: PostCode.OutwardCode = Or.First(area.withName["Area"] +: district.withName["District"])
+            outward: PostCode.OutwardCode = Or.First(area +: district)
             inward                        <- Rope.parseTo[PostCode.InwardCode]("1BB")
           } yield outward +: ' ' +: inward
           postcode.getOrElse(fail()).write should be("EC1A 1BB")
@@ -166,11 +165,11 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
       // number because they were formerly assigned by geographical region; the middle two
       // digits, known as the group number; and the final four digits, known as the
       // serial number.
-      type Area   = Repeated.Exactly[3, Digit] ConvertedTo Int
-      type Group  = Repeated.Exactly[2, Digit] ConvertedTo Int
-      type Serial = Repeated.Exactly[4, Digit] ConvertedTo Int
+      type Area   = Repeated.Exactly[3, Digit] ConvertedTo Int Named "Area"
+      type Group  = Repeated.Exactly[2, Digit] ConvertedTo Int Named "Group"
+      type Serial = Repeated.Exactly[4, Digit] ConvertedTo Int Named "Serial"
       type Dash   = Literal['-']
-      type SSN    = (Area WithName "Area") +: Dash +: (Group WithName "Group") +: Dash +: (Serial WithName "Serial")
+      type SSN    = Area +: Dash +: Group +: Dash +: Serial
       "078-05-1120" - {
         "parsing and de-composing" in {
           val parsed = Rope.parseTo[SSN]("078-05-1120").getOrElse(fail())
@@ -180,12 +179,12 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
           parsed.write should be("078-05-1120")
         }
         "composing and writing" in {
-          //TODO can we make this more elegant?
+          //TODO can we make this more elegant, only supplying the Rope type to `fromTarget`?
           val composed = for {
             area   <- ConvertedTo.fromTarget[Repeated.Exactly[3, Digit], Int](78)
             group  <- ConvertedTo.fromTarget[Repeated.Exactly[2, Digit], Int](5)
             serial <- ConvertedTo.fromTarget[Repeated.Exactly[4, Digit], Int](1120)
-          } yield area.withName["Area"] +: '-' +: group.withName["Group"] +: '-' +: serial.withName["Serial"]
+          } yield area +: '-' +: group +: '-' +: serial
 
           composed.getOrElse(fail()).write should be("078-05-1120")
         }

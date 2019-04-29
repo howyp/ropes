@@ -38,24 +38,27 @@ object Reduce {
   implicit def `reduce||`[L <: Nestable, R <: Nestable](implicit left: Reduce[L], right: Reduce[R]): Reduce[L || R] = {
     val all = left.reduce ::: right.reduce
     instance(
-      all.sortBy(_._1).foldLeft(List.empty[(Char, Char)]) {
-        case (List(), first) => List(first)
-        case (merged, next)  => merged.init ::: merge(merged.last, next)
-      }
+      mergeAll(all)
     )
+  }
+
+  private def mergeAll(all: List[(Char, Char)]) = {
+    all.sortBy(_._1).foldLeft(List.empty[(Char, Char)]) {
+      case (List(), first) => List(first)
+      case (merged, next) =>
+        val value = merged.init ::: merge(merged.last, next)
+        println(all.sortBy(_._1) -> value)
+        value
+    }
   }
 
   private def merge(l: (Char, Char), r: (Char, Char)): List[(Char, Char)] = {
     val (l1, _) = l
     val (r1, _) = r
-    println(l -> r)
 
     val (s @ (s1, s2), b @ (b1, b2)) = if (l1 <= r1) (l, r) else (r, l)
     if (s2 + 1 >= b1.toInt) List(s1 -> b2)
-    else {
-      println(((s1, s2), (b1, b2)));
-      List(s, b)
-    }
+    else List(s, b)
   }
   implicit def `reduce-`[Start <: Char with Singleton, End <: Char with Singleton](
       implicit start: ValueOf[Start],
@@ -67,7 +70,27 @@ object Reduce {
   implicit val `reduce*` : Reduce[*] = instance(Char.MinValue -> Char.MaxValue)
 
   implicit def `reduce&^`[L <: Spec, R <: Nestable](implicit left: Reduce[L], right: Reduce[R]): Reduce[L &^ R] = {
-    val head = left.reduce.head
-    instance(List(head._1 -> (right.reduce.head._1 - 1).toChar, (right.reduce.head._2 + 1).toChar -> head._2))
+    val l = left.reduce
+    val r = right.reduce
+    val removed = r.foldLeft(l) {
+      case (previous, a) =>
+        val value = previous.flatMap(removeRight(_, a))
+        println("remove" -> a -> previous -> value)
+        value
+    }
+    instance(mergeAll(removed))
+  }
+
+  private def removeRight(l: (Char, Char), r: (Char, Char)) = {
+    val (l1, l2) = l
+    val (r1, r2) = r
+
+    if (r1 <= l1 && l2 <= r2) List.empty // right completely overlaps left
+    else if (l2 < r1 || r2 < l1) List(l) // left and right do not intersect
+    else
+      List(
+        Option.when(l._1 < r._1)(l._1              -> (r._1 - 1).toChar),
+        Option.when(r._2 < l._2)((r._2 + 1).toChar -> l._2)
+      ).flatten
   }
 }

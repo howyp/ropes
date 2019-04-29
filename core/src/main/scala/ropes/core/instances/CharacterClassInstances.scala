@@ -16,11 +16,10 @@
 
 package ropes.core.instances
 
-import ropes.core.Spec.Validate
 import ropes.core._
 
 private[ropes] trait CharacterClassInstances {
-  implicit def characterClassParse[S <: Spec: Validate, N <: Naming]: Parse[CharacterClass[S] { type Name = N }] = {
+  implicit def characterClassParse[S <: Spec: Reduce, N <: Naming]: Parse[CharacterClass[S] { type Name = N }] = {
     str =>
       str.headOption
         .toRight(left = Rope.InvalidValue)

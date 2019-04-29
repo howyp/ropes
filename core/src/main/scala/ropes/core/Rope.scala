@@ -17,7 +17,6 @@
 package ropes.core
 
 import instances._
-import ropes.core.Spec.Validate
 
 /**
   * Super-type of all available format specifications for strongly typed `String`s.
@@ -198,32 +197,14 @@ object Range extends RangeInstances {
     from[Start, End](char).getOrElse(throw new IllegalArgumentException(char.toString))
 }
 
-sealed trait Spec
-object Spec {
-  sealed trait Nestable extends Spec
-  type * = *.type
-  case object *                                                                                  extends Spec
-  case class ==[V <: Char with Singleton](value: V)                                              extends Nestable
-  case class ||[L <: Nestable, R <: Nestable](left: L, right: R)                                 extends Nestable
-  case class &^[L <: Spec, R <: Nestable](left: L, right: R)                                     extends Nestable
-  case class -[Start <: Char with Singleton, End <: Char with Singleton](start: Start, end: End) extends Nestable
-
-  trait Validate[S <: Spec] { def valid(c: Char): Boolean }
-
-  implicit def `validate-`[Start <: Char with Singleton, End <: Char with Singleton](
-      implicit start: ValueOf[Start],
-      end: ValueOf[End]
-  ): Validate[Start - End] = ???
-}
-
 case class CharacterClass[S <: Spec](value: Char) extends Rope {
   type Name = Naming.Unassigned
 }
 object CharacterClass extends CharacterClassInstances {
-  def from[S <: Spec](char: Char)(
-      implicit validate: Validate[S]): Either[Rope.InvalidValue.type, CharacterClass[Spec]] =
-    if (validate.valid(char)) Right(new CharacterClass[Spec](char) {})
-    else Left(Rope.InvalidValue)
+  def from[S <: Spec](char: Char)(implicit validate: Reduce[S]): Either[Rope.InvalidValue.type, CharacterClass[Spec]] =
+    ???
+  //    if (validate.valid(char)) Right(new CharacterClass[Spec](char) {})
+//    else Left(Rope.InvalidValue)
 
 //  def unsafeFrom[Start <: Char with Singleton: ValueOf, End <: Char with Singleton: ValueOf](
 //                                                                                              char: Char): CharacterClass[Start, End] =

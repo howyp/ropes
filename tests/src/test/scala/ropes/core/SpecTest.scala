@@ -21,29 +21,42 @@ import ropes.core.Spec._
 
 class SpecTest extends FreeSpec with Matchers {
 
-  //[a]
-  type _1 = ==['a']
+  "Specs reduce down to ranges" - {
+    "==['a']" in {
+      Reduce[==['a']].reduce should contain only ('a' -> 'a')
+    }
+    "|| with two literals" - {
+      "==['a'] || ==['b']" in (Reduce[==['a'] || ==['b']].reduce should contain only ('a'        -> 'b'))
+      "==['b'] || ==['a']" in (Reduce[==['b'] || ==['a']].reduce should contain only ('a'        -> 'b'))
+      "==['a'] || ==['c']" in (Reduce[==['a'] || ==['c']].reduce should contain inOrderOnly ('a' -> 'a', 'c' -> 'c'))
+      "==['c'] || ==['a']" in (Reduce[==['c'] || ==['a']].reduce should contain inOrderOnly ('a' -> 'a', 'c' -> 'c'))
+    }
 
-  //[abc]
-  type _2 = ==['a'] || ==['b'] || ==['c']
+    "|| with three literals" - {
+      "==['a'] || ==['b'] || ==['c']" in (Reduce[==['a'] || ==['b'] || ==['c']].reduce should contain only ('a'        -> 'c'))
+      "==['a'] || ==['c'] || ==['b']" in (Reduce[==['a'] || ==['c'] || ==['b']].reduce should contain only ('a'        -> 'c'))
+      "==['c'] || ==['b'] || ==['a']" in (Reduce[==['c'] || ==['b'] || ==['a']].reduce should contain only ('a'        -> 'c'))
+      "==['c'] || ==['d'] || ==['a']" in (Reduce[==['c'] || ==['d'] || ==['a']].reduce should contain inOrderOnly ('a' -> 'a', 'c' -> 'd'))
+    }
 
-  //[^a]
-  type _3 = ('0' - 'Z') &^ ==['a']
+    //[^a]
+    type _3 = ('0' - 'Z') &^ ==['a']
 
-  //[^abc]
-  type _4 = * &^ (==['a'] || ==['b'] || ==['c'])
+    //[^abc]
+    type _4 = * &^ (==['a'] || ==['b'] || ==['c'])
 
-  //[a-zA-Z]
-  type _5 = ('a' - 'z') || ('A' - 'Z')
+    //[a-zA-Z]
+    type _5 = ('a' - 'z') || ('A' - 'Z')
 
-  //[^a-zA-Z]
-  type _6 = * &^ (('a' - 'z') || ('a' - 'z'))
+    //[^a-zA-Z]
+    type _6 = * &^ (('a' - 'z') || ('a' - 'z'))
 
-  //[^abcA-Z]
-  type _7 = * &^ (==['a'] || ==['b'] || ==['c'] || ('A' - 'Z'))
+    //[^abcA-Z]
+    type _7 = * &^ (==['a'] || ==['b'] || ==['c'] || ('A' - 'Z'))
 
-  //[abcA-Z,.;]
-  type _8 = ==['a'] || ==['b'] || ==['c'] || ('A' - 'Z') || ==[','] || ==['.'] || ==[';']
+    //[abcA-Z,.;]
+    type _8 = ==['a'] || ==['b'] || ==['c'] || ('A' - 'Z') || ==[','] || ==['.'] || ==[';']
 
-  type _9 = ('a' - 'z') &^ ('h' - 'j')
+    type _9 = ('a' - 'z') &^ ('h' - 'j')
+  }
 }

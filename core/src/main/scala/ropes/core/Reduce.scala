@@ -57,4 +57,17 @@ object Reduce {
       List(s, b)
     }
   }
+  implicit def `reduce-`[Start <: Char with Singleton, End <: Char with Singleton](
+      implicit start: ValueOf[Start],
+      end: ValueOf[End]): Reduce[Start - End] = {
+    if (start.value <= end.value) instance(start.value -> end.value)
+    else throw new IllegalStateException(s"""Range "'${start.value}' - '${end.value}'" is invalid""")
+  }
+
+  implicit val `reduce*` : Reduce[*] = instance(Char.MinValue -> Char.MaxValue)
+
+  implicit def `reduce&^`[L <: Spec, R <: Nestable](implicit left: Reduce[L], right: Reduce[R]): Reduce[L &^ R] = {
+    val head = left.reduce.head
+    instance(List(head._1 -> (right.reduce.head._1 - 1).toChar, (right.reduce.head._2 + 1).toChar -> head._2))
+  }
 }

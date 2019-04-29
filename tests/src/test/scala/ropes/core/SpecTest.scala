@@ -25,18 +25,49 @@ class SpecTest extends FreeSpec with Matchers {
     "==['a']" in {
       Reduce[==['a']].reduce should contain only ('a' -> 'a')
     }
-    "|| with two literals" - {
-      "==['a'] || ==['b']" in (Reduce[==['a'] || ==['b']].reduce should contain only ('a'        -> 'b'))
-      "==['b'] || ==['a']" in (Reduce[==['b'] || ==['a']].reduce should contain only ('a'        -> 'b'))
-      "==['a'] || ==['c']" in (Reduce[==['a'] || ==['c']].reduce should contain inOrderOnly ('a' -> 'a', 'c' -> 'c'))
-      "==['c'] || ==['a']" in (Reduce[==['c'] || ==['a']].reduce should contain inOrderOnly ('a' -> 'a', 'c' -> 'c'))
-    }
+    "|| with" - {
+      "two literals" - {
+        "==['a'] || ==['b']" in (Reduce[==['a'] || ==['b']].reduce should contain only ('a'        -> 'b'))
+        "==['b'] || ==['a']" in (Reduce[==['b'] || ==['a']].reduce should contain only ('a'        -> 'b'))
+        "==['a'] || ==['c']" in (Reduce[==['a'] || ==['c']].reduce should contain inOrderOnly ('a' -> 'a', 'c' -> 'c'))
+        "==['c'] || ==['a']" in (Reduce[==['c'] || ==['a']].reduce should contain inOrderOnly ('a' -> 'a', 'c' -> 'c'))
+      }
 
-    "|| with three literals" - {
-      "==['a'] || ==['b'] || ==['c']" in (Reduce[==['a'] || ==['b'] || ==['c']].reduce should contain only ('a'        -> 'c'))
-      "==['a'] || ==['c'] || ==['b']" in (Reduce[==['a'] || ==['c'] || ==['b']].reduce should contain only ('a'        -> 'c'))
-      "==['c'] || ==['b'] || ==['a']" in (Reduce[==['c'] || ==['b'] || ==['a']].reduce should contain only ('a'        -> 'c'))
-      "==['c'] || ==['d'] || ==['a']" in (Reduce[==['c'] || ==['d'] || ==['a']].reduce should contain inOrderOnly ('a' -> 'a', 'c' -> 'd'))
+      "three literals" - {
+        "==['a'] || ==['b'] || ==['c']" in (Reduce[==['a'] || ==['b'] || ==['c']].reduce should contain only ('a'        -> 'c'))
+        "==['a'] || ==['c'] || ==['b']" in (Reduce[==['a'] || ==['c'] || ==['b']].reduce should contain only ('a'        -> 'c'))
+        "==['c'] || ==['b'] || ==['a']" in (Reduce[==['c'] || ==['b'] || ==['a']].reduce should contain only ('a'        -> 'c'))
+        "==['c'] || ==['d'] || ==['a']" in (Reduce[==['c'] || ==['d'] || ==['a']].reduce should contain inOrderOnly ('a' -> 'a', 'c' -> 'd'))
+      }
+    }
+    "- with" - {
+      "two different characters in the correct order" - {
+        "('a' - 'z')" in (Reduce[('a' - 'z')].reduce should contain only ('a' -> 'z'))
+        "('a' - 'b')" in (Reduce[('a' - 'b')].reduce should contain only ('a' -> 'b'))
+      }
+      "two different characters in the wrong order" - {
+        "('b' - 'a')" in (an[Exception] should be thrownBy Reduce[('b' - 'a')].reduce)
+        "('9' - '1')" in (an[Exception] should be thrownBy Reduce[('9' - '1')].reduce)
+      }
+      "the same characters" - {
+        "('a' - 'a')" in (Reduce[('a' - 'a')].reduce should contain only ('a' -> 'a'))
+      }
+    }
+    "*" in (Reduce[*].reduce should contain only (Char.MinValue -> Char.MaxValue))
+    "&^ with" - {
+      "* and a literal char" - {
+        "* &^ ==['c']" in (Reduce[* &^ ==['c']].reduce should contain inOrderOnly (Char.MinValue -> 'b', 'd' -> Char.MaxValue))
+      }
+      "* and a '-'" - {
+        "* &^ ('c' - 'e')" in (Reduce[* &^ ('c' - 'e')].reduce should contain inOrderOnly (Char.MinValue -> 'b', 'f' -> Char.MaxValue))
+      }
+      "* and multiple literal chars" ignore {
+        "* &^ (==['a'] || ==['g'])" in (Reduce[* &^ (==['a'] || ==['g'])].reduce should contain inOrderOnly (
+          Char.MinValue -> '`',
+          'b'           -> 'f',
+          'h'           -> Char.MaxValue
+        ))
+      }
     }
 
     //[^a]

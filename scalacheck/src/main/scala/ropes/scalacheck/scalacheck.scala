@@ -55,18 +55,17 @@ package object scalacheck {
         .map(Range.unsafeFrom[Start, End](_).asInstanceOf[Range[Start, End] { type Name = N }]))
 
   implicit def arbCharacterClass[
-      Start <: Char with Singleton,
-      End <: Char with Singleton,
+      S <: Spec,
       N <: Naming
   ](
       implicit
-      start: ValueOf[Start],
-      end: ValueOf[End]
-  ): Arbitrary[CharacterClass[Spec.-[Start, End]] { type Name = N }] =
-    Arbitrary(
-      Gen
-        .choose(start.value: Char, end.value: Char)
-        .map(CharacterClass[Spec.-[Start, End]](_).asInstanceOf[CharacterClass[Spec.-[Start, End]] { type Name = N }]))
+      reduce: Reduce[S]
+  ): Arbitrary[CharacterClass[S] { type Name = N }] =
+    Arbitrary((reduce.reduce.map { case (s, b) => Gen.choose(s, b) } match {
+      case List()                                   => ???
+      case List(single)                             => single
+      case firstRange :: secondRange :: otherRanges => Gen.oneOf(firstRange, secondRange, otherRanges: _*)
+    }).map(CharacterClass[S](_).asInstanceOf[CharacterClass[S] { type Name = N }]))
 
   implicit def arbConvertedTo[
       Source <: Rope,

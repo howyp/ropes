@@ -24,26 +24,42 @@ import ropes.core.Spec._
 import ropes.scalacheck._
 
 class CharacterClassSpec extends RopeLaws with CommonGens {
-  "A CharacterClass['a','z']" - {
+  "A CharacterClass" - {
     val genAtoZ = Gen.choose('a', 'z')
     val genNonAtoZ = Gen
       .oneOf(
         Gen.choose(Char.MinValue, ('a' - 1).toChar),
         Gen.choose(('z' + 1).toChar, Char.MaxValue)
       )
-
-//    `obeys Rope laws`[CharacterClass['a' - 'z']](
-//      genValidStringsWithDecompositionAssertion = genAtoZ.map { char =>
-//        char.toString -> (_.value should be(char))
-//      },
-//      genSuffixToMakeValidStringIncomplete = Some(genNonEmptyString),
-//      genInvalidStrings = Some(genNonAtoZ.map(_.toString))
-//    )(CharacterClass.characterClassParse, arbCharacterClass, CharacterClass.characterClassWrite)
-//    "CharacterClass can be created from valid characters" - forAll(genAtoZ) { char =>
-//      CharacterClass.from['a', 'z'](char).getOrElse(fail()).value should be(char)
-//    }
-//    "CharacterClass cannot be created from invalid characters" - forAll(genNonAtoZ) { char =>
-//      CharacterClass.from['a', 'z'](char) should be(a[Left[_, _]])
-//    }
+    "['a' - 'z']" - {
+      `obeys Rope laws`[CharacterClass['a' - 'z']](
+        genValidStringsWithDecompositionAssertion = genAtoZ.map { char =>
+          char.toString -> (_.value should be(char))
+        },
+        genSuffixToMakeValidStringIncomplete = Some(genNonEmptyString),
+        genInvalidStrings = Some(genNonAtoZ.map(_.toString))
+      )
+      "CharacterClass can be created from valid characters" in forAll(genAtoZ) { char =>
+        CharacterClass.from['a' - 'z'](char).getOrElse(fail()).value should be(char)
+      }
+      "CharacterClass cannot be created from invalid characters" in forAll(genNonAtoZ) { char =>
+        CharacterClass.from['a' - 'z'](char) should be(a[Left[_, _]])
+      }
+    }
+    "[* &^ ('a' - 'z')]" - {
+      `obeys Rope laws`[CharacterClass[* &^ ('a' - 'z')]](
+        genValidStringsWithDecompositionAssertion = genNonAtoZ.map { char =>
+          char.toString -> (_.value should be(char))
+        },
+        genSuffixToMakeValidStringIncomplete = Some(genNonEmptyString),
+        genInvalidStrings = Some(genAtoZ.map(_.toString))
+      )
+      "CharacterClass can be created from valid characters" in forAll(genNonAtoZ) { char =>
+        CharacterClass.from[* &^ ('a' - 'z')](char).getOrElse(fail()).value should be(char)
+      }
+      "CharacterClass cannot be created from invalid characters" in forAll(genAtoZ) { char =>
+        CharacterClass.from[* &^ ('a' - 'z')](char) should be(a[Left[_, _]])
+      }
+    }
   }
 }

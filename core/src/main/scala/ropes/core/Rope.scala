@@ -201,10 +201,10 @@ case class CharacterClass[S <: Spec](value: Char) extends Rope {
   type Name = Naming.Unassigned
 }
 object CharacterClass extends CharacterClassInstances {
-  def from[S <: Spec](char: Char)(implicit validate: Reduce[S]): Either[Rope.InvalidValue.type, CharacterClass[Spec]] =
-    ???
-  //    if (validate.valid(char)) Right(new CharacterClass[Spec](char) {})
-//    else Left(Rope.InvalidValue)
+  //TODO can we avoid re-calculating the reduction for each use?
+  def from[S <: Spec](char: Char)(implicit reduce: Reduce[S]): Either[Rope.InvalidValue.type, CharacterClass[Spec]] =
+    if (reduce.reduce.exists { case (s, g) => s <= char && char <= g }) Right(new CharacterClass[Spec](char) {})
+    else Left(Rope.InvalidValue)
 
 //  def unsafeFrom[Start <: Char with Singleton: ValueOf, End <: Char with Singleton: ValueOf](
 //                                                                                              char: Char): CharacterClass[Start, End] =

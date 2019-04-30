@@ -202,13 +202,15 @@ case class CharacterClass[S <: Spec](value: Char) extends Rope {
 }
 object CharacterClass extends CharacterClassInstances {
   //TODO can we avoid re-calculating the reduction for each use?
-  def from[S <: Spec](char: Char)(implicit reduce: Reduce[S]): Either[Rope.InvalidValue.type, CharacterClass[Spec]] =
-    if (reduce.reduce.exists { case (s, g) => s <= char && char <= g }) Right(new CharacterClass[Spec](char) {})
+  def from[S <: Spec](char: Char)(implicit reduce: Reduce[S]): Either[Rope.InvalidValue.type, CharacterClass[Spec]] = {
+    val reduced = reduce.reduce
+    if (reduced.isEmpty) throw new IllegalStateException("Cannot create a instance of an empty CharacterClass")
+    if (reduced.exists { case (s, g) => s <= char && char <= g }) Right(new CharacterClass[Spec](char) {})
     else Left(Rope.InvalidValue)
+  }
 
-//  def unsafeFrom[Start <: Char with Singleton: ValueOf, End <: Char with Singleton: ValueOf](
-//                                                                                              char: Char): CharacterClass[Start, End] =
-//    from[Start, End](char).getOrElse(throw new IllegalArgumentException(char.toString))
+  def unsafeFrom[S <: Spec](char: Char)(implicit reduce: Reduce[S]): CharacterClass[Spec] =
+    from[S](char).getOrElse(throw new IllegalArgumentException(char.toString))
 }
 
 /**

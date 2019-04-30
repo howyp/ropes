@@ -46,9 +46,7 @@ object Reduce {
     all.sortBy(_._1).foldLeft(List.empty[(Char, Char)]) {
       case (List(), first) => List(first)
       case (merged, next) =>
-        val value = merged.init ::: merge(merged.last, next)
-        println(all.sortBy(_._1) -> value)
-        value
+        merged.init ::: merge(merged.last, next)
     }
   }
 
@@ -70,14 +68,9 @@ object Reduce {
   implicit val `reduce*` : Reduce[*] = instance(Char.MinValue -> Char.MaxValue)
 
   implicit def `reduce&^`[L <: Spec, R <: Nestable](implicit left: Reduce[L], right: Reduce[R]): Reduce[L &^ R] = {
-    val l = left.reduce
-    val r = right.reduce
-    val removed = r.foldLeft(l) {
-      case (previous, a) =>
-        val value = previous.flatMap(removeRight(_, a))
-        println("remove" -> a -> previous -> value)
-        value
-    }
+    val l       = left.reduce
+    val r       = right.reduce
+    val removed = r.foldLeft(l) { case (previous, a) => previous.flatMap(removeRight(_, a)) }
     instance(mergeAll(removed))
   }
 

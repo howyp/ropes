@@ -62,7 +62,7 @@ package object scalacheck {
       reduce: Reduce[S]
   ): Arbitrary[CharacterClass[S] { type Name = N }] =
     Arbitrary((reduce.reduce.map { case (s, b) => Gen.choose(s, b) } match {
-      case List()                                   => ???
+      case List()                                   => throw new IllegalStateException("Cannot create a generator for an empty CharacterClass")
       case List(single)                             => single
       case firstRange :: secondRange :: otherRanges => Gen.oneOf(firstRange, secondRange, otherRanges: _*)
     }).map(CharacterClass[S](_).asInstanceOf[CharacterClass[S] { type Name = N }]))

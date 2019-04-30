@@ -18,7 +18,7 @@ package unit
 
 import gens.CommonGens
 import laws.RopeLaws
-import org.scalacheck.Gen
+import org.scalacheck.{Arbitrary, Gen}
 import ropes.core._
 import ropes.core.Spec._
 import ropes.scalacheck._
@@ -60,6 +60,12 @@ class CharacterClassSpec extends RopeLaws with CommonGens {
       "CharacterClass cannot be created from invalid characters" in forAll(genAtoZ) { char =>
         CharacterClass.from[* &^ ('a' - 'z')](char) should be(a[Left[_, _]])
       }
+    }
+    "Arbitrary CharacterClass cannot be derived when the reduction is empty" in {
+      an[Exception] should be thrownBy Arbitrary.arbitrary[CharacterClass['a' - 'z' &^ ('a' - 'z')]].sample
+    }
+    "CharacterClass cannot be created when the reduction is empty" in forAll { char: Char =>
+      an[Exception] should be thrownBy CharacterClass.from['a' - 'z' &^ ('a' - 'z')](char)
     }
   }
 }

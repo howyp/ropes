@@ -180,6 +180,7 @@ object ConvertedTo extends ConvertedToInstances {
   * @tparam End A singleton `Char` type which is the maximum allowable character, inclusive
   * @param value The single character value, which must be inside the range specified by `Start` and `End`
   */
+//TODO can we implement this in terms of CharacterClass?
 sealed abstract case class Range[Start <: Char with Singleton, End <: Char with Singleton](value: Char)
     extends Rope
     with NameOps[Range[Start, End]] {
@@ -195,6 +196,22 @@ object Range extends RangeInstances {
   def unsafeFrom[Start <: Char with Singleton: ValueOf, End <: Char with Singleton: ValueOf](
       char: Char): Range[Start, End] =
     from[Start, End](char).getOrElse(throw new IllegalArgumentException(char.toString))
+}
+
+sealed abstract case class CharacterClass[S <: Spec](value: Char) extends Rope {
+  type Name = Naming.Unassigned
+}
+object CharacterClass extends CharacterClassInstances {
+  //TODO can we avoid re-calculating the reduction for each use?
+  def from[S <: Spec](char: Char)(implicit reduce: Reduce[S]): Either[Rope.InvalidValue.type, CharacterClass[Spec]] = {
+    val reduced = reduce.reduce
+    if (reduced.isEmpty) throw new IllegalStateException("Cannot create a instance of an empty CharacterClass")
+    if (reduced.exists { case (s, g) => s <= char && char <= g }) Right(new CharacterClass[Spec](char) {})
+    else Left(Rope.InvalidValue)
+  }
+
+  def unsafeFrom[S <: Spec](char: Char)(implicit reduce: Reduce[S]): CharacterClass[Spec] =
+    from[S](char).getOrElse(throw new IllegalArgumentException(char.toString))
 }
 
 /**

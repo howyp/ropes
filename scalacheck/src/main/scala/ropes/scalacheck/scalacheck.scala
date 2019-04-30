@@ -54,6 +54,19 @@ package object scalacheck {
         .choose(start.value: Char, end.value: Char)
         .map(Range.unsafeFrom[Start, End](_).asInstanceOf[Range[Start, End] { type Name = N }]))
 
+  implicit def arbCharacterClass[
+      S <: Spec,
+      N <: Naming
+  ](
+      implicit
+      reduce: Reduce[S]
+  ): Arbitrary[CharacterClass[S] { type Name = N }] =
+    Arbitrary((reduce.reduce.map { case (s, b) => Gen.choose(s, b) } match {
+      case List()                                   => throw new IllegalStateException("Cannot create a generator for an empty CharacterClass")
+      case List(single)                             => single
+      case firstRange :: secondRange :: otherRanges => Gen.oneOf(firstRange, secondRange, otherRanges: _*)
+    }).map(CharacterClass.unsafeFrom[S](_).asInstanceOf[CharacterClass[S] { type Name = N }]))
+
   implicit def arbConvertedTo[
       Source <: Rope,
       Target,

@@ -17,18 +17,11 @@
 package ropes.core
 
 sealed trait Spec
-
 object Spec {
-  sealed trait Nestable extends Spec
-  type * = *.type
-  case object *                                                                                  extends Spec
-  case class ==[V <: Char with Singleton](value: V)                                              extends Nestable
-  case class ||[L <: Nestable, R <: Nestable](left: L, right: R)                                 extends Nestable
-  case class &^[L <: Spec, R <: Nestable](left: L, right: R)                                     extends Nestable
-  case class -[Start <: Char with Singleton, End <: Char with Singleton](start: Start, end: End) extends Nestable
-
-//  implicit def `validate-`[Start <: Char with Singleton, End <: Char with Singleton](
-//      implicit start: ValueOf[Start],
-//      end: ValueOf[End]
-//  ): Reduce[Start - End] = ???
+  sealed trait Nestable                                                    extends Spec
+  sealed trait *                                                           extends Spec
+  sealed trait ==[V <: Char with Singleton]                                extends Nestable
+  sealed trait ||[L <: Nestable, R <: Nestable]                            extends Nestable
+  sealed trait &^[L <: Spec, R <: Nestable]                                extends Nestable
+  sealed trait -[Start <: Char with Singleton, End <: Char with Singleton] extends Nestable
 }

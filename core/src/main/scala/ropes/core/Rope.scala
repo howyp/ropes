@@ -180,6 +180,7 @@ object ConvertedTo extends ConvertedToInstances {
   * @tparam End A singleton `Char` type which is the maximum allowable character, inclusive
   * @param value The single character value, which must be inside the range specified by `Start` and `End`
   */
+//TODO can we implement this in terms of CharacterClass?
 sealed abstract case class Range[Start <: Char with Singleton, End <: Char with Singleton](value: Char)
     extends Rope
     with NameOps[Range[Start, End]] {
@@ -197,7 +198,7 @@ object Range extends RangeInstances {
     from[Start, End](char).getOrElse(throw new IllegalArgumentException(char.toString))
 }
 
-case class CharacterClass[S <: Spec](value: Char) extends Rope {
+sealed abstract case class CharacterClass[S <: Spec](value: Char) extends Rope {
   type Name = Naming.Unassigned
 }
 object CharacterClass extends CharacterClassInstances {

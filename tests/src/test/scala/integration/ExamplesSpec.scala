@@ -17,6 +17,7 @@
 package integration
 
 import ropes.core._
+import ropes.core.Spec._
 import ropes.dsl._
 import ropes.scalacheck._
 
@@ -26,12 +27,21 @@ import org.scalatest.{FreeSpec, Matchers}
 class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyChecks {
   "Some examples of valid ropes include" - {
     "twitter handles" - {
-      //This is very simplified - starts with an '@', then upper or lowercase letter characters
-      type Username      = Repeated[1, 15, Letter]
+      //From https://help.twitter.com/en/managing-your-account/twitter-username-rules :
+      //Username cannot be longer than 15 characters. Your name can be longer (50 characters), but usernames are kept
+      // shorter for the sake of ease. A username can only contain alphanumeric characters (letters A-Z, numbers 0-9)
+      // with the exception of underscores
+      type Username      = Repeated[1, 15, CharacterClass[('a' - 'z') || ('A' - 'Z') || ('0' - '9') || ==['_']]]
       type TwitterHandle = Literal['@'] +: Username
       "parsing and de-composing" in {
-        val Right(parsed) = Rope.parseTo[TwitterHandle]("@HowyP")
-        parsed.suffix.write should be("HowyP")
+        val Right(parsed) = Rope.parseTo[TwitterHandle]("@HowyP_1")
+        parsed.suffix.write should be("HowyP_1")
+      }
+      "validating" in {
+        Rope.parseTo[TwitterHandle]("HowyP") should be(Left(Rope.InvalidValue))             // No @ prefix
+        Rope.parseTo[TwitterHandle]("@") should be(Left(Rope.InvalidValue))                 // No suffix
+        Rope.parseTo[TwitterHandle]("@abcdefghijklmnop") should be(Left(Rope.InvalidValue)) // Suffix too long
+        Rope.parseTo[TwitterHandle]("@HowyP*") should be(Left(Rope.InvalidValue))           // No @ prefix
       }
       "composing and writing" in {
         val handle: TwitterHandle = '@' +: Rope.parseTo[Username]("HowyP").getOrElse(fail())

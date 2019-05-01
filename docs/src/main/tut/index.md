@@ -146,7 +146,7 @@ Now, let's try generating some handles again:
 List.fill(5)(arbitrary[TwitterHandle].sample).flatten.map(_.write + '\n')
 ```
 
-#### Defining character sets with `Range`
+#### Restricting allowed characters with `Range`
 
 `Letter` comes pre-defined in ropes as:
 
@@ -162,6 +162,30 @@ It defines the upper and lower case characters using a `Range`, which
 takes two literal type parameters specifying the minimum and maximum
 characters allowed. `Or` lets us to join the two, allowing characters
 from either range.
+
+#### Building more complex restrictions with `CharacterClass`
+
+Looking at the twitteer spec more closely
+(https://help.twitter.com/en/managing-your-account/twitter-username-rules)
+digits and '_' characters are also allowed in the username portion of
+the handle. A simple `Range` will not be sufficient here, so we can turn
+to `CharacterClass` and it's associated `Spec` types. 
+
+```tut:silent
+import ropes.core.Spec._
+
+type Username      = Repeated[1, 15, CharacterClass[('a' - 'z') || ('A' - 'Z') || ('0' - '9') || ==['_']]]
+type TwitterHandle = Literal['@'] Concat Username
+```
+
+To keep things concise, it uses symbolic definitions, so let's at these
+in turn:
+
+* `'x' - 'y'` defines that any characters from `x` up to and including
+  `y` are allowed
+* `=['x']` defines that only character `x` is allowed
+* `a || b` defines that characters matching the spec `a` or the spec `b`
+  are allowed
 
 ### A Tougher Rope: Social Security Numbers
 

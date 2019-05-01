@@ -133,11 +133,11 @@ Scalacheck <code class="highlighter-rouge">Arbitrary</code>:</p>
 </span>
 <span class="nc">List</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="mi">5</span><span class="o">)(</span><span class="n">arbitrary</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">].</span><span class="n">sample</span><span class="o">).</span><span class="n">flatten</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">write</span> <span class="o">+</span> <span class="sc">'\n'</span><span class="o">)</span>
 <span class="c1">// res6: List[String] =
-// List("@΍䤉㈑൙ಘ妈싿䚟钄Ỽ惀긅Т쵒罠䉜촾봜硌鷘뷝Ẅꧣ曦寫儹⓲֟钦뷦勴忉ᖙ聾鹣앻컁흠轳⯪῱ꨇ澥ﺆ殻憒抠曆謼⣠琢叝귚僙䘒培೬阦كে㑿隬펿︃齆韋맑䌞鋂琜쩽Ⱂ䈢嶩柾ퟝⷯ序日璑됥
-// ", "@낌텰ᩛ㥖嫞켾㐕뽐騚➀㠧ǬƸ濴⮀ᦇ幐拮쵦ꌻ≩૙賈쭿軤豉쮣ꧩ꿀룆俞뼎࿲
-// ", "@欦꓃刎襁霜먈쁌裕ꣲ峝犚웈뗉虮ﵗƝ㒯麬旿籮됂ಕ홓줲갫柢긠鿃疶ꫪ≍颼ၩ钴溍탑烥齪㌬⼟Ǜ얜냇啣⽹걓ᾀ廴ힺ쭄ᔓꢀ쓤礤ﺯ䒆꽏꼊
-// ", "@宩瑜롼쳅՛멕࣎舀䱩슽色㐵騘肋柫荏㑱达ร헨瞚쬅౜ⷭ猾ể台
-// ", "@刞甋৩魡₇橢㖩Ꚓꂺ＝텡璄ɟ屌笗練聰硂哭瞦碨삣蜇둄뛰玜㫼榓芈벐빶䂐㻭掤⑗鸟瀗컏⾴걸ឤ᥊껄緻鼊૘토秨겴뮥ʳ饂ퟨ䌷ᨕ㰜䲽Β컳ᛕ檈鑜팞ᔶ﹫ᵴ뻛볯輶⇕힫蓎干䏰钉㭢ᚣ돥檄鎥๭⬮챳蒕贋췇ᖈﯠ鶿
+// List("@褷輦ᶇ⼲ፈάẤ࢑霯ꛩ秧Ბஐ䱹ﳖ䌕꩗㙥룋癇鶭⺊
+// ", "@꽪뵋ῆ쵽ꄤ텄뎧蓿⸪᭣姰兪ﲶ䊩븳ࡷ⡮ꂜ鿻䂱ɿ鉈켩䅻൅泔噦쎴蠧誇뢷䍁劏廼㾹莝㡰Ѣ㊪㶢訒ꭡ쯭㩄䦧㸋䍵ꦧ峎ﻓ䟱鳺毮ᰝ识붮渱˯ퟚﰞ塰킼ጂ柢빾덄紦
+// ", "@つ쪚ኇࠁ徼橺樍煵ꍛ磻딆㪎忭⸽흕ෞ䫷紼ꡏ麉䰊᲏봺븖怩溻锆뎕ﺙ毎﹗黐꼭纭㻭塙票䧏茸匼括౵塝ྙ㬌替궩⤮烱ꐟᓯ뙮桋辬勸ぁ妦巔ꄸᏛ郓륽緯䲲䆀䨘ᚋ
+// ", "@菉ῑ챹䶠⺇轂澠᏷斡踅촽ꃅ䃿닏ꬄ蒻䦘▊୏砾Ⓩ䆆ᑦꋗ⦿ષ굔刾勊앞⦖歄컣枨♮ꅋ헻曫璨䶇嶃썜硼
+// ", "@笘罛䁂㹜훶굔Ӟ凇茋鐽ໆᲅꖰ詈Ď櫕＄簤賑蒏䖩䂟펴飘鲖ﵟ憬鮎儸㍂髑㔃ꝉ︼抽갦嫜활轜瀇ᡈ㵰ꓭᮯ䀑쾧ᛊ
 // ")
 </span></code></pre>
 </div>
@@ -172,16 +172,16 @@ usernames which are too long or have non-letter characters:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">List</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="mi">5</span><span class="o">)(</span><span class="n">arbitrary</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">].</span><span class="n">sample</span><span class="o">).</span><span class="n">flatten</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">write</span> <span class="o">+</span> <span class="sc">'\n'</span><span class="o">)</span>
 <span class="c1">// res10: List[String] =
-// List("@hjKRCGlfVpVubVY
-// ", "@TvuJtTp
-// ", "@x
-// ", "@sYoolqJORD
-// ", "@Ew
+// List("@LO
+// ", "@J
+// ", "@XBkunuCGgWG
+// ", "@N
+// ", "@c
 // ")
 </span></code></pre>
 </div>
 
-<h4 id="defining-character-sets-with-range">Defining character sets with <code class="highlighter-rouge">Range</code></h4>
+<h4 id="restricting-allowed-characters-with-range">Restricting allowed characters with <code class="highlighter-rouge">Range</code></h4>
 
 <p><code class="highlighter-rouge">Letter</code> comes pre-defined in ropes as:</p>
 
@@ -197,6 +197,32 @@ usernames which are too long or have non-letter characters:</p>
 takes two literal type parameters specifying the minimum and maximum
 characters allowed. <code class="highlighter-rouge">Or</code> lets us to join the two, allowing characters
 from either range.</p>
+
+<h4 id="building-more-complex-restrictions-with-characterclass">Building more complex restrictions with <code class="highlighter-rouge">CharacterClass</code></h4>
+
+<p>Looking at the twitteer spec more closely
+(https://help.twitter.com/en/managing-your-account/twitter-username-rules)
+digits and ‘_’ characters are also allowed in the username portion of
+the handle. A simple <code class="highlighter-rouge">Range</code> will not be sufficient here, so we can turn
+to <code class="highlighter-rouge">CharacterClass</code> and it’s associated <code class="highlighter-rouge">Spec</code> types.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">ropes.core.Spec._</span>
+
+<span class="k">type</span> <span class="kt">Username</span>      <span class="o">=</span> <span class="nc">Repeated</span><span class="o">[</span><span class="err">1</span>, <span class="err">15</span>, <span class="kt">CharacterClass</span><span class="o">[(</span><span class="kt">'a'</span> <span class="kt">-</span> <span class="kt">'z'</span><span class="o">)</span> <span class="kt">||</span> <span class="o">(</span><span class="kt">'A'</span> <span class="kt">-</span> <span class="kt">'Z'</span><span class="o">)</span> <span class="kt">||</span> <span class="o">(</span><span class="kt">'</span><span class="err">0</span><span class="kt">'</span> <span class="kt">-</span> <span class="kt">'</span><span class="err">9</span><span class="kt">'</span><span class="o">)</span> <span class="kt">||</span> <span class="kt">==</span><span class="o">[</span><span class="kt">'</span><span class="k">_</span><span class="kt">'</span><span class="o">]]]</span>
+<span class="k">type</span> <span class="kt">TwitterHandle</span> <span class="o">=</span> <span class="nc">Literal</span><span class="o">[</span><span class="kt">'@'</span><span class="o">]</span> <span class="nc">Concat</span> <span class="nc">Username</span>
+</code></pre>
+</div>
+
+<p>To keep things concise, it uses symbolic definitions, so let’s at these
+in turn:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">'x' - 'y'</code> defines that any characters from <code class="highlighter-rouge">x</code> up to and including
+<code class="highlighter-rouge">y</code> are allowed</li>
+  <li><code class="highlighter-rouge">=['x']</code> defines that only character <code class="highlighter-rouge">x</code> is allowed</li>
+  <li><code class="highlighter-rouge">a || b</code> defines that characters matching the spec <code class="highlighter-rouge">a</code> or the spec <code class="highlighter-rouge">b</code>
+are allowed</li>
+</ul>
 
 <h3 id="a-tougher-rope-social-security-numbers">A Tougher Rope: Social Security Numbers</h3>
 

@@ -205,5 +205,23 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
         }
       }
     }
+    "Hostnames" - {
+      type Domain   = Repeated[1, 10, Range['a', 'z']]
+      type Hostname = Repeated[0, 2, Domain +: Literal['.']] +: Domain
+      "localhost" - {
+        "parsing and de-composing" in {
+          val parsed = Rope.parseTo[Hostname]("localhost").getOrElse(fail())
+          parsed.section[1].values should be(empty)
+          parsed.section[2].write should be("localhost")
+        }
+      }
+      "www.google.com" - {
+        "parsing and de-composing" in {
+          val parsed = Rope.parseTo[Hostname]("www.google.com").getOrElse(fail())
+          parsed.section[1].values.map(_.section[1].write) should contain inOrderOnly ("www", "google")
+          parsed.section[2].write should be("com")
+        }
+      }
+    }
   }
 }

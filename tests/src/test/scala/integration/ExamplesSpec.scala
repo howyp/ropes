@@ -206,20 +206,30 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
       }
     }
     "Hostnames" - {
-      type Domain   = Repeated[1, 10, Range['a', 'z']]
-      type Hostname = Repeated[0, 2, Domain +: Literal['.']] +: Domain
+      type Domain   = Repeated[1, 63, CharacterClass[('a' - 'z') || ('A' - 'Z') || ('0' - '9') || ==['-']]]
+      type Hostname = Repeated[0, 10, Domain +: Literal['.']] +: (Domain Named "TLD")
       "localhost" - {
         "parsing and de-composing" in {
           val parsed = Rope.parseTo[Hostname]("localhost").getOrElse(fail())
           parsed.section[1].values should be(empty)
-          parsed.section[2].write should be("localhost")
+          parsed.section["TLD"].write should be("localhost")
         }
       }
       "www.google.com" - {
         "parsing and de-composing" in {
           val parsed = Rope.parseTo[Hostname]("www.google.com").getOrElse(fail())
           parsed.section[1].values.map(_.section[1].write) should contain inOrderOnly ("www", "google")
-          parsed.section[2].write should be("com")
+          parsed.section["TLD"].write should be("com")
+        }
+      }
+      "hyphens-and-digits-5.com" - {
+        "parsing and de-composing" in {
+          val parsed = Rope.parseTo[Hostname]("hyphens-and-digits-5.com").getOrElse(fail())
+          parsed
+            .section[1]
+            .values
+            .map(_.section[1].write) should contain only "hyphens-and-digits-5"
+          parsed.section["TLD"].write should be("com")
         }
       }
     }

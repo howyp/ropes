@@ -19,7 +19,6 @@ package ropes.core.instances
 import ropes.core._
 
 private[core] trait DigitInstances {
-  //TODO consider if we can write Conversion[Digit]
   implicit val digitConversion: Conversion[Range['0', '9'], Int] = Conversion.instance(
     forwards = _.value.toInt - '0'.charValue(),
     backwards = target => Range.from['0', '9']((target + '0'.charValue()).toChar).swap.map(_ => Conversion.Failed).swap
@@ -28,12 +27,13 @@ private[core] trait DigitInstances {
   implicit def repeatedDigitsConversion[
       MinReps <: Int with Singleton,
       MaxReps <: Int with Singleton,
+      N <: Naming
   ](
       implicit
       minReps: ValueOf[MinReps],
       maxReps: ValueOf[MaxReps]
-  ): Conversion[Repeated[MinReps, MaxReps, Digit], Int] =
-    Conversion.instance[Repeated[MinReps, MaxReps, Digit], Int](
+  ): Conversion[Repeated[MinReps, MaxReps, Digit] { type Name = N }, Int] =
+    Conversion.instance[Repeated[MinReps, MaxReps, Digit] { type Name = N }, Int](
       forwards = _.values.foldLeft(0) {
         case (accumulated, digit) => accumulated * 10 + digit.value
       },
@@ -45,7 +45,10 @@ private[core] trait DigitInstances {
         val listOfDigitsPaddedWithZeros =
           List.fill(minReps.value - listOfDigits.size)(Digit.unsafeFrom(0)) ++ listOfDigits
 
-        Right(Repeated.unsafeFrom[MinReps, MaxReps, Digit](listOfDigitsPaddedWithZeros))
+        Right(
+          Repeated
+            .unsafeFrom[MinReps, MaxReps, Digit](listOfDigitsPaddedWithZeros)
+            .asInstanceOf[Repeated[MinReps, MaxReps, Digit] { type Name = N }])
       }
     )
 }

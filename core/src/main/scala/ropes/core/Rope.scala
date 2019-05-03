@@ -127,20 +127,20 @@ object Or extends OrInstances {
 }
 
 /**
-  * A `Rope` which specifies a section by `Source`, but exposes it's value as `Target` via a `Conversion`. Sections
-  * specified using this type will only be usable where an instance of `Conversion[Source, Target]` is available in
+  * A `Rope` which specifies a section by `S`, but exposes it's value as `T` via a `Conversion`. Sections
+  * specified using this type will only be usable where an instance of `Conversion[S, T]` is available in
   * implicit scope to describe the conversion.
   *
-  * @tparam Source A `Rope` type which specifies the format. This should only allow values which can be validly
-  *                converted to `Target`.
-  * @tparam Target Any type, which the `Source` will be converted to during parsing and converted from during writing.
+  * @tparam S A `Rope` type which specifies the format. This should only allow values which can be validly
+  *                converted to `T`.
+  * @tparam T Any type, which the `S` will be converted to during parsing and converted from during writing.
   *
-  * @param value The value, expressed in terms of `Target`
+  * @param value The value, expressed in terms of `T`
   */
-sealed abstract case class ConvertedTo[Source <: Rope, Target](value: Target)
-    extends Rope
-    with NameOps[ConvertedTo[Source, Target]] {
-  type Name = Naming.Unassigned
+sealed abstract case class ConvertedTo[S <: Rope, T](value: T) extends Rope with NameOps[ConvertedTo[S, T]] {
+  type Name   = Naming.Unassigned
+  type Source = S
+  type Target = T
 }
 object ConvertedTo extends ConvertedToInstances {
   type Name = Naming.Unassigned

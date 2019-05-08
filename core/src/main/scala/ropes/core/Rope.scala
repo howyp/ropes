@@ -174,43 +174,19 @@ object ConvertedTo extends ConvertedToInstances {
     new ConvertedTo[Source, Target](conversion.forwards(source)) {}
 }
 
-/**
-  * A `Rope` which holds a single character matching a given range.
-  * @tparam Start A singleton `Char` type which is the minimum allowable character, inclusive
-  * @tparam End A singleton `Char` type which is the maximum allowable character, inclusive
-  * @param value The single character value, which must be inside the range specified by `Start` and `End`
-  */
-//TODO can we implement this in terms of CharacterClass?
-sealed abstract case class Range[Start <: Char with Singleton, End <: Char with Singleton](value: Char)
-    extends Rope
-    with NameOps[Range[Start, End]] {
-  type Name = Naming.Unassigned
-}
-object Range extends RangeInstances {
-  def from[Start <: Char with Singleton, End <: Char with Singleton](char: Char)(
-      implicit start: ValueOf[Start],
-      end: ValueOf[End]): Either[Rope.InvalidValue.type, Range[Start, End]] =
-    if (char >= start.value && char <= end.value) Right(new Range[Start, End](char) {})
-    else Left(Rope.InvalidValue)
-
-  def unsafeFrom[Start <: Char with Singleton: ValueOf, End <: Char with Singleton: ValueOf](
-      char: Char): Range[Start, End] =
-    from[Start, End](char).getOrElse(throw new IllegalArgumentException(char.toString))
-}
-
 sealed abstract case class CharacterClass[S <: Spec](value: Char) extends Rope {
   type Name = Naming.Unassigned
 }
 object CharacterClass extends CharacterClassInstances {
   //TODO can we avoid re-calculating the reduction for each use?
-  def from[S <: Spec](char: Char)(implicit reduce: Reduce[S]): Either[Rope.InvalidValue.type, CharacterClass[Spec]] = {
+  def from[S <: Spec](char: Char)(implicit reduce: Reduce[S]): Either[Rope.InvalidValue.type, CharacterClass[S]] = {
     val reduced = reduce.reduce
     if (reduced.isEmpty) throw new IllegalStateException("Cannot create a instance of an empty CharacterClass")
-    if (reduced.exists { case (s, g) => s <= char && char <= g }) Right(new CharacterClass[Spec](char) {})
+    if (reduced.exists { case (s, g) => s <= char && char <= g }) Right(new CharacterClass[S](char) {})
     else Left(Rope.InvalidValue)
   }
 
-  def unsafeFrom[S <: Spec](char: Char)(implicit reduce: Reduce[S]): CharacterClass[Spec] =
+  def unsafeFrom[S <: Spec](char: Char)(implicit reduce: Reduce[S]): CharacterClass[S] =
     from[S](char).getOrElse(throw new IllegalArgumentException(char.toString))
 }
 

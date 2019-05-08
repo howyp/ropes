@@ -133,11 +133,11 @@ Scalacheck <code class="highlighter-rouge">Arbitrary</code>:</p>
 </span>
 <span class="nc">List</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="mi">5</span><span class="o">)(</span><span class="n">arbitrary</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">].</span><span class="n">sample</span><span class="o">).</span><span class="n">flatten</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">write</span> <span class="o">+</span> <span class="sc">'\n'</span><span class="o">)</span>
 <span class="c1">// res6: List[String] =
-// List("@朤Þ✀Ȕﮖ䪳钗傛븩꫷೥̓ꁅ膿祐䶅ଶ壛▏븷킢຃Ǝ졅䪂⡙ས튋涾⼪﫺㴮父㙗弲ﲞᆄ䩦䅇ጛ搨鳠̧⍠崭爷埥밝矧뮁柜⊼䀚﵇띔峳몊福궸칳熡己҂琭哠鉍ῼ絜滣쒒좣ສ抶릇⠤㣛ꉜ澣
-// ", "@↶࿦둫彬ꢑꅧ㫠∿熲墬檸㢖戝쪩梾ॊ瓐ᩪ剎줌
-// ", "@㣳ﶪ濪㋒랻뱳䊻槄䈩鱷홿巂ᾎ㳹爧藅바넭ᔍᵎ鏼댕斿뉵뺣磅푒쓜檕ਭ៊ᐚ穸急㸘䈪嶥᫪ꄌ᥋ꩢ黫╥챚⿘깥跨屁戆䵼沨ẹ無播厍ҧﯜཎ隸髗䪋韂″ﶄ枲뉧䎘箠㐜㙲穌疊㸑鬨˙藎桔੒ⴠቾ໒㛒웆讵ᚺ⍾ڗ쟳
-// ", "@ꑔ姉兙䉳ᯃ᥇銋ᅿ嶄н䯼㋼垣Ɯ㒄盷朇ࡢ鐱㶗廫噤롔竸
-// ", "@࿂ո튎萨ꍺ嗃唀覄花价伦ﭪ絩䖴︈觻㴓ᶐ﫻ₒ젗໷㜾ꃜ
+// List("@핔쏃탤ɬ뵍隵鿻ꂑ䥿籶ᔿ亞꿪鴻鍿툈쉧趧⌿᚝ܒꨵ쀝ꡟ욒鴋窗ꐮ؎瀝Ƕ륒霪朙쯮ﴱ왚እЗ솙ｆ卛閵벜篌褉듾害ꛢ톼릛竃⻈ꍲꏻ忕䗚骀ო둀铭㶎촠⥬ڸ꺲￪㡥炁劘딝瞶쵩舏켜㾇慐䷯굓霟꽲
+// ", "@㺠Ⴊ㤌댱ꄡ璖⺬粬﩯둙臍
+// ", "@鮙盹薑痸姢鶢轍㒆蒎ꚴ箾풊
+// ", "@ᘹ馓醟疅琮ﶡꈉ쨤煸丵馾ᘛᒈ૖몀䐁Ⴀ仼拦뵟廄ꗑ煅➪♨奼㬺썌㗣਩㎻챲ꖓ햣Ỗ읇脬ꄐ嚗譝پᤶ솻暧ࣰ䚊쒉꾡麄덂릻㶢꽭띔ึ쀷ཛྷ
+// ", "@桴䊾阷ᵿ㝤ᛥᎿⶶ縎悈䵊꠴긒䃦퟾Ⱦ戍燀酓븣ꥣች秭쯈Զ쯤쏻㢑栉슁陙ӣዣᗑ蘿ਵ諠辑뻖퓟痖
 // ")
 </span></code></pre>
 </div>
@@ -158,7 +158,7 @@ letter characters, repeated 1 to 15 times. It now will not allow
 usernames which are too long or have non-letter characters:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Rope</span><span class="o">.</span><span class="n">parseTo</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">](</span><span class="s">"@HowyP"</span><span class="o">)</span>
-<span class="c1">// res7: Either[ropes.core.Rope.InvalidValue.type,TwitterHandle] = Right(Concat(Literal(@),Repeated(List(First(Range(H)), Second(Range(o)), Second(Range(w)), Second(Range(y)), First(Range(P))))))
+<span class="c1">// res7: Either[ropes.core.Rope.InvalidValue.type,TwitterHandle] = Right(Concat(Literal(@),Repeated(List(First(CharacterClass(H)), Second(CharacterClass(o)), Second(CharacterClass(w)), Second(CharacterClass(y)), First(CharacterClass(P))))))
 </span>
 <span class="nc">Rope</span><span class="o">.</span><span class="n">parseTo</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">](</span><span class="s">"@TwoManyCharactersForAUsername"</span><span class="o">)</span>
 <span class="c1">// res8: Either[ropes.core.Rope.InvalidValue.type,TwitterHandle] = Left(InvalidValue)
@@ -172,11 +172,11 @@ usernames which are too long or have non-letter characters:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">List</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="mi">5</span><span class="o">)(</span><span class="n">arbitrary</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">].</span><span class="n">sample</span><span class="o">).</span><span class="n">flatten</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">write</span> <span class="o">+</span> <span class="sc">'\n'</span><span class="o">)</span>
 <span class="c1">// res10: List[String] =
-// List("@f
-// ", "@SxcWDAAe
-// ", "@WBTjXwlopZjLjhR
-// ", "@o
-// ", "@FNKBvLVas
+// List("@qJt
+// ", "@IKabPG
+// ", "@q
+// ", "@jBoIpSldD
+// ", "@Ua
 // ")
 </span></code></pre>
 </div>

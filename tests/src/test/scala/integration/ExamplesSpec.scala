@@ -24,24 +24,6 @@ import ropes.scalacheck._
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import org.scalatest.{FreeSpec, Matchers}
 
-object RopeCompanion {
-  trait Build[R <: Rope] {
-    type Companion
-    def companion: Companion
-  }
-  object Build {
-    type Aux[R <: Rope, _Companion] = Build[R] { type Companion = _Companion }
-  }
-
-  implicit def literalBuild[V <: Char with Singleton](implicit v: ValueOf[V]): Build.Aux[Literal[V], Literal[V]] =
-    new Build[Literal[V]] {
-      type Companion = Literal[V]
-      def companion: Literal[V] = Literal(v.value)
-    }
-
-  def apply[R <: Rope](implicit build: RopeCompanion.Build[R]): build.Companion = build.companion
-}
-
 class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyChecks {
   "Some examples of valid ropes include" - {
     "twitter handles" - {

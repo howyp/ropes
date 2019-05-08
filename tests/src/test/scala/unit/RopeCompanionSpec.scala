@@ -16,9 +16,10 @@
 
 package unit
 import org.scalatest.{FreeSpec, Matchers}
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import ropes.core._
 
-class RopeCompanionSpec extends FreeSpec with Matchers {
+class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyChecks {
   "The Rope companion object" - {
     "Can parse to a given rope" - {
       "Successfully if the parse is complete" in {
@@ -32,6 +33,22 @@ class RopeCompanionSpec extends FreeSpec with Matchers {
       "Failing if the parse is a failure" in {
         implicit val exampleParse: Parse[AnyString] = _ => Parse.Result.Failure
         Rope.parseTo[AnyString]("") should be(Left(Rope.InvalidValue))
+      }
+    }
+  }
+  "A built companion for the specific rope type" - {
+    "Literal" - {
+      "just contains the value itself" in {
+        type A = Literal['a']
+        val A: A = RopeCompanion[A]
+        A.value should be('a')
+      }
+    }
+    "AnyString" - {
+      "has an apply method" in forAll { v: String =>
+        type Example = AnyString
+        val Example = RopeCompanion[AnyString].materialise
+        Example(v) should be(AnyString(v))
       }
     }
   }

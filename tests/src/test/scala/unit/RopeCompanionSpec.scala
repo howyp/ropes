@@ -46,10 +46,15 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
       }
     }
     "AnyString" - {
+      type Example = AnyString
+      val Example = RopeCompanion[AnyString].materialise
       "has an apply method" in forAll { v: String =>
-        type Example = AnyString
-        val Example = RopeCompanion[AnyString].materialise
         Example(v) should be(AnyString(v))
+      }
+      "has an unapply method" in forAll { v: String =>
+        (Example(v) match {
+          case Example(w) => w
+        }) should be(v)
       }
     }
     "CharacterClass" - {
@@ -61,6 +66,17 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
       }
       "has a unsafeFrom method" in forAll(Gen.alphaLowerChar) { c =>
         Example.unsafeFrom(c).value should be(c)
+      }
+      "has an unapply method" - {
+        "which matches classes with the same spec" in forAll(Gen.alphaLowerChar) { c =>
+          (Example.unsafeFrom(c) match {
+            case Example(w) => w
+          }) should be(c)
+        }
+        "which cannot match classes with a different spec" in forAll(Gen.alphaLowerChar) { c =>
+          val value = CharacterClass.unsafeFrom['A' - 'z'](c)
+          """value match { case Example(w) => w }""" shouldNot typeCheck
+        }
       }
     }
   }

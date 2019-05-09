@@ -33,8 +33,11 @@ object RopeCompanion {
     }
 
   object AnyStringCompanion { self =>
-    final val materialise    = self
+    final val materialise = self
+
     def apply(value: String) = AnyString.apply(value)
+
+    def unapply(arg: AnyString): Option[String] = Some(arg.value)
   }
   implicit val anyStringBuild: Build.Aux[AnyString, AnyStringCompanion.type] =
     new Build[AnyString] {
@@ -48,6 +51,8 @@ object RopeCompanion {
 
     def unsafeFrom(char: Char)(implicit reduce: Reduce[S]): CharacterClass[S] =
       CharacterClass.unsafeFrom[S](char)
+
+    def unapply(arg: CharacterClass[S]): Option[Char] = Some(arg.value)
   }
   implicit def characterClassBuild[S <: Spec]: Build.Aux[CharacterClass[S], CharacterClassCompanion[S]] =
     new Build[CharacterClass[S]] {

@@ -42,6 +42,19 @@ object RopeCompanion {
       def companion: AnyStringCompanion.type = AnyStringCompanion
     }
 
+  class CharacterClassCompanion[S <: Spec] {
+    def from(char: Char)(implicit reduce: Reduce[S]): Either[Rope.InvalidValue.type, CharacterClass[S]] =
+      CharacterClass.from[S](char)
+
+    def unsafeFrom(char: Char)(implicit reduce: Reduce[S]): CharacterClass[S] =
+      CharacterClass.unsafeFrom[S](char)
+  }
+  implicit def characterClassBuild[S <: Spec]: Build.Aux[CharacterClass[S], CharacterClassCompanion[S]] =
+    new Build[CharacterClass[S]] {
+      type Companion = CharacterClassCompanion[S]
+      def companion: CharacterClassCompanion[S] = new CharacterClassCompanion[S]
+    }
+
   def apply[R <: Rope](implicit build: RopeCompanion.Build[R]): build.Companion = build.companion
   def build[R <: Rope](implicit build: RopeCompanion.Build[R]): build.Companion = build.companion
 }

@@ -23,55 +23,13 @@ object RopeCompanion {
   }
   object Build {
     type Aux[R <: Rope, _Companion] = Build[R] { type Companion = _Companion }
+
+    def instance[R <: Rope, _Companion](_companion: _Companion) =
+      new Build[R] {
+        type Companion = _Companion
+        def companion: _Companion = _companion
+      }
   }
-
-  //TODO move these into their specific instances traits
-  implicit def literalBuild[V <: Char with Singleton](implicit v: ValueOf[V]): Build.Aux[Literal[V], Literal[V]] =
-    new Build[Literal[V]] {
-      type Companion = Literal[V]
-      def companion: Literal[V] = Literal(v.value)
-    }
-
-  object AnyStringCompanion { self =>
-    final val materialise = self
-
-    def apply(value: String) = AnyString.apply(value)
-
-    def unapply(arg: AnyString): Option[String] = Some(arg.value)
-  }
-  implicit val anyStringBuild: Build.Aux[AnyString, AnyStringCompanion.type] =
-    new Build[AnyString] {
-      type Companion = AnyStringCompanion.type
-      def companion: AnyStringCompanion.type = AnyStringCompanion
-    }
-
-  class CharacterClassCompanion[S <: Spec] {
-    def from(char: Char)(implicit reduce: Reduce[S]): Either[Rope.InvalidValue.type, CharacterClass[S]] =
-      CharacterClass.from[S](char)
-
-    def unsafeFrom(char: Char)(implicit reduce: Reduce[S]): CharacterClass[S] =
-      CharacterClass.unsafeFrom[S](char)
-
-    def unapply(arg: CharacterClass[S]): Option[Char] = Some(arg.value)
-  }
-  implicit def characterClassBuild[S <: Spec]: Build.Aux[CharacterClass[S], CharacterClassCompanion[S]] =
-    new Build[CharacterClass[S]] {
-      type Companion = CharacterClassCompanion[S]
-      def companion: CharacterClassCompanion[S] = new CharacterClassCompanion[S]
-    }
-
-  class Concat2Companion[Prefix <: Rope, Suffix <: Rope] { self =>
-    // TODO de-duplicate
-    final val materialise = self
-
-    def apply(prefix: Prefix, suffix: Suffix): Concat[Prefix, Suffix] = Concat(prefix, suffix)
-  }
-  implicit def concatBuild2[Prefix <: Rope, Suffix <: Rope]
-    : Build.Aux[Concat[Prefix, Suffix], Concat2Companion[Prefix, Suffix]] =
-    new Build[Concat[Prefix, Suffix]] {
-      type Companion = Concat2Companion[Prefix, Suffix]
-      def companion = new Concat2Companion[Prefix, Suffix]
-    }
 
   def apply[R <: Rope](implicit build: RopeCompanion.Build[R]): build.Companion = build.companion
   def build[R <: Rope](implicit build: RopeCompanion.Build[R]): build.Companion = build.companion

@@ -16,6 +16,7 @@
 
 package unit
 import org.scalacheck.Gen
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, Matchers}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import ropes.core._
@@ -60,7 +61,7 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
     "CharacterClass" - {
       import Spec._
       type Example = CharacterClass['a' - 'z']
-      val Example = RopeCompanion[CharacterClass['a' - 'z']]
+      val Example = RopeCompanion[Example]
       "has a from method" in forAll(Gen.alphaLowerChar) { c =>
         Example.from(c).right.get.value should be(c)
       }
@@ -77,6 +78,16 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
           val value = CharacterClass.unsafeFrom['A' - 'z'](c)
           """value match { case Example(w) => w }""" shouldNot typeCheck
         }
+      }
+    }
+    "Concat" - {
+      import Spec._
+      type Example = Concat[CharacterClass['a' - 'z'], AnyString]
+      val Example = RopeCompanion[Example].materialise
+      "has a from method" in forAll(Gen.alphaLowerChar, arbitrary[String]) { (c, s) =>
+        val prefix = CharacterClass.from['a' - 'z'](c).right.get
+        val suffix = AnyString(s)
+        Example(prefix, suffix) should be(Concat(prefix, suffix))
       }
     }
   }

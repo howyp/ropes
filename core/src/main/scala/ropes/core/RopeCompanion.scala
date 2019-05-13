@@ -60,6 +60,19 @@ object RopeCompanion {
       def companion: CharacterClassCompanion[S] = new CharacterClassCompanion[S]
     }
 
+  class Concat2Companion[Prefix <: Rope, Suffix <: Rope] { self =>
+    // TODO de-duplicate
+    final val materialise = self
+
+    def apply(prefix: Prefix, suffix: Suffix): Concat[Prefix, Suffix] = Concat(prefix, suffix)
+  }
+  implicit def concatBuild2[Prefix <: Rope, Suffix <: Rope]
+    : Build.Aux[Concat[Prefix, Suffix], Concat2Companion[Prefix, Suffix]] =
+    new Build[Concat[Prefix, Suffix]] {
+      type Companion = Concat2Companion[Prefix, Suffix]
+      def companion = new Concat2Companion[Prefix, Suffix]
+    }
+
   def apply[R <: Rope](implicit build: RopeCompanion.Build[R]): build.Companion = build.companion
   def build[R <: Rope](implicit build: RopeCompanion.Build[R]): build.Companion = build.companion
 }

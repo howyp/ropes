@@ -16,7 +16,6 @@
 
 package ropes.core.instances
 
-import ropes.core.RopeCompanion.Build
 import ropes.core.{Concat, Named, Naming, Parse, Rope, SectionFinder, Write}
 
 private[ropes] trait ConcatExplicitSectionFinderInstances {
@@ -39,7 +38,8 @@ private[ropes] trait ConcatExplicitSectionFinderInstances {
     : SectionFinder.Aux[Concat[Prefix, Suffix], SectionName, nested.Out] =
     SectionFinder.instance(concat => nested(concat.suffix))
 }
-private[ropes] trait ConcatInstances extends ConcatGeneratedSectionFinderInstances {
+
+private[ropes] trait ConcatInstances extends ConcatGeneratedSectionFinderInstances with ConcatBuildInstance22 {
   implicit def concatParse[Prefix <: Rope: Parse, Suffix <: Rope: Parse, N <: Naming]
     : Parse[Concat[Prefix, Suffix] { type Name = N }] = { str =>
     Parse[Prefix].parse(str).flatMap {
@@ -54,14 +54,4 @@ private[ropes] trait ConcatInstances extends ConcatGeneratedSectionFinderInstanc
 
   implicit def concatWrite[P <: Rope: Write, S <: Rope: Write, N <: Naming]: Write[Concat[P, S] { type Name = N }] =
     concat => concat.prefix.write + concat.suffix.write
-
-  class Concat2Companion[Prefix <: Rope, Suffix <: Rope] { self =>
-    // TODO de-duplicate
-    final val materialise = self
-
-    def apply(prefix: Prefix, suffix: Suffix): Concat[Prefix, Suffix] = Concat(prefix, suffix)
-  }
-  implicit def concatBuild2[Prefix <: Rope, Suffix <: Rope]
-    : Build.Aux[Concat[Prefix, Suffix], Concat2Companion[Prefix, Suffix]] =
-    Build.instance(new Concat2Companion[Prefix, Suffix])
 }

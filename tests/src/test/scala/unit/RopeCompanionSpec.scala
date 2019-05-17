@@ -82,12 +82,24 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
     }
     "Concat" - {
       import Spec._
-      type Example = Concat[CharacterClass['a' - 'z'], AnyString]
-      val Example = RopeCompanion[Example].materialise
-      "has a from method" in forAll(Gen.alphaLowerChar, arbitrary[String]) { (c, s) =>
-        val prefix = CharacterClass.from['a' - 'z'](c).right.get
-        val suffix = AnyString(s)
-        Example(prefix, suffix) should be(Concat(prefix, suffix))
+      "With two sections" - {
+        type Example = Concat[CharacterClass['a' - 'z'], AnyString]
+        val Example = RopeCompanion[Example].materialise
+        "has a from method" in forAll(Gen.alphaLowerChar, arbitrary[String]) { (c, s) =>
+          val prefix = CharacterClass.from['a' - 'z'](c).right.get
+          val suffix = AnyString(s)
+          Example(prefix, suffix) should be(Concat(prefix, suffix))
+        }
+      }
+      "With many sections" - {
+        type Example = Concat[CharacterClass['a' - 'z'],
+                              Concat[CharacterClass['a' - 'z'], Concat[CharacterClass['a' - 'z'], AnyString]]]
+        val Example = RopeCompanion[Example].materialise
+        "has a from method" in forAll(Gen.alphaLowerChar, arbitrary[String]) { (c, s) =>
+          val prefix = CharacterClass.from['a' - 'z'](c).right.get
+          val suffix = AnyString(s)
+          Example(prefix, prefix, prefix, suffix) should be(Concat(prefix, Concat(prefix, Concat(prefix, suffix))))
+        }
       }
     }
   }

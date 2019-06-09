@@ -24,7 +24,15 @@ trait ToGeneric[R <: Rope] {
   def apply(r: R): Out
 }
 
-object ToGeneric {
+trait LowPriorityToGeneric {
+  implicit def toHlistForNonNestedConcat[
+      Prefix <: Rope,
+      Suffix <: Rope
+  ]: ToGeneric.Aux[Concat[Prefix, Suffix], Prefix :: Suffix :: HNil] =
+    ToGeneric.instance(r => r.prefix :: r.suffix :: HNil)
+}
+
+object ToGeneric extends LowPriorityToGeneric {
   type Aux[R <: Rope, Out_0] = ToGeneric[R] { type Out = Out_0 }
 
   def instance[R <: Rope, Out_0](f: R => Out_0): ToGeneric.Aux[R, Out_0] = new ToGeneric[R] {
@@ -32,10 +40,12 @@ object ToGeneric {
     def apply(r: R): Out_0 = f(r)
   }
 
-  //TODO this will not work for nested concats
-  implicit def toHlistForConcatPrefix[
+  implicit def toHlistForNestedConcat[
       Prefix <: Rope,
-      Suffix <: Rope
-  ]: ToGeneric.Aux[Concat[Prefix, Suffix], Prefix :: Suffix :: HNil] =
-    ToGeneric.instance(r => r.prefix :: r.suffix :: HNil)
+      Suffix1 <: Rope,
+      Suffix2 <: Rope,
+      Nested <: HList
+  ](implicit suffixToHList: ToGeneric.Aux[Concat[Suffix1, Suffix2], Nested])
+    : ToGeneric.Aux[Concat[Prefix, Concat[Suffix1, Suffix2]], Prefix :: Nested] =
+    ToGeneric.instance(r => r.prefix :: suffixToHList(r.suffix))
 }

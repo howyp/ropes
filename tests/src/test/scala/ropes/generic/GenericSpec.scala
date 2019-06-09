@@ -20,14 +20,28 @@ import org.scalatest.{FreeSpec, Matchers}
 import ropes.core.{Range, _}
 
 class GenericSpec extends FreeSpec with Matchers {
-  case class ExampleCaseClass(first: Range['a', 'z'], second: Range['a', 'z'])
-  type ExampleRope = Concat[Range['a', 'z'], Range['a', 'z']]
 
-  "A rope can be converted to and from a case class" in {
-    val exampleRope      = Rope.parseTo[ExampleRope]("ab").right.get
-    val exampleCaseClass = ExampleCaseClass(Range.unsafeFrom('a'), Range.unsafeFrom('b'))
+  "A rope can be converted to and from a case class" - {
+    "which is not nested" in {
+      case class ExampleCaseClass(first: Range['a', 'z'], second: Range['a', 'z'])
+      type ExampleRope = Concat[Range['a', 'z'], Range['a', 'z']]
 
-    Conversion[ExampleRope, ExampleCaseClass].forwards(exampleRope) should be(exampleCaseClass)
-    Conversion[ExampleRope, ExampleCaseClass].backwards(exampleCaseClass).right.get should be(exampleRope)
+      val exampleRope      = Rope.parseTo[ExampleRope]("ab").right.get
+      val exampleCaseClass = ExampleCaseClass(Range.unsafeFrom('a'), Range.unsafeFrom('b'))
+
+      Conversion[ExampleRope, ExampleCaseClass].forwards(exampleRope) should be(exampleCaseClass)
+      Conversion[ExampleRope, ExampleCaseClass].backwards(exampleCaseClass).right.get should be(exampleRope)
+    }
+
+    "which is nested" in {
+      case class ExampleCaseClass(first: Range['a', 'z'], second: Range['a', 'z'], third: Range['a', 'z'])
+      type ExampleRope = Concat[Range['a', 'z'], Concat[Range['a', 'z'], Range['a', 'z']]]
+
+      val exampleRope      = Rope.parseTo[ExampleRope]("abc").right.get
+      val exampleCaseClass = ExampleCaseClass(Range.unsafeFrom('a'), Range.unsafeFrom('b'), Range.unsafeFrom('c'))
+
+      Conversion[ExampleRope, ExampleCaseClass].forwards(exampleRope) should be(exampleCaseClass)
+//      Conversion[ExampleRope, ExampleCaseClass].backwards(exampleCaseClass).right.get should be(exampleRope)
+    }
   }
 }

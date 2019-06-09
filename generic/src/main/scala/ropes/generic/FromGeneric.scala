@@ -38,4 +38,6 @@ object FromGeneric {
       Suffix <: Rope
   ]: FromGeneric.Aux[Prefix :: Suffix :: HNil, Concat[Prefix, Suffix]] =
     FromGeneric.instance { case head :: tail :: HNil => Concat(head, tail) }
+
+  implicit def any[In, Out <: Rope]: FromGeneric.Aux[In, Out] = FromGeneric.instance(_ => ???)
 }

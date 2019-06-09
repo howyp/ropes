@@ -45,16 +45,39 @@ object ToHList {
   ]: ToHList.Aux[Concat[Prefix, Suffix], Prefix :: Suffix :: HNil] =
     ToHList.instance(r => r.prefix :: r.suffix :: HNil)
 }
+trait FromHList[Repr] {
+  type Out <: Rope
+  def apply(r: Repr): Out
+}
+object FromHList {
+  type Aux[R, Out_0 <: Rope] = FromHList[R] { type Out = Out_0 }
+
+  def instance[R, Out_0 <: Rope](f: R => Out_0): FromHList.Aux[R, Out_0] = new FromHList[R] {
+    type Out = Out_0
+    def apply(r: R): Out_0 = f(r)
+  }
+
+  //TODO this will not work for nested concats
+  implicit def fromHlistForConcatPrefix[
+      Prefix <: Rope,
+      Suffix <: Rope
+  ]: FromHList.Aux[Prefix :: Suffix :: HNil, Concat[Prefix, Suffix]] =
+    FromHList.instance {
+      case head :: tail :: HNil => Concat(head, tail)
+    }
+}
 
 case class ExampleCaseClass(first: Range['a', 'z'], second: Range['a', 'z'])
 trait X {
 
   implicit def convertGeneric[Repr <: HList](
       implicit gen: Generic.Aux[ExampleCaseClass, Repr],
-      toHList: ToHList.Aux[ExampleRope, Repr]): Conversion[Concat[Range['a', 'z'], Range['a', 'z']], ExampleCaseClass] =
+      toHList: ToHList.Aux[ExampleRope, Repr],
+      fromHList: FromHList.Aux[Repr, ExampleRope]
+  ): Conversion[Concat[Range['a', 'z'], Range['a', 'z']], ExampleCaseClass] =
     Conversion.instance[Concat[Range['a', 'z'], Range['a', 'z']], ExampleCaseClass](
       forwards = r => gen.from(toHList(r)),
-      backwards = t => Right(Concat(t.first, t.second))
+      backwards = t => Right(fromHList(gen.to(t)))
     )
 }
 class GenericSpec extends FreeSpec with Matchers with X {

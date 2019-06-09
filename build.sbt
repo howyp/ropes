@@ -1,7 +1,7 @@
 name := "ropes"
 
 Global / version := "0.1.0-SNAPSHOT"
-Global / scalaVersion := "2.13.0-RC1"
+Global / scalaVersion := "2.13.0-RC2"
 Global / resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots")
@@ -63,8 +63,9 @@ ThisBuild / Compile / console / scalacOptions --= Seq("-Ywarn-unused:imports", "
 ThisBuild / Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oSDI")
 
 val Dependencies = new {
-  val scalacheck = "org.scalacheck" %% "scalacheck" % "1.14.0"
-  val scalatest  = "org.scalatest"  %% "scalatest"  % "3.0.8-RC2"
+  val scalacheck                 = "org.scalacheck"    %% "scalacheck"               % "1.14.0"
+  val scalatest                  = "org.scalatest"     %% "scalatest"                % "3.1.0-SNAP11"
+  val `scalatestplus-scalacheck` = "org.scalatestplus" %% "scalatestplus-scalacheck" % "1.0.0-SNAP6"
 }
 
 lazy val core = project
@@ -95,8 +96,9 @@ lazy val tests = project
       "-Ywarn-value-discard"
     ),
     libraryDependencies ++= Seq(
-      Dependencies.scalatest  % Test,
-      Dependencies.scalacheck % Test
+      Dependencies.scalatest                  % Test,
+      Dependencies.scalacheck                 % Test,
+      Dependencies.`scalatestplus-scalacheck` % Test
     )
   )
 

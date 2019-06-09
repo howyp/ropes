@@ -133,11 +133,11 @@ Scalacheck <code class="highlighter-rouge">Arbitrary</code>:</p>
 </span>
 <span class="nc">List</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="mi">5</span><span class="o">)(</span><span class="n">arbitrary</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">].</span><span class="n">sample</span><span class="o">).</span><span class="n">flatten</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">write</span> <span class="o">+</span> <span class="sc">'\n'</span><span class="o">)</span>
 <span class="c1">// res6: List[String] =
-// List("@鍍懬&lt;뙒꜔봢ⱡ걃ଐ⾯╙ញ짴骪㠠覘ㅧ渇걠ﰹ≎ᗊ﷐ꉶ笣㲯蝖迢뵠煑ạ뺑⨆嶍͚现࿔⩌ꢌࠔ唢ꐺଊ䭶綏鉠穌ꏪ쫘鳸繀ⷪ뾺嘾떪븾濸⦗彿妨뚟ᗷ溦
-// ", "@ᐺ눆擎깨갘粴㡪頛얿毿馄ﱶ뎃镹娂⦜羂ꉃᝓᯊ㸞螽仹텃쌔ᢗ탫㒌᥋ᔮ煁嫧唼跪ﱈ⦿䏹鲠瑑벵᝚렭陆┉ે뚯喙㈉덇潤櫬盧杲힯北쥡曆￷䒒ࡍꥐ䩂쯲륤㡓⓳ӓ逥釼⚻ﯺ쓖㦪㟘郖
-// ", "@傤⌮턛䰻搼ਵႛ㋡ጱ麠䐽✌霞䟽樂ࡪ锌ࣖ釕슪ᖐề怬霩拮⚷嘘됅鋟ﭖ冎韛Ꟶ䡦ꋞ걖꫉㺴䈙縪焨ｮ͜㺓㉆⌆꤈쁴걩홭襬뫝䘚鲳ẚ茆ষ騿똴綧柕ꕊ禋䗆艡Ξꝧ腜㷰鸟
-// ", "@哺Ɐ⠣Ьꢚ᠆徒ກ윁䌸튙◯䕿曡语ᩞ긣뀺ﶅ킹叫侲咸ꦒ鞨ᵪ뜕欭릪쑞䋟ࣣ씈緂閘≹㞜걈㼾⋀萠᏶ᐞᨌ운ᴲ❇仳軍౫ἣ꾯딟ᆭ꿽癣⊺偉솲텦म㖨劘릆秹⦪芆餲분ẇㅹ鱂当⟞倧ﲮޕ╆﫱쪶턯噕湇ꌽ㇃꺯蕍␞
-// ", "@ꦃ쟼♒Ӧ帚꣸슢֙굛錣谙㠁ꀎ⇂椹棊岓䞃ꗽꆫ㫦辌﵉琛陋涬䁚뺯辫ꩨꤪ厇㺵度颉ᇚ١ꊅ翗㊇蕯劀뾡鍔餿ة톚⎾涼ᖗ瓃斜ପ݁邉鉠扳㸀
+// List("@䁸ῄ鍸핖읡똼黊ꬻ㫍ᡮ籺뽍飜觷ᾖ玆鍣蠎䫝뼁쥔偰ꋿﭺ⹘屣㯎೼僉ꃩ踛뙢榍ᅍ놦쩦䟴퀞뿋⠞勫ኮ
+// ", "@뜡⠷ﶂ뚱Ꜽʹᕙ뉶渉⎂얒舻㎴№朸葽좴晩ꖺ顄㠶刖㾯ພ骾蛋꯳㴂꿃뿠꣪牗쯬ఉ࠮Č낽齭ජ멌ⴆ돃ᓠ⢅๻軙㜧ㅿ캹놞࠯譺撺페喉퐆൬᲋糉楕㙱㔣㨓埒⿖뉕ዪ璫ꊡㄧ０䙖抎暫褍워㶷췙뭚Ғ쯎幉쁇뤨뮝뱑鄜ꆓ㎤訲
+// ", "@힎뱉혩褫渽竚뛪囒᫯䆱嫮霷繹퍧莚祔ᩰ䐋渡姂醃곳홹䠳嗜㓤疨㔚꼯ａ䚟윢좘ꊤ儽淭鍄蘵⽒彠뼡陥헫븙ˉ碑甈꾧儤⾲埶鿸স्헳餢握Ꙡ賷՘ｑ髢띿꺭⫇燕쌝땚凾ꍳ恢벵ᮍ탸廁
+// ", "@穆⣣㣲燈ු꒶鞕꺭襽ঊ횃楝랴犲빲놉䚼棱㒌뎼䔺⏺椓뗡ᆾ攳岥ૅ獃딝㩰䨼麒ꃥ긗樞ॐ橚䁢而쥈䧱頪妳羔∽⠉鉫쭤ﷀ쉰緛蛱⻼এ椣㝕䳝薍캪僇셪䉫垗๾큻濆Ꙍ噔汓줬ꞝ렕붘瓗瑷삣஠Ⓒ鈎墙얘዇⫌㕎蟁
+// ", "@；᥵أ稝迡㹹ȳ뷊픩觑⦆犁魉墭东ⵕ掫靣Ⰿ濳빭宏㿴ᢿ뷢撋ꅬ惲䅼䟲㏍棡蛛䎋䐨ⅽ퉧救霯삾ꬩ꟢䝋덖ذ渙ꍐᙵ쉤ު
 // ")
 </span></code></pre>
 </div>
@@ -172,11 +172,11 @@ usernames which are too long or have non-letter characters:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">List</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="mi">5</span><span class="o">)(</span><span class="n">arbitrary</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">].</span><span class="n">sample</span><span class="o">).</span><span class="n">flatten</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">write</span> <span class="o">+</span> <span class="sc">'\n'</span><span class="o">)</span>
 <span class="c1">// res10: List[String] =
-// List("@aF
-// ", "@f
-// ", "@sWURxaUrxkmLzk
-// ", "@gg
-// ", "@s
+// List("@r
+// ", "@FubPeX
+// ", "@OeHeEGwoPp
+// ", "@J
+// ", "@RKzObAPVxYNfFey
 // ")
 </span></code></pre>
 </div>

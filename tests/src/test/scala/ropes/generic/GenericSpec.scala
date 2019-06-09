@@ -20,38 +20,48 @@ import org.scalatest.{FreeSpec, Matchers}
 import ropes.core.{Range, _}
 import shapeless._
 
+object R {
+  type ExampleRope = Concat[Range['a', 'z'], Range['a', 'z']] //ConvertedTo ExampleCaseClass
+}
+
+import R._
+
+trait ToHList[R <: Rope] {
+  type Out
+  def apply(r: R): Out
+}
+object ToHList {
+  type Aux[R <: Rope, Out_0] = ToHList[R] { type Out = Out_0 }
+
+  def instance[R <: Rope, Out_0](f: R => Out_0): ToHList.Aux[R, Out_0] = new ToHList[R] {
+    type Out = Out_0
+    def apply(r: R): Out_0 = f(r)
+  }
+
+  //TODO this will not work for nested concats
+  implicit def toHlistForConcatPrefix[
+      Prefix <: Rope,
+      Suffix <: Rope
+  ]: ToHList.Aux[Concat[Prefix, Suffix], Prefix :: Suffix :: HNil] =
+    ToHList.instance(r => r.prefix :: r.suffix :: HNil)
+}
+
 case class ExampleCaseClass(first: Range['a', 'z'], second: Range['a', 'z'])
 trait X {
-  implicit def convertGeneric //(implicit generic: Generic[ExampleCaseClass])
-    : Conversion[Concat[Range['a', 'z'], Range['a', 'z']], ExampleCaseClass] = {
-    val gen = Generic[ExampleCaseClass]
-    println(Typeable[gen.Repr].describe)
+
+  implicit def convertGeneric[Repr <: HList](
+      implicit gen: Generic.Aux[ExampleCaseClass, Repr],
+      toHList: ToHList.Aux[ExampleRope, Repr]): Conversion[Concat[Range['a', 'z'], Range['a', 'z']], ExampleCaseClass] =
     Conversion.instance[Concat[Range['a', 'z'], Range['a', 'z']], ExampleCaseClass](
-      forwards = r => gen.from(r.section[1] :: r.section[2] :: HNil),
+      forwards = r => gen.from(toHList(r)),
       backwards = t => Right(Concat(t.first, t.second))
     )
-  }
 }
 class GenericSpec extends FreeSpec with Matchers with X {
 
-  type ExampleRope = Concat[Range['a', 'z'], Range['a', 'z']] //ConvertedTo ExampleCaseClass
-
   "A rope can be converted to a case class with matching names" in {
-
-    val gen = Generic[ExampleCaseClass]
-    println(Typeable[gen.type].describe)
-    println(gen.to(ExampleCaseClass(Range.unsafeFrom['a', 'z']('a'), Range.unsafeFrom['a', 'z']('b'))))
-    println(gen.from(Range.unsafeFrom['a', 'z']('a') :: Range.unsafeFrom['a', 'z']('b') :: HNil))
-
     val r = Rope.parseTo[ExampleRope]("ab").right.get
-    println(gen.from(r.section[1] :: r.section[2] :: HNil))
-
-    Conversion.instance[Concat[Range['a', 'z'], Range['a', 'z']], ExampleCaseClass](
-      forwards = r => gen.from((r.section[1]: Range['a', 'z']) :: (r.section[2]: Range['a', 'z']) :: HNil),
-      backwards = _ => ???
-    )
-
     ConvertedTo.fromSource[ExampleRope, ExampleCaseClass](r).value should be(
-      ExampleCaseClass(Range.unsafeFrom['a', 'z']('a'), Range.unsafeFrom['a', 'z']('b')))
+      ExampleCaseClass(Range.unsafeFrom('a'), Range.unsafeFrom('b')))
   }
 }

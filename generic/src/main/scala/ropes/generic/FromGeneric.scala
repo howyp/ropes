@@ -24,7 +24,15 @@ trait FromGeneric[Repr] {
   def apply(r: Repr): Out
 }
 
-object FromGeneric {
+trait LowPriorityFromGeneric {
+  implicit def fromGenericForNonNestedConcat[
+      Prefix <: Rope,
+      Suffix <: Rope
+  ]: FromGeneric.Aux[Prefix :: Suffix :: HNil, Concat[Prefix, Suffix]] =
+    FromGeneric.instance { case head :: tail :: HNil => Concat(head, tail) }
+}
+
+object FromGeneric extends LowPriorityFromGeneric {
   type Aux[R, Out_0 <: Rope] = FromGeneric[R] { type Out = Out_0 }
 
   def instance[R, Out_0 <: Rope](f: R => Out_0): FromGeneric.Aux[R, Out_0] = new FromGeneric[R] {
@@ -32,12 +40,14 @@ object FromGeneric {
     def apply(r: R): Out_0 = f(r)
   }
 
-  //TODO this will not work for nested concats
-  implicit def fromHlistForConcatPrefix[
+  implicit def fromGenericForNestedConcat[
       Prefix <: Rope,
-      Suffix <: Rope
-  ]: FromGeneric.Aux[Prefix :: Suffix :: HNil, Concat[Prefix, Suffix]] =
-    FromGeneric.instance { case head :: tail :: HNil => Concat(head, tail) }
-
-  implicit def any[In, Out <: Rope]: FromGeneric.Aux[In, Out] = FromGeneric.instance(_ => ???)
+      Suffix1 <: Rope,
+      Suffix2 <: Rope,
+      Nested <: HList
+  ](implicit suffixToGeneric: FromGeneric.Aux[Nested, Concat[Suffix1, Suffix2]])
+    : FromGeneric.Aux[Prefix :: Nested, Concat[Prefix, Concat[Suffix1, Suffix2]]] =
+    FromGeneric.instance {
+      case prefix :: nested => Concat(prefix, suffixToGeneric(nested))
+    }
 }

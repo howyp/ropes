@@ -41,7 +41,7 @@ class GenericSpec extends FreeSpec with Matchers {
       val exampleCaseClass = ExampleCaseClass(Range.unsafeFrom('a'), Range.unsafeFrom('b'), Range.unsafeFrom('c'))
 
       Conversion[ExampleRope, ExampleCaseClass].forwards(exampleRope) should be(exampleCaseClass)
-//      Conversion[ExampleRope, ExampleCaseClass].backwards(exampleCaseClass).right.get should be(exampleRope)
+      Conversion[ExampleRope, ExampleCaseClass].backwards(exampleCaseClass).right.get should be(exampleRope)
     }
   }
 }

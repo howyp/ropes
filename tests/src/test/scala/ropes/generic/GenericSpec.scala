@@ -21,11 +21,13 @@ import ropes.core.{Range, _}
 
 class GenericSpec extends FreeSpec with Matchers {
   case class ExampleCaseClass(first: Range['a', 'z'], second: Range['a', 'z'])
-  type ExampleRope = Concat[Range['a', 'z'], Range['a', 'z']] //ConvertedTo ExampleCaseClass
+  type ExampleRope = Concat[Range['a', 'z'], Range['a', 'z']]
 
-  "A rope can be converted to a case class" in {
-    val r = Rope.parseTo[ExampleRope]("ab").right.get
-    ConvertedTo.fromSource[ExampleRope, ExampleCaseClass](r).value should be(
-      ExampleCaseClass(Range.unsafeFrom('a'), Range.unsafeFrom('b')))
+  "A rope can be converted to and from a case class" in {
+    val exampleRope      = Rope.parseTo[ExampleRope]("ab").right.get
+    val exampleCaseClass = ExampleCaseClass(Range.unsafeFrom('a'), Range.unsafeFrom('b'))
+
+    Conversion[ExampleRope, ExampleCaseClass].forwards(exampleRope) should be(exampleCaseClass)
+    Conversion[ExampleRope, ExampleCaseClass].backwards(exampleCaseClass).right.get should be(exampleRope)
   }
 }

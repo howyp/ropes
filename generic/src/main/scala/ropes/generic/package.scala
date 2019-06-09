@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package ropes.generic
+package ropes
 
-import org.scalatest.{FreeSpec, Matchers}
-import ropes.core.{Range, _}
+import ropes.core.{Conversion, Rope}
+import shapeless.{Generic, HList}
 
-class GenericSpec extends FreeSpec with Matchers {
-  case class ExampleCaseClass(first: Range['a', 'z'], second: Range['a', 'z'])
-  type ExampleRope = Concat[Range['a', 'z'], Range['a', 'z']] //ConvertedTo ExampleCaseClass
+package object generic {
 
-  "A rope can be converted to a case class" in {
-    val r = Rope.parseTo[ExampleRope]("ab").right.get
-    ConvertedTo.fromSource[ExampleRope, ExampleCaseClass](r).value should be(
-      ExampleCaseClass(Range.unsafeFrom('a'), Range.unsafeFrom('b')))
-  }
+  implicit def convertGeneric[R <: Rope, Out, Repr <: HList](
+      implicit gen: Generic.Aux[Out, Repr],
+      toHList: ToGeneric.Aux[R, Repr],
+      fromHList: FromGeneric.Aux[Repr, R]
+  ): Conversion[R, Out] =
+    Conversion.instance[R, Out](
+      forwards = r => gen.from(toHList(r)),
+      backwards = t => Right(fromHList(gen.to(t)))
+    )
 }

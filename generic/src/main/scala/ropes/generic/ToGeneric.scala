@@ -16,16 +16,26 @@
 
 package ropes.generic
 
-import org.scalatest.{FreeSpec, Matchers}
-import ropes.core.{Range, _}
+import ropes.core.{Concat, Rope}
+import shapeless._
 
-class GenericSpec extends FreeSpec with Matchers {
-  case class ExampleCaseClass(first: Range['a', 'z'], second: Range['a', 'z'])
-  type ExampleRope = Concat[Range['a', 'z'], Range['a', 'z']] //ConvertedTo ExampleCaseClass
+trait ToGeneric[R <: Rope] {
+  type Out
+  def apply(r: R): Out
+}
 
-  "A rope can be converted to a case class" in {
-    val r = Rope.parseTo[ExampleRope]("ab").right.get
-    ConvertedTo.fromSource[ExampleRope, ExampleCaseClass](r).value should be(
-      ExampleCaseClass(Range.unsafeFrom('a'), Range.unsafeFrom('b')))
+object ToGeneric {
+  type Aux[R <: Rope, Out_0] = ToGeneric[R] { type Out = Out_0 }
+
+  def instance[R <: Rope, Out_0](f: R => Out_0): ToGeneric.Aux[R, Out_0] = new ToGeneric[R] {
+    type Out = Out_0
+    def apply(r: R): Out_0 = f(r)
   }
+
+  //TODO this will not work for nested concats
+  implicit def toHlistForConcatPrefix[
+      Prefix <: Rope,
+      Suffix <: Rope
+  ]: ToGeneric.Aux[Concat[Prefix, Suffix], Prefix :: Suffix :: HNil] =
+    ToGeneric.instance(r => r.prefix :: r.suffix :: HNil)
 }

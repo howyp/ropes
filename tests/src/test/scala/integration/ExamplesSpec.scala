@@ -175,7 +175,9 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
       // number because they were formerly assigned by geographical region; the middle two
       // digits, known as the group number; and the final four digits, known as the
       // serial number.
-      case class SocialSecurityNumber(Area: Int, Group: Int, Serial: Int)
+      //TODO don't require literals to be in the case class
+      //TODO recursive conversions, such that Area, Group, Serial can be `Int` in the case class
+      case class SocialSecurityNumber(Area: Area, dash1: Dash, Group: Group, dash2: Dash, Serial: Serial)
 
       type Area   = Repeated.Exactly[3, Digit] ConvertedTo Int Named "Area"
       type Group  = Repeated.Exactly[2, Digit] ConvertedTo Int Named "Group"
@@ -183,27 +185,14 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
       type Dash   = Literal['-']
       type SSN    = Area +: Dash +: Group +: Dash +: Serial
 
-      implicit val ssnConversion: Conversion[SSN, SocialSecurityNumber] = Conversion.instance(
-        forwards = r =>
-          SocialSecurityNumber(Area = r.section["Area"].value,
-                               Group = r.section["Group"].value,
-                               Serial = r.section["Serial"].value),
-        backwards = s =>
-          Right(
-            ConvertedTo.fromTarget[Repeated.Exactly[3, Digit], Int](s.Area).right.get.assignName["Area"] +:
-              Literal['-'] +:
-              ConvertedTo.fromTarget[Repeated.Exactly[2, Digit], Int](s.Group).right.get.assignName["Group"] +:
-              Literal['-'] +:
-              ConvertedTo.fromTarget[Repeated.Exactly[4, Digit], Int](s.Serial).right.get.assignName["Serial"]
-        )
-      )
+      import ropes.generic._
 
       "078-05-1120" - {
         "parsing and de-composing" in {
           val parsed = Rope.parseTo[SSN ConvertedTo SocialSecurityNumber]("078-05-1120").getOrElse(fail())
-          parsed.value.Area should be(78)
-          parsed.value.Group should be(5)
-          parsed.value.Serial should be(1120)
+          parsed.value.Area.value should be(78)
+          parsed.value.Group.value should be(5)
+          parsed.value.Serial.value should be(1120)
           parsed.write should be("078-05-1120")
         }
         "composing and writing" in {
@@ -218,10 +207,23 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
         }
         "composing and writing via the conversion" in {
           //TODO can we make this more elegant, only supplying the Rope type to `fromTarget`?
+          //TODO re-enable
           val Right(composed) =
-            ConvertedTo.fromTarget[SSN, SocialSecurityNumber](SocialSecurityNumber(Area = 78, Group = 5, Serial = 1120))
-
-          composed.write should be("078-05-1120")
+            for {
+              area   <- ConvertedTo.fromTarget[Repeated.Exactly[3, Digit], Int](78)
+              group  <- ConvertedTo.fromTarget[Repeated.Exactly[2, Digit], Int](5)
+              serial <- ConvertedTo.fromTarget[Repeated.Exactly[4, Digit], Int](1120)
+            } yield
+              SocialSecurityNumber(area.assignName["Area"],
+                                   Literal['-'],
+                                   group.assignName["Group"],
+                                   Literal['-'],
+                                   serial.assignName["Serial"])
+          ConvertedTo
+            .fromTarget[SSN, SocialSecurityNumber](composed)
+            .right
+            .get
+            .write should be("078-05-1120")
         }
       }
       "generating" in {

@@ -1,7 +1,7 @@
 name := "ropes"
 
 Global / version := "0.1.0-SNAPSHOT"
-Global / scalaVersion := "2.13.0-RC2"
+Global / scalaVersion := "2.13.0"
 Global / resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots")
@@ -64,8 +64,8 @@ ThisBuild / Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oSD
 
 val Dependencies = new {
   val scalacheck                 = "org.scalacheck"    %% "scalacheck"               % "1.14.0"
-  val scalatest                  = "org.scalatest"     %% "scalatest"                % "3.1.0-SNAP11"
-  val `scalatestplus-scalacheck` = "org.scalatestplus" %% "scalatestplus-scalacheck" % "1.0.0-SNAP6"
+  val scalatest                  = "org.scalatest"     %% "scalatest"                % "3.1.0-SNAP13"
+  val `scalatestplus-scalacheck` = "org.scalatestplus" %% "scalatestplus-scalacheck" % "1.0.0-SNAP8"
 }
 
 lazy val core = project
@@ -116,7 +116,7 @@ lazy val docs = project
     micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
     libraryDependencies -= "org.scalameta" %% "mdoc"     % "1.2.10", // MDoc not published for 2.13 yet
     libraryDependencies -= "org.tpolecat"  %% "tut-core" % "0.6.10",
-    libraryDependencies += "org.tpolecat"  %% "tut-core" % "0.6.11",
+    libraryDependencies += "org.tpolecat"  %% "tut-core" % "0.6.12",
     scalacOptions --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings")
   )
   .dependsOn(core, dsl, scalacheck)

@@ -79,24 +79,25 @@ val Dependencies = new {
   val `scalatestplus-scalacheck` = "org.scalatestplus" %% "scalatestplus-scalacheck" % "1.0.0-SNAP8"
 }
 
-lazy val core = project
-  .in(file("core"))
-  .enablePlugins(AutomateHeaderPlugin, spray.boilerplate.BoilerplatePlugin)
+def module(p: Project, modName: String, skipPublish: Boolean) =
+  p.in(file(modName))
+    .enablePlugins(AutomateHeaderPlugin)
+    .settings(
+      moduleName := s"ropes-$modName",
+      publish / skip := skipPublish
+    )
 
-lazy val dsl = project
-  .in(file("dsl"))
+lazy val core = module(project, modName = "core", skipPublish = false)
+  .enablePlugins(spray.boilerplate.BoilerplatePlugin)
+
+lazy val dsl = module(project, modName = "dsl", skipPublish = false)
   .dependsOn(core)
-  .enablePlugins(AutomateHeaderPlugin)
 
-lazy val scalacheck = project
-  .in(file("scalacheck"))
-  .enablePlugins(AutomateHeaderPlugin)
+lazy val scalacheck = module(project, modName = "scalacheck", skipPublish = false)
   .dependsOn(core)
   .settings(libraryDependencies ++= Seq(Dependencies.scalacheck))
 
-lazy val tests = project
-  .in(file("tests"))
-  .enablePlugins(AutomateHeaderPlugin)
+lazy val tests = module(project, modName = "tests", skipPublish = true)
   .dependsOn(core, dsl, scalacheck)
   .settings(
     scalacOptions --= Seq(
@@ -113,14 +114,12 @@ lazy val tests = project
     )
   )
 
-lazy val docs = project
+lazy val docs = module(project, modName = "docs", skipPublish = true)
   .enablePlugins(MicrositesPlugin)
   .settings(
     name := "ropes",
     description := "Type-level String Formats",
-    moduleName := "ropes-docs",
     micrositeBaseUrl := "/ropes",
-//    micrositeDocumentationUrl := "/docs",
     micrositeGithubOwner := "howyp",
     micrositeGithubRepo := "ropes",
     micrositePushSiteWith := GitHub4s,

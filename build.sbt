@@ -1,14 +1,25 @@
 name := "ropes"
 
-Global / version := "0.1.0-SNAPSHOT"
-Global / scalaVersion := "2.13.0"
+Global / organization := "io.github.howyp"
+Global / organizationName := "Howard Perrin"
+Global / startYear := Some(2018)
+Global / licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt"))
+Global / homepage := Some(url("https://howyp.github.io/ropes/"))
+Global / developers := List(
+  Developer(
+    id = "howyp",
+    name = "Howard Perrin",
+    email = "howyp@users.noreply.github.com",
+    url = url("https://github.com/howyp")
+  )
+)
+
 Global / resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots")
 )
-Global / organizationName := "Howard Perrin"
-Global / startYear := Some(2018)
-Global / licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt"))
+
+Global / scalaVersion := "2.13.0"
 Global / scalacOptions ++= Seq(
   // Thanks to @tpolecat for this list at https://tpolecat.github.io/2017/04/25/scalac-flags.html
   // Some options have been commented as they are either not needed for this project, or do not seem to be available

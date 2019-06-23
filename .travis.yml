@@ -5,6 +5,7 @@ scala:
 
 before_install:
 - export PATH=${PATH}:./vendor/bundle
+- git fetch --tags
 
 install:
 - rvm use 2.6.0 --install --fuzzy
@@ -13,4 +14,4 @@ install:
 - gem install jekyll -v 3.2.1
 
 script:
-- sbt ++$TRAVIS_SCALA_VERSION scalafmtCheck scalafmtSbtCheck headerCheck test:headerCheck test docs/publishMicrosite
+- sbt ++$TRAVIS_SCALA_VERSION scalafmtCheck scalafmtSbtCheck headerCheck test:headerCheck test ci-release docs/publishMicrosite

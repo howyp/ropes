@@ -1,7 +1,7 @@
 Ropes
 =====
-[![Build Status](https://travis-ci.com/howyp/ropes.svg?branch=master)](https://travis-ci.com/howyp/ropes)
-
+[![Build Status](https://travis-ci.com/howyp/ropes.svg?branch=master)](https://travis-ci.com/howyp/ropes) 
+[![GitHub license](https://img.shields.io/github/license/howyp/ropes.svg)](https://github.com/howyp/ropes/blob/master/LICENSE)
 #### Type-level String Formats
 
 Declare your string formats at the type level, and

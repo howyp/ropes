@@ -16,7 +16,7 @@
 
 package ropes
 
-import ropes.core.instances.{DigitInstances, OptionalInstances, RangeInstances}
+import ropes.core.instances.{DigitInstances, OptionalInstances}
 import ropes.core.Spec._
 
 package object core extends DigitInstances with OptionalInstances {
@@ -46,7 +46,7 @@ package object core extends DigitInstances with OptionalInstances {
     * @tparam End A singleton `Char` type which is the maximum allowable character, inclusive
     */
   type Range[Start <: Char with Singleton, End <: Char with Singleton] = CharacterClass[Start - End]
-  object Range extends RangeInstances {
+  object Range {
     def from[Start <: Char with Singleton: ValueOf, End <: Char with Singleton: ValueOf](
         char: Char): Either[Rope.InvalidValue.type, Range[Start, End]] =
       CharacterClass.from[Start - End](char)

@@ -33,5 +33,12 @@ class OrSpec extends RopeLaws with CommonGens {
       genInvalidStrings =
         Some(Arbitrary.arbitrary[String].suchThat(str => !(str.startsWith("a") || str.startsWith("b"))))
     )
+    "Can be created from an Either" in forAll { o: Or[Literal['a'], Literal['b']] =>
+      val asEither = o match {
+        case Or.First(a)  => Left(a)
+        case Or.Second(a) => Right(a)
+      }
+      Or.from(asEither) should be(o)
+    }
   }
 }

@@ -43,8 +43,10 @@ class NamedSpec extends RopeLaws with CommonGens {
         parsed.section["The b"].value should be('b')
 
         val a: AnyString Named "The b" = AnyString("B").assignName["The b"]
-        val b: AnyString               = AnyString("B").assignName["The b"]
-        """val c: AnyString WithName "The b" = AnyString("B")""" shouldNot compile
+        val b: AnyString               = a
+        val c: AnyString               = a.unassignName
+        """val d: AnyString WithName "The b" = AnyString("B")""" shouldNot compile
+        """val e: AnyString WithName "The b" = a.unassignName""" shouldNot compile
       }
       """For a 3-section concat""" in {
         val Parse.Result.Complete(parsed) =

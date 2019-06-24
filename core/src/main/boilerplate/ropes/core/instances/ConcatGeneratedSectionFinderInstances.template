@@ -2,9 +2,13 @@ package ropes.core.instances
 import ropes.core.{Concat, Rope, SectionFinder}
 
 private[ropes] trait ConcatGeneratedSectionFinderInstances extends ConcatExplicitSectionFinderInstances {
+  // $COVERAGE-OFF$ Not expecting every instance here to be tested
+  
   [#implicit def sectionByNumber2forConcat[Prefix <: Rope, Suffix <: Rope](
       implicit nested: SectionFinder[Suffix, 1]): SectionFinder.Aux[Concat[Prefix, Suffix], 2, nested.Out] =
     SectionFinder.instance(concat => nested(concat.suffix))#
 
   ]
+  
+  // $COVERAGE-ON$
 }

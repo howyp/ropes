@@ -120,6 +120,7 @@ lazy val docs = module(project, modName = "docs", skipPublish = true)
     name := "ropes",
     description := "Type-level String Formats",
     micrositeBaseUrl := "/ropes",
+    micrositeDocumentationUrl := "/ropes/learn-the-ropes/1-basics.html",
     micrositeGithubOwner := "howyp",
     micrositeGithubRepo := "ropes",
     micrositePushSiteWith := GitHub4s,

@@ -1,0 +1,24 @@
+options:
+  - title: 1 - Basics
+    url: learn-the-ropes/1-basics.html
+    section: intro
+
+  - title: 2 - Letters
+    url: learn-the-ropes/2-letters.html
+    section: intro
+
+  - title: 3 - Character Classes
+    url: learn-the-ropes/3-character-classes.html
+    section: intro
+
+  - title: 4 - Concats
+    url: learn-the-ropes/4-concats.html
+    section: intro
+
+  - title: 5 - Naming
+    url: learn-the-ropes/5-naming.html
+    section: intro
+
+  - title: 6 - Conversions
+    url: learn-the-ropes/6-conversions.html
+    section: intro

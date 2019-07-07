@@ -15,10 +15,14 @@ options:
     url: learn-the-ropes/4-concats.html
     section: intro
 
-  - title: 5 - Naming
-    url: learn-the-ropes/5-naming.html
+  - title: 5 - DSL
+    url: learn-the-ropes/5-dsl.html
     section: intro
 
-  - title: 6 - Conversions
-    url: learn-the-ropes/6-conversions.html
+  - title: 6 - Naming
+    url: learn-the-ropes/6-naming.html
+    section: intro
+
+  - title: 7 - Conversions
+    url: learn-the-ropes/7-conversions.html
     section: intro

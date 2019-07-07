@@ -5,11 +5,13 @@ title: 6. Conversions
 
 # Section 6 - Conversions
 
-When we've accessed the area, group and serial numbers above, we've used
-`.write` to returned them as `String`s. That's because the actual return
-type is `Repeated.Exactly[N, Digit]`, which gives it's values as a list
-of `Int`s. That's a bit difficult to work with, and they'd be more
-naturally represented as `Int`s.
+When we've accessed the area, group and serial numbers in previous
+sections, we've used `.write` to return them as `String`s. That's
+because the actual return type is `Repeated.Exactly[N, Digit]`, which
+gives it's values as a list of `Int`s. That's a bit difficult to work
+with, and they'd be more naturally represented as `Int`s.
+
+<!--TODO Describe `Digit`-->
 
 Ropes provides a way to do this using `ConvertedTo`, which takes a rope
 type and the type you want to convert to and from:

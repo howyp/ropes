@@ -5,7 +5,7 @@ title: 5. Naming
 
 # Section 5 - Naming sections with `Named`
 
-If we'd like, we can parts of our rope:
+If we'd like, we can name parts of our rope:
 
 ```tut:silent
 import ropes.core._

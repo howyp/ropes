@@ -16,6 +16,14 @@
 
 package ropes.core
 
+import ropes.core.Rope.InvalidValue
+
+trait Parsing[R <: Rope] {
+  def parse(s: String)(implicit parse: Parse[R]): Either[InvalidValue.type, R] = Rope.parseTo[R](s)(parse)
+  def unsafeParse(s: String)(implicit parse: Parse[R]): R = {
+    Rope.parseTo[R](s)(parse).getOrElse(throw new IllegalArgumentException(s"'$s' is invalid"))
+  }
+}
 object RopeCompanion {
   trait Build[R <: Rope] {
     type Companion
@@ -32,5 +40,4 @@ object RopeCompanion {
   }
 
   def apply[R <: Rope](implicit build: RopeCompanion.Build[R]): build.Companion = build.companion
-  def build[R <: Rope](implicit build: RopeCompanion.Build[R]): build.Companion = build.companion
 }

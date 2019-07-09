@@ -185,6 +185,7 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
       type Serial = Repeated.Exactly[4, Digit] ConvertedTo Int Named "Serial"
       type Dash   = Literal['-']
       type SSN    = Area +: Dash +: Group +: Dash +: Serial
+      val SSN = RopeCompanion[SSN]
 
       implicit val ssnConversion: Conversion[SSN, SocialSecurityNumber] = Conversion.instance(
         forwards = r =>
@@ -193,11 +194,13 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
                                Serial = r.section["Serial"].value),
         backwards = s =>
           Right(
-            ConvertedTo.fromTarget[Repeated.Exactly[3, Digit], Int](s.Area).right.get.assignName["Area"] +:
-              Literal['-'] +:
-              ConvertedTo.fromTarget[Repeated.Exactly[2, Digit], Int](s.Group).right.get.assignName["Group"] +:
-              Literal['-'] +:
+            SSN(
+              ConvertedTo.fromTarget[Repeated.Exactly[3, Digit], Int](s.Area).right.get.assignName["Area"],
+              Literal['-'],
+              ConvertedTo.fromTarget[Repeated.Exactly[2, Digit], Int](s.Group).right.get.assignName["Group"],
+              Literal['-'],
               ConvertedTo.fromTarget[Repeated.Exactly[4, Digit], Int](s.Serial).right.get.assignName["Serial"]
+            )
         )
       )
 
@@ -229,7 +232,7 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
       }
       "generating" in {
         forAll { ssn: SSN =>
-          Rope.parseTo[SSN](ssn.write) should be(a[Right[_, _]])
+          SSN.parse(ssn.write) should be(a[Right[_, _]])
         }
       }
     }

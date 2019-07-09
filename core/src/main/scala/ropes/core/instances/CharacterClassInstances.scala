@@ -33,7 +33,7 @@ private[ropes] trait CharacterClassInstances {
   implicit def characterClassWrite[S <: Spec, N <: Naming]: Write[CharacterClass[S] { type Name = N }] =
     _.value.toString
 
-  class CharacterClassCompanion[S <: Spec] {
+  class CharacterClassCompanion[S <: Spec] extends Parsing[CharacterClass[S]] {
     def from(char: Char)(implicit reduce: Reduce[S]): Either[Rope.InvalidValue.type, CharacterClass[S]] =
       CharacterClass.from[S](char)
 

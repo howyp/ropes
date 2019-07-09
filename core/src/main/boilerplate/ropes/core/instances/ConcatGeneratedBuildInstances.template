@@ -1,6 +1,6 @@
 package ropes.core.instances
 import ropes.core.RopeCompanion.Build
-import ropes.core.{Concat, Rope}
+import ropes.core.{Concat, Rope, Parsing}
 
 private[ropes] trait ConcatBuildInstance1 {
   private[ropes] type +:[Prefix <: Rope, Suffix <: Rope] = Concat[Prefix, Suffix]
@@ -11,7 +11,7 @@ private[ropes] trait ConcatBuildInstance1 {
   }
 }
 [2..#private[ropes] trait ConcatBuildInstance1 extends ConcatBuildInstance0 {
-  class Concat1Companion[[#Section1 <: Rope#]] { self =>
+  class Concat1Companion[[#Section1 <: Rope#]] extends Parsing[[#Section1# +: ]] { self =>
     // TODO de-duplicate
     final val materialise = self
 

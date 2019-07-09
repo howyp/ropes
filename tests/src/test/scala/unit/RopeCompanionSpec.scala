@@ -53,9 +53,13 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
         Example(v) should be(AnyString(v))
       }
       "has an unapply method" in forAll { v: String =>
-        (Example(v) match {
-          case Example(w) => w
-        }) should be(v)
+        (Example(v) match { case Example(w) => w }) should be(v)
+      }
+      "has a parse method" in forAll { v: String =>
+        Example.parse(v) should be(Right(AnyString(v)))
+      }
+      "has a unsafeParse method" in forAll { v: String =>
+        Example.unsafeParse(v) should be(AnyString(v))
       }
     }
     "CharacterClass" - {
@@ -79,26 +83,52 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
           """value match { case Example(w) => w }""" shouldNot typeCheck
         }
       }
+      "has a parse method" in forAll(Gen.alphaLowerChar) { c =>
+        Example.parse(c.toString).right.get.value should be(c)
+      }
+      "has a unsafeParse method" in forAll(Gen.alphaLowerChar) { c =>
+        Example.unsafeParse(c.toString).value should be(c)
+      }
     }
     "Concat" - {
       import Spec._
+      val genValues = Gen.zip(
+        Gen.alphaLowerChar.map(CharacterClass.from['a' - 'z'](_).right.get),
+        arbitrary[String].map(AnyString.apply)
+      )
       "With two sections" - {
         type Example = Concat[CharacterClass['a' - 'z'], AnyString]
         val Example = RopeCompanion[Example].materialise
-        "has a from method" in forAll(Gen.alphaLowerChar, arbitrary[String]) { (c, s) =>
-          val prefix = CharacterClass.from['a' - 'z'](c).right.get
-          val suffix = AnyString(s)
-          Example(prefix, suffix) should be(Concat(prefix, suffix))
+        "has a from method" in forAll(genValues) {
+          case (prefix, suffix) =>
+            Example(prefix, suffix) should be(Concat(prefix, suffix))
+        }
+        "has a parse method" in forAll(genValues) {
+          case (prefix, suffix) =>
+            Example.parse(s"${prefix.write}${suffix.write}") should be(Right(Concat(prefix, suffix)))
+        }
+        "has a unsafeParse method" in forAll(genValues) {
+          case (prefix, suffix) =>
+            Example.unsafeParse(s"${prefix.write}${suffix.write}") should be(Concat(prefix, suffix))
         }
       }
       "With many sections" - {
         type Example = Concat[CharacterClass['a' - 'z'],
                               Concat[CharacterClass['a' - 'z'], Concat[CharacterClass['a' - 'z'], AnyString]]]
         val Example = RopeCompanion[Example].materialise
-        "has a from method" in forAll(Gen.alphaLowerChar, arbitrary[String]) { (c, s) =>
-          val prefix = CharacterClass.from['a' - 'z'](c).right.get
-          val suffix = AnyString(s)
-          Example(prefix, prefix, prefix, suffix) should be(Concat(prefix, Concat(prefix, Concat(prefix, suffix))))
+        "has a from method" in forAll(genValues) {
+          case (prefix, suffix) =>
+            Example(prefix, prefix, prefix, suffix) should be(Concat(prefix, Concat(prefix, Concat(prefix, suffix))))
+        }
+        "has a parse method" in forAll(genValues) {
+          case (prefix, suffix) =>
+            Example.parse(s"${prefix.write}${prefix.write}${prefix.write}${suffix.write}") should be(
+              Right(Concat(prefix, Concat(prefix, Concat(prefix, suffix)))))
+        }
+        "has a unsafeParse method" in forAll(genValues) {
+          case (prefix, suffix) =>
+            Example.unsafeParse(s"${prefix.write}${prefix.write}${prefix.write}${suffix.write}") should be(
+              Concat(prefix, Concat(prefix, Concat(prefix, suffix))))
         }
       }
     }

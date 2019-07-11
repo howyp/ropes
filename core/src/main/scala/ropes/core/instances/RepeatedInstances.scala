@@ -54,8 +54,14 @@ trait RepeatedInstances {
     def from(values: List[R]): Either[Rope.InvalidValue.type, Repeated[MinReps, MaxReps, R]] =
       Repeated.from[MinReps, MaxReps, R](values)
 
+    def from(values: R*): Either[Rope.InvalidValue.type, Repeated[MinReps, MaxReps, R]] =
+      Repeated.from[MinReps, MaxReps, R](values.toList)
+
     def unsafeFrom(values: List[R]): Repeated[MinReps, MaxReps, R] =
       Repeated.unsafeFrom[MinReps, MaxReps, R](values)
+
+    def unsafeFrom(values: R*): Repeated[MinReps, MaxReps, R] =
+      Repeated.unsafeFrom[MinReps, MaxReps, R](values.toList)
 
     def unapply(repeated: Repeated[MinReps, MaxReps, R]): Option[List[R]] = Some(repeated.values)
   }

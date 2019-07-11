@@ -32,11 +32,10 @@ object RopeCompanion {
   object Build {
     type Aux[R <: Rope, _Companion] = Build[R] { type Companion = _Companion }
 
-    def instance[R <: Rope, _Companion](_companion: _Companion) =
-      new Build[R] {
-        type Companion = _Companion
-        def companion: _Companion = _companion
-      }
+    def instance[R <: Rope, _Companion](c: _Companion) = new Build[R] {
+      type Companion = _Companion
+      def companion: _Companion = c
+    }
   }
 
   def apply[R <: Rope](implicit build: RopeCompanion.Build[R]): build.Companion = build.companion

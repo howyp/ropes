@@ -148,6 +148,11 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
       "has an unsafeFrom method taking a list" in forAll(values) { v: List['@'] =>
         Example.unsafeFrom(v.map(Literal['@'])) should be(asRepeated(v))
       }
+      "has an from method taking varargs" in {
+        Example.from(Literal['@']) should be(Right(asRepeated(List('@'))))
+        Example.from(Literal['@'], Literal['@']) should be(Right(asRepeated(List('@', '@'))))
+        Example.from(Literal['@'], Literal['@'], Literal['@']) should be(Right(asRepeated(List('@', '@', '@'))))
+      }
       "has an unapply method" in forAll(values) { v: List['@'] =>
         (asRepeated(v) match { case Example(w) => w }) should be(v.map(Literal['@']))
       }

@@ -32,7 +32,7 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
       // shorter for the sake of ease. A username can only contain alphanumeric characters (letters A-Z, numbers 0-9)
       // with the exception of underscores
       type Username = Repeated[1, 15, CharacterClass[('a' - 'z') || ('A' - 'Z') || ('0' - '9') || ==['_']]]
-      val Username = RopeCompanion[TwitterHandle]
+      val Username = RopeCompanion[Username]
       type TwitterHandle = Literal['@'] +: Username
       val TwitterHandle = RopeCompanion[TwitterHandle]
       val `@`           = RopeCompanion[Literal['@']]
@@ -47,12 +47,13 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
         Rope.parseTo[TwitterHandle]("@HowyP*") should be(Left(Rope.InvalidValue))           // No @ prefix
       }
       "composing and writing" in {
-        val handle: TwitterHandle = TwitterHandle(`@`, Rope.parseTo[Username]("HowyP").getOrElse(fail()))
-        handle.write should be("@HowyP")
+        TwitterHandle(`@`, Username.unsafeParse("HowyP")).write should be("@HowyP")
       }
       "generating" in {
         forAll { handle: TwitterHandle =>
-          handle.write should startWith("@")
+          val s = handle.write
+          s should startWith("@")
+          s.length should ((be >= 2) and (be <= 16))
         }
       }
     }

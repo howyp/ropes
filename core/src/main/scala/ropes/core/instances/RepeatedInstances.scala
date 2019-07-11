@@ -56,6 +56,8 @@ trait RepeatedInstances {
 
     def unsafeFrom(values: List[R]): Repeated[MinReps, MaxReps, R] =
       Repeated.unsafeFrom[MinReps, MaxReps, R](values)
+
+    def unapply(repeated: Repeated[MinReps, MaxReps, R]): Option[List[R]] = Some(repeated.values)
   }
   implicit def anyStringBuild[MinReps <: Int with Singleton: ValueOf, MaxReps <: Int with Singleton: ValueOf, R <: Rope]
     : Build.Aux[Repeated[MinReps, MaxReps, R], RepeatedCompanion[MinReps, MaxReps, R]] =

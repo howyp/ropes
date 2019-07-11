@@ -140,17 +140,22 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
 
       val values: Gen[List['@']] = Gen.choose(1, 5).flatMap(Gen.listOfN(_, '@'))
 
+      def asRepeated(v: List['@']) = Repeated.unsafeFrom[1, 5, Literal['@']](v.map(Literal['@']))
+
       "has an from method taking a list" in forAll(values) { v: List['@'] =>
-        Example.from(v.map(Literal['@'])) should be(Right(Repeated.unsafeFrom[1, 5, Literal['@']](v.map(Literal['@']))))
+        Example.from(v.map(Literal['@'])) should be(Right(asRepeated(v)))
       }
       "has an unsafeFrom method taking a list" in forAll(values) { v: List['@'] =>
-        Example.unsafeFrom(v.map(Literal['@'])) should be(Repeated.unsafeFrom[1, 5, Literal['@']](v.map(Literal['@'])))
+        Example.unsafeFrom(v.map(Literal['@'])) should be(asRepeated(v))
+      }
+      "has an unapply method" in forAll(values) { v: List['@'] =>
+        (asRepeated(v) match { case Example(w) => w }) should be(v.map(Literal['@']))
       }
       "has a parse method" in forAll(values) { v: List['@'] =>
-        Example.parse(v.mkString) should be(Right(Repeated.unsafeFrom[1, 5, Literal['@']](v.map(Literal['@']))))
+        Example.parse(v.mkString) should be(Right(asRepeated(v)))
       }
       "has a unsafeParse method" in forAll(values) { v: List['@'] =>
-        Example.unsafeParse(v.mkString) should be(Repeated.unsafeFrom[1, 5, Literal['@']](v.map(Literal['@'])))
+        Example.unsafeParse(v.mkString) should be(asRepeated(v))
       }
     }
   }

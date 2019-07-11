@@ -15,13 +15,15 @@
  */
 
 package unit
-import org.scalacheck.Gen
+import org.scalacheck.{Gen, Shrink}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, Matchers}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import ropes.core._
 
 class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyChecks {
+  private implicit def noShrink[T]: Shrink[T] = Shrink(_ => Stream.empty[T])
+
   "The Rope companion object" - {
     "Can parse to a given rope" - {
       "Successfully if the parse is complete" in {
@@ -48,7 +50,7 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
     }
     "AnyString" - {
       type Example = AnyString
-      val Example = RopeCompanion[AnyString].materialise
+      val Example = RopeCompanion[Example].materialise
       "has an apply method" in forAll { v: String =>
         Example(v) should be(AnyString(v))
       }
@@ -130,6 +132,25 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
             Example.unsafeParse(s"${prefix.write}${prefix.write}${prefix.write}${suffix.write}") should be(
               Concat(prefix, Concat(prefix, Concat(prefix, suffix))))
         }
+      }
+    }
+    "Repeated" - {
+      type Example = Repeated[1, 5, Literal['@']]
+      val Example = RopeCompanion[Example]
+
+      val values: Gen[List['@']] = Gen.choose(1, 5).flatMap(Gen.listOfN(_, '@'))
+
+      "has an from method taking a list" in forAll(values) { v: List['@'] =>
+        Example.from(v.map(Literal['@'])) should be(Right(Repeated.unsafeFrom[1, 5, Literal['@']](v.map(Literal['@']))))
+      }
+      "has an unsafeFrom method taking a list" in forAll(values) { v: List['@'] =>
+        Example.unsafeFrom(v.map(Literal['@'])) should be(Repeated.unsafeFrom[1, 5, Literal['@']](v.map(Literal['@'])))
+      }
+      "has a parse method" in forAll(values) { v: List['@'] =>
+        Example.parse(v.mkString) should be(Right(Repeated.unsafeFrom[1, 5, Literal['@']](v.map(Literal['@']))))
+      }
+      "has a unsafeParse method" in forAll(values) { v: List['@'] =>
+        Example.unsafeParse(v.mkString) should be(Repeated.unsafeFrom[1, 5, Literal['@']](v.map(Literal['@'])))
       }
     }
   }

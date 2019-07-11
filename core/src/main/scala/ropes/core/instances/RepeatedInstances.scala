@@ -16,6 +16,7 @@
 
 package ropes.core.instances
 
+import ropes.core.RopeCompanion.Build
 import ropes.core._
 
 import scala.annotation.tailrec
@@ -46,4 +47,17 @@ trait RepeatedInstances {
 
   implicit def repeatedWrite[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope, N <: Naming](
       implicit w: Write[R]): Write[Repeated[MinReps, MaxReps, R] { type Name = N }] = _.values.map(_.write).mkString("")
+
+  class RepeatedCompanion[MinReps <: Int with Singleton: ValueOf, MaxReps <: Int with Singleton: ValueOf, R <: Rope]
+      extends Parsing[Repeated[MinReps, MaxReps, R]] { self =>
+
+    def from(values: List[R]): Either[Rope.InvalidValue.type, Repeated[MinReps, MaxReps, R]] =
+      Repeated.from[MinReps, MaxReps, R](values)
+
+    def unsafeFrom(values: List[R]): Repeated[MinReps, MaxReps, R] =
+      Repeated.unsafeFrom[MinReps, MaxReps, R](values)
+  }
+  implicit def anyStringBuild[MinReps <: Int with Singleton: ValueOf, MaxReps <: Int with Singleton: ValueOf, R <: Rope]
+    : Build.Aux[Repeated[MinReps, MaxReps, R], RepeatedCompanion[MinReps, MaxReps, R]] =
+    Build.instance(new RepeatedCompanion[MinReps, MaxReps, R])
 }

@@ -26,7 +26,8 @@ private[ropes] trait AnyStringInstances {
   implicit val anyStringWrite: Write[AnyString] = _.value
 
   object AnyStringCompanion extends Parsing[AnyString] { self =>
-    final val materialise = self
+    protected val parseInstance: Parse[AnyString] = Parse[AnyString]
+    final val materialise                         = self
 
     def apply(value: String)                    = AnyString.apply(value)
     def unapply(arg: AnyString): Option[String] = Some(arg.value)

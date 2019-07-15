@@ -19,10 +19,12 @@ package ropes.core
 import ropes.core.Rope.InvalidValue
 
 trait Parsing[R <: Rope] {
-  def parse(s: String)(implicit parse: Parse[R]): Either[InvalidValue.type, R] = Rope.parseTo[R](s)(parse)
-  def unsafeParse(s: String)(implicit parse: Parse[R]): R = {
-    Rope.parseTo[R](s)(parse).getOrElse(throw new IllegalArgumentException(s"'$s' is invalid"))
-  }
+  protected val parseInstance: Parse[R]
+
+  def parse(s: String): Either[InvalidValue.type, R] =
+    Rope.parseTo[R](s)(parseInstance)
+  def unsafeParse(s: String): R =
+    Rope.parseTo[R](s)(parseInstance).getOrElse(throw new IllegalArgumentException(s"'$s' is invalid"))
 }
 object RopeCompanion {
   trait Build[R <: Rope] {

@@ -33,7 +33,8 @@ private[ropes] trait CharacterClassInstances {
   implicit def characterClassWrite[S <: Spec, N <: Naming]: Write[CharacterClass[S] { type Name = N }] =
     _.value.toString
 
-  class CharacterClassCompanion[S <: Spec] extends Parsing[CharacterClass[S]] {
+  class CharacterClassCompanion[S <: Spec](protected val parseInstance: Parse[CharacterClass[S]])
+      extends Parsing[CharacterClass[S]] {
     def from(char: Char)(implicit reduce: Reduce[S]): Either[Rope.InvalidValue.type, CharacterClass[S]] =
       CharacterClass.from[S](char)
 
@@ -42,6 +43,8 @@ private[ropes] trait CharacterClassInstances {
 
     def unapply(arg: CharacterClass[S]): Option[Char] = Some(arg.value)
   }
-  implicit def characterClassBuild[S <: Spec]: Build.Aux[CharacterClass[S], CharacterClassCompanion[S]] =
-    Build.instance(new CharacterClassCompanion[S])
+
+  implicit def characterClassBuild[S <: Spec](
+      implicit parse: Parse[CharacterClass[S]]): Build.Aux[CharacterClass[S], CharacterClassCompanion[S]] =
+    Build.instance(new CharacterClassCompanion[S](parse))
 }

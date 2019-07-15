@@ -48,24 +48,27 @@ trait RepeatedInstances {
   implicit def repeatedWrite[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope, N <: Naming](
       implicit w: Write[R]): Write[Repeated[MinReps, MaxReps, R] { type Name = N }] = _.values.map(_.write).mkString("")
 
-  class RepeatedCompanion[MinReps <: Int with Singleton: ValueOf, MaxReps <: Int with Singleton: ValueOf, R <: Rope]
-      extends Parsing[Repeated[MinReps, MaxReps, R]] { self =>
+  class RepeatedCompanion[MinReps <: Int with Singleton: ValueOf, MaxReps <: Int with Singleton: ValueOf, Inner <: Rope](
+      protected val parseInstance: Parse[Repeated[MinReps, MaxReps, Inner]])
+      extends Parsing[Repeated[MinReps, MaxReps, Inner]] { self =>
 
-    def from(values: List[R]): Either[Rope.InvalidValue.type, Repeated[MinReps, MaxReps, R]] =
-      Repeated.from[MinReps, MaxReps, R](values)
+    def from(values: List[Inner]): Either[Rope.InvalidValue.type, Repeated[MinReps, MaxReps, Inner]] =
+      Repeated.from[MinReps, MaxReps, Inner](values)
 
-    def from(values: R*): Either[Rope.InvalidValue.type, Repeated[MinReps, MaxReps, R]] =
-      Repeated.from[MinReps, MaxReps, R](values.toList)
+    def from(values: Inner*): Either[Rope.InvalidValue.type, Repeated[MinReps, MaxReps, Inner]] =
+      Repeated.from[MinReps, MaxReps, Inner](values.toList)
 
-    def unsafeFrom(values: List[R]): Repeated[MinReps, MaxReps, R] =
-      Repeated.unsafeFrom[MinReps, MaxReps, R](values)
+    def unsafeFrom(values: List[Inner]): Repeated[MinReps, MaxReps, Inner] =
+      Repeated.unsafeFrom[MinReps, MaxReps, Inner](values)
 
-    def unsafeFrom(values: R*): Repeated[MinReps, MaxReps, R] =
-      Repeated.unsafeFrom[MinReps, MaxReps, R](values.toList)
+    def unsafeFrom(values: Inner*): Repeated[MinReps, MaxReps, Inner] =
+      Repeated.unsafeFrom[MinReps, MaxReps, Inner](values.toList)
 
-    def unapply(repeated: Repeated[MinReps, MaxReps, R]): Option[List[R]] = Some(repeated.values)
+    def unapply(repeated: Repeated[MinReps, MaxReps, Inner]): Option[List[Inner]] = Some(repeated.values)
   }
-  implicit def anyStringBuild[MinReps <: Int with Singleton: ValueOf, MaxReps <: Int with Singleton: ValueOf, R <: Rope]
-    : Build.Aux[Repeated[MinReps, MaxReps, R], RepeatedCompanion[MinReps, MaxReps, R]] =
-    Build.instance(new RepeatedCompanion[MinReps, MaxReps, R])
+  implicit def repeatdBuild[MinReps <: Int with Singleton: ValueOf,
+                            MaxReps <: Int with Singleton: ValueOf,
+                            Inner <: Rope](implicit parse: Parse[Repeated[MinReps, MaxReps, Inner]])
+    : Build.Aux[Repeated[MinReps, MaxReps, Inner], RepeatedCompanion[MinReps, MaxReps, Inner]] =
+    Build.instance(new RepeatedCompanion[MinReps, MaxReps, Inner](parse))
 }

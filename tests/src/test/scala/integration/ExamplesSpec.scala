@@ -240,23 +240,25 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
     "Hostnames" - {
       type Domain   = Repeated[1, 63, CharacterClass[('a' - 'z') || ('A' - 'Z') || ('0' - '9') || ==['-']]]
       type Hostname = Repeated[0, 10, Domain +: Literal['.']] +: (Domain Named "TLD")
+      val Domain   = RopeCompanion[Domain]
+      val Hostname = RopeCompanion[Hostname]
       "localhost" - {
         "parsing and de-composing" in {
-          val parsed = Rope.parseTo[Hostname]("localhost").getOrElse(fail())
+          val parsed = Hostname.unsafeParse("localhost")
           parsed.section[1].values should be(empty)
           parsed.section["TLD"].write should be("localhost")
         }
       }
       "www.google.com" - {
         "parsing and de-composing" in {
-          val parsed = Rope.parseTo[Hostname]("www.google.com").getOrElse(fail())
+          val parsed = Hostname.unsafeParse("www.google.com")
           parsed.section[1].values.map(_.section[1].write) should contain inOrderOnly ("www", "google")
           parsed.section["TLD"].write should be("com")
         }
       }
       "hyphens-and-digits-5.com" - {
         "parsing and de-composing" in {
-          val parsed = Rope.parseTo[Hostname]("hyphens-and-digits-5.com").getOrElse(fail())
+          val parsed = Hostname.unsafeParse("hyphens-and-digits-5.com")
           parsed
             .section[1]
             .values

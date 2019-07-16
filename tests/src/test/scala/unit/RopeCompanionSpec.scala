@@ -163,5 +163,23 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
         Example.unsafeParse(v.mkString) should be(asRepeated(v))
       }
     }
+    "ConvertedTo" - {
+      type Example = Digit
+      val Example = RopeCompanion[Example]
+
+      "has a from method taking the target value" in forAll(Gen.choose(0, 9)) { v =>
+        Example.from(v) should be(ConvertedTo.fromTarget[Digit#Source, Int](v))
+      }
+      "has an unsafeFrom method taking the target value" in forAll(Gen.choose(0, 9)) { v =>
+        Example.unsafeFrom(v) should be(ConvertedTo.fromTarget[Digit#Source, Int](v).getOrElse(fail()))
+      }
+
+      "has a parse method" in forAll(Gen.choose(0, 9)) { v =>
+        Example.parse(v.toString) should be(ConvertedTo.fromTarget[Digit#Source, Int](v))
+      }
+      "has a unsafeParse method" in forAll(Gen.choose(0, 9)) { v =>
+        Example.unsafeParse(v.toString) should be(ConvertedTo.fromTarget[Digit#Source, Int](v).getOrElse(fail()))
+      }
+    }
   }
 }

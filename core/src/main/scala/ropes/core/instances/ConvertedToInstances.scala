@@ -15,6 +15,7 @@
  */
 
 package ropes.core.instances
+import ropes.core.RopeCompanion.Build
 import ropes.core._
 
 private[ropes] trait ConvertedToInstances {
@@ -31,4 +32,21 @@ private[ropes] trait ConvertedToInstances {
       implicit sourceWrite: Write[Source],
       conversion: Conversion[Source, Target]): Write[ConvertedTo[Source, Target] { type Name = N }] =
     target => sourceWrite.write(conversion.backwards(target.value).getOrElse(throw new IllegalStateException))
+
+  class ConvertedToCompanion[S <: Rope, T](protected val parseInstance: Parse[ConvertedTo[S, T]],
+                                           conversion: Conversion[S, T])
+      extends Parsing[ConvertedTo[S, T]] {
+    def from(target: T): Either[Rope.InvalidValue.type, ConvertedTo[S, T]] =
+      ConvertedTo.fromTarget(target)(conversion)
+
+    def unsafeFrom(target: T): ConvertedTo[S, T] =
+      from(target).getOrElse(throw new IllegalArgumentException(target.toString))
+//
+//    def unapply(arg: ConvertedTo[S]): Option[Char] = Some(arg.value)
+  }
+
+  implicit def convertedToBuild[S <: Rope, T](
+      implicit parse: Parse[ConvertedTo[S, T]],
+      conversion: Conversion[S, T]): Build.Aux[ConvertedTo[S, T], ConvertedToCompanion[S, T]] =
+    Build.instance(new ConvertedToCompanion[S, T](parse, conversion))
 }

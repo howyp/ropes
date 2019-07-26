@@ -20,6 +20,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, Matchers}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import ropes.core._
+import ropes.scalacheck._
 
 class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyChecks {
   private implicit def noShrink[T]: Shrink[T] = Shrink(_ => Stream.empty[T])
@@ -174,11 +175,18 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
         Example.unsafeFrom(v) should be(ConvertedTo.fromTarget[Digit#Source, Int](v).getOrElse(fail()))
       }
 
+      "has a from method taking the source value" in forAll { s: Digit#Source =>
+        Example.fromSource(s) should be(ConvertedTo.fromSource[Digit#Source, Int](s))
+      }
+
       "has a parse method" in forAll(Gen.choose(0, 9)) { v =>
         Example.parse(v.toString) should be(ConvertedTo.fromTarget[Digit#Source, Int](v))
       }
       "has a unsafeParse method" in forAll(Gen.choose(0, 9)) { v =>
         Example.unsafeParse(v.toString) should be(ConvertedTo.fromTarget[Digit#Source, Int](v).getOrElse(fail()))
+      }
+      "has a unapply method" in forAll(Gen.choose(0, 9)) { v =>
+        (Example.unsafeFrom(v) match { case Example(t) => t }) should be(v)
       }
     }
   }

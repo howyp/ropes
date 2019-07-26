@@ -39,10 +39,13 @@ private[ropes] trait ConvertedToInstances {
     def from(target: T): Either[Rope.InvalidValue.type, ConvertedTo[S, T]] =
       ConvertedTo.fromTarget(target)(conversion)
 
+    def fromSource(target: S): ConvertedTo[S, T] =
+      ConvertedTo.fromSource(target)(conversion)
+
     def unsafeFrom(target: T): ConvertedTo[S, T] =
       from(target).getOrElse(throw new IllegalArgumentException(target.toString))
-//
-//    def unapply(arg: ConvertedTo[S]): Option[Char] = Some(arg.value)
+
+    def unapply(arg: ConvertedTo[S, T]): Option[T] = Some(arg.value)
   }
 
   implicit def convertedToBuild[S <: Rope, T](

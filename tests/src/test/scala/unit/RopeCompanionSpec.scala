@@ -189,5 +189,21 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
         (Example.unsafeFrom(v) match { case Example(t) => t }) should be(v)
       }
     }
+    "Or" - {
+      type Example = Literal['a'] Or Literal['b']
+      val Example = RopeCompanion[Example]
+
+      "has a from method taking an Either" in {
+        Example.from(Left(Literal['a'])) should be(Or.First(Literal['a']))
+        Example.from(Right(Literal['b'])) should be(Or.Second(Literal['b']))
+      }
+
+      "has a parse method" in forAll(Gen.oneOf(Literal['a'], Literal['b'])) { v =>
+        Example.parse(v.value.toString) should be(Rope.parseTo[Example](v.value.toString))
+      }
+      "has a unsafeParse method" in forAll(Gen.oneOf(Literal['a'], Literal['b'])) { v =>
+        Example.unsafeParse(v.value.toString) should be(Rope.parseTo[Example](v.value.toString).getOrElse(fail()))
+      }
+    }
   }
 }

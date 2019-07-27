@@ -15,7 +15,8 @@
  */
 
 package ropes.core.instances
-import ropes.core.{Or, Parse, Rope, Write}
+import ropes.core.RopeCompanion.Build
+import ropes.core.{Or, Parse, Parsing, Rope, Write}
 
 trait OrInstances {
   implicit def parseOr[First <: Rope, Second <: Rope](implicit parseFirst: Parse[First],
@@ -31,4 +32,13 @@ trait OrInstances {
     case Or.First(v)  => writeFirst.write(v)
     case Or.Second(v) => writeSecond.write(v)
   }
+
+  class OrCompanion[First <: Rope, Second <: Rope](protected val parseInstance: Parse[Or[First, Second]])
+      extends Parsing[Or[First, Second]] {
+    def from(e: Either[First, Second]): Or[First, Second] = Or.from(e)
+  }
+
+  implicit def writeBuild[First <: Rope, Second <: Rope](
+      implicit parse: Parse[Or[First, Second]]): Build.Aux[Or[First, Second], OrCompanion[First, Second]] =
+    Build.instance(new OrCompanion[First, Second](parse))
 }

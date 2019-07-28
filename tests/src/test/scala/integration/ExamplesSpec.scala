@@ -60,48 +60,47 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
     "UK Postcodes" - {
       //Wikipedia lists a validation Regex as:
       // ^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? [0-9][A-Za-z]{2}|[Gg][Ii][Rr] 0[Aa]{2})$
-      type PostCode = Concat[PostCode.OutwardCode, Concat[Literal[' '], PostCode.InwardCode]]
-      object PostCode {
-        type Area        = Repeated[1, 2, Letter.Uppercase] Named "Area"
-        type District    = Concat[Repeated[1, 2, Digit] ConvertedTo Int, Optional[Letter.Uppercase]] Named "District"
-        type OutwardCode = Concat[Area, District] Or (Literal['G'] +: Literal['I'] +: Literal['R'])
+      type PostCode = Concat[OutwardCode, Concat[Literal[' '], InwardCode]]
+      val PostCode = RopeCompanion[PostCode]
 
-        type Sector     = Digit Named "Sector"
-        type Unit       = Repeated[2, 2, Letter.Uppercase] Named "Unit"
-        type InwardCode = Sector +: Unit
-      }
+      type Area        = Repeated[1, 2, Letter.Uppercase] Named "Area"
+      type District    = Concat[Repeated[1, 2, Digit] ConvertedTo Int, Optional[Letter.Uppercase]] Named "District"
+      type OutwardCode = Concat[Area, District] Or (Literal['G'] +: Literal['I'] +: Literal['R']) //TODO Concat companions need to support naming
+
+      type Sector     = Digit Named "Sector"
+      type Unit       = Repeated[2, 2, Letter.Uppercase] Named "Unit"
+      type InwardCode = Sector +: Unit
+
       "parsing and de-composing" - {
         "CR2 6XH" in {
-          val Right(postCode) = Rope.parseTo[PostCode]("CR2 6XH")
+          val postCode = PostCode.unsafeParse("CR2 6XH")
 
           val Or.First(outward) = postCode.section[1]
           outward.section["Area"].values.map(_.value) should be(List('C', 'R'))
           outward.section["District"].prefix.value should be(2)
           outward.write should be("CR2")
 
-          val sector = postCode.section[3]
-          sector.value should be(6)
-
-          postCode.section[4].values.map(_.value) should be(List('X', 'H'))
+          postCode.section["Sector"].value should be(6)
+          postCode.section["Unit"].values.map(_.value) should be(List('X', 'H'))
         }
         "M1 1AE" in {
-          val Right(Or.First(outward) +: _) = Rope.parseTo[PostCode]("M1 1AE")
+          val Right(Or.First(outward) +: _) = PostCode.parse("M1 1AE")
           outward.section["Area"].values.map(_.value) should contain only 'M'
           outward.section["District"].suffix.value should be(None)
         }
         "DN55 1PT" in {
-          val Right(Or.First(outward) +: _) = Rope.parseTo[PostCode]("DN55 1PT")
+          val Right(Or.First(outward) +: _) = PostCode.parse("DN55 1PT")
           outward.section["Area"].values.map(_.value) should be(List('D', 'N'))
           outward.section["District"].prefix.value should be(55)
           outward.section["District"].suffix.value should be(None)
         }
         "EC1A 1BB" in {
-          val Right(Or.First(outward) +: _) = Rope.parseTo[PostCode]("EC1A 1BB")
+          val Right(Or.First(outward) +: _) = PostCode.parse("EC1A 1BB")
           outward.section["District"].prefix.value should be(1)
           outward.section["District"].suffix.value.get.value should be('A')
         }
         "GIR 0AA" in {
-          val Right(Or.Second(outward) +: _) = Rope.parseTo[PostCode]("GIR 0AA")
+          val Right(Or.Second(outward) +: _) = PostCode.parse("GIR 0AA")
           outward.write should be("GIR")
         }
       }
@@ -109,27 +108,27 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
         "CR2 6XH" in {
 //          TODO Can we do this better? For instance allow the ' ' char to be implicit
           val postcode = for {
-            area                          <- Rope.parseTo[PostCode.Area]("CR")
-            district                      <- Rope.parseTo[PostCode.District]("2")
-            outward: PostCode.OutwardCode = Or.First(area +: district)
-            sector                        <- Digit.from(6)
-            unit                          <- Rope.parseTo[PostCode.Unit]("XH")
+            area                 <- Rope.parseTo[Area]("CR")
+            district             <- Rope.parseTo[District]("2")
+            outward: OutwardCode = Or.First(area +: district)
+            sector               <- Digit.from(6)
+            unit                 <- Rope.parseTo[Unit]("XH")
           } yield outward +: ' ' +: sector +: unit
           postcode.getOrElse(fail()).write should be("CR2 6XH")
         }
         "EC1A 1BB" in {
           val postcode = for {
-            area                          <- Rope.parseTo[PostCode.Area]("EC")
-            district                      <- Rope.parseTo[PostCode.District]("1A")
-            outward: PostCode.OutwardCode = Or.First(area +: district)
-            inward                        <- Rope.parseTo[PostCode.InwardCode]("1BB")
+            area                 <- Rope.parseTo[Area]("EC")
+            district             <- Rope.parseTo[District]("1A")
+            outward: OutwardCode = Or.First(area +: district)
+            inward               <- Rope.parseTo[InwardCode]("1BB")
           } yield outward +: ' ' +: inward
           postcode.getOrElse(fail()).write should be("EC1A 1BB")
         }
       }
       "generating" in {
         forAll { postcode: PostCode =>
-          Rope.parseTo[PostCode](postcode.write) should be(a[Right[_, _]])
+          PostCode.parse(postcode.write) should be(a[Right[_, _]])
         }
       }
     }

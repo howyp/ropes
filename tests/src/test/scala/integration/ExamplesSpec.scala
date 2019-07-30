@@ -71,6 +71,9 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
       type Unit       = Repeated[2, 2, Letter.Uppercase] Named "Unit"
       type InwardCode = Sector +: Unit
 
+      val Sector = RopeCompanion[Sector]
+      val Unit   = RopeCompanion[Unit]
+
       "parsing and de-composing" - {
         "CR2 6XH" in {
           val postCode = PostCode.unsafeParse("CR2 6XH")

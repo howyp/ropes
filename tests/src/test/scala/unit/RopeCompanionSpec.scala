@@ -45,7 +45,7 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
     "Literal" - {
       "just contains the value itself" in {
         type A = Literal['a']
-        val A: A = RopeCompanion[A]
+        val A = RopeCompanion[A]
         A.value should be('a')
       }
     }

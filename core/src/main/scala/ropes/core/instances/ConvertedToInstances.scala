@@ -33,23 +33,24 @@ private[ropes] trait ConvertedToInstances {
       conversion: Conversion[Source, Target]): Write[ConvertedTo[Source, Target] { type Name = N }] =
     target => sourceWrite.write(conversion.backwards(target.value).getOrElse(throw new IllegalStateException))
 
-  class ConvertedToCompanion[S <: Rope, T](protected val parseInstance: Parse[ConvertedTo[S, T]],
-                                           conversion: Conversion[S, T])
-      extends Parsing[ConvertedTo[S, T]] {
-    def from(target: T): Either[Rope.InvalidValue.type, ConvertedTo[S, T]] =
-      ConvertedTo.fromTarget(target)(conversion)
+  class ConvertedToCompanion[S <: Rope, T, C <: ConvertedTo[S, T]](protected val parseInstance: Parse[C],
+                                                                   conversion: Conversion[S, T])
+      extends Parsing[C] {
+    def from(target: T): Either[Rope.InvalidValue.type, C] =
+      ConvertedTo.fromTarget(target)(conversion).map(_.asInstanceOf[C])
 
-    def fromSource(target: S): ConvertedTo[S, T] =
-      ConvertedTo.fromSource(target)(conversion)
+    def fromSource(target: S): C =
+      ConvertedTo.fromSource(target)(conversion).asInstanceOf[C]
 
-    def unsafeFrom(target: T): ConvertedTo[S, T] =
+    def unsafeFrom(target: T): C =
       from(target).getOrElse(throw new IllegalArgumentException(target.toString))
 
-    def unapply(arg: ConvertedTo[S, T]): Option[T] = Some(arg.value)
+    def unapply(arg: C): Option[T] = Some(arg.value)
   }
 
-  implicit def convertedToBuild[S <: Rope, T](
-      implicit parse: Parse[ConvertedTo[S, T]],
-      conversion: Conversion[S, T]): Build.Aux[ConvertedTo[S, T], ConvertedToCompanion[S, T]] =
-    Build.instance(new ConvertedToCompanion[S, T](parse, conversion))
+  implicit def convertedToBuild[S <: Rope, T, N <: Naming](
+      implicit parse: Parse[ConvertedTo[S, T] { type Name = N }],
+      conversion: Conversion[S, T]
+  ): Build.Aux[ConvertedTo[S, T] { type Name = N }, ConvertedToCompanion[S, T, ConvertedTo[S, T] { type Name = N }]] =
+    Build.instance(new ConvertedToCompanion[S, T, ConvertedTo[S, T] { type Name = N }](parse, conversion))
 }

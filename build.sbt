@@ -19,7 +19,7 @@ Global / resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 
-Global / scalaVersion := "2.13.0"
+Global / scalaVersion := "2.13.1"
 Global / scalacOptions ++= Seq(
   // Thanks to @tpolecat for this list at https://tpolecat.github.io/2017/04/25/scalac-flags.html
   // Some options have been commented as they are either not needed for this project, or do not seem to be available

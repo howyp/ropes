@@ -1,0 +1,91 @@
+<html><head><title>ropes: 1. Basics</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Howard Perrin" /><meta name="description" content="Type-level String Formats" /><meta name="og:image" content="/ropes/img/poster.png" /><meta name="image" property="og:image" content="/ropes/img/poster.png" /><meta name="og:title" content="ropes: 1. Basics" /><meta name="title" property="og:title" content="ropes: 1. Basics" /><meta name="og:site_name" content="ropes" /><meta name="og:url" content="https://howyp.github.io/ropes/" /><meta name="og:type" content="website" /><meta name="og:description" content="Type-level String Formats" /><link rel="icon" type="image/png" href="/ropes/img/favicon.png" /><meta name="twitter:title" content="ropes: 1. Basics" /><meta name="twitter:image" content="/ropes/img/poster.png" /><meta name="twitter:description" content="Type-level String Formats" /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/ropes/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/ropes/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/ropes/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/ropes/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/ropes/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/ropes/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/ropes/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/ropes/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/ropes/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/ropes/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/ropes/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/ropes/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/ropes/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/ropes/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/ropes/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/ropes/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/ropes/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/ropes/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/ropes/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/ropes/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/ropes/highlight/styles/default.css" /><link rel="stylesheet" href="/ropes/css/style.css" /><link rel="stylesheet" href="/ropes/css/palette.css" /><link rel="stylesheet" href="/ropes/css/codemirror.css" /></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/ropes/" class="brand"><div class="brand-wrapper"><span>ropes</span></div></a></li> <li><a href="/ropes/learn-the-ropes/1-basics.html" class="">1 - Basics</a></li> <li><a href="/ropes/learn-the-ropes/2-letters.html" class="">2 - Letters</a></li> <li><a href="/ropes/learn-the-ropes/3-character-classes.html" class="">3 - Character Classes</a></li> <li><a href="/ropes/learn-the-ropes/4-concats.html" class="">4 - Concats</a></li> <li><a href="/ropes/learn-the-ropes/5-dsl.html" class="">5 - DSL</a></li> <li><a href="/ropes/learn-the-ropes/6-naming.html" class="">6 - Naming</a></li> <li><a href="/ropes/learn-the-ropes/7-conversions.html" class="">7 - Conversions</a></li></ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li id="gh-eyes-item" class="hidden-xs"><a href="https://github.com/howyp/ropes"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li id="gh-stars-item" class="hidden-xs"><a href="https://github.com/howyp/ropes"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('ropes Type-level String Formats');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('ropes Type-level String Formats');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="howyp" data-github-repo="ropes"><div class="content-wrapper"><section><h1 id="section-1---basics">Section 1 - Basics</h1>
+
+<p>Let’s dive straight into an example.</p>
+
+<h3 id="twitter-handles">Twitter Handles</h3>
+
+<p>We know that (simplistically) a Twitter handle always starts with a
+literal ‘@’ symbol, followed by any string. We can define that with:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">ropes.core._</span>
+
+<span class="k">type</span> <span class="kt">TwitterHandle</span> <span class="o">=</span> <span class="nc">Concat</span><span class="o">[</span><span class="kt">Literal</span><span class="o">[</span><span class="kt">'@'</span><span class="o">]</span>, <span class="kt">AnyString</span><span class="o">]</span>
+</code></pre>
+</div>
+
+<p>Or you can use Concat as an infix type:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="kt">TwitterHandle</span> <span class="o">=</span> <span class="nc">Literal</span><span class="o">[</span><span class="kt">'@'</span><span class="o">]</span> <span class="nc">Concat</span> <span class="nc">AnyString</span>
+</code></pre>
+</div>
+
+<p>Now, we can parse matching strings, and write them back to their
+original form:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Rope</span><span class="o">.</span><span class="n">parseTo</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">](</span><span class="s">"!Bob"</span><span class="o">)</span>
+<span class="c1">// res0: Either[ropes.core.Rope.InvalidValue.type,TwitterHandle] = Left(InvalidValue)
+</span>
+<span class="k">val</span> <span class="nc">Right</span><span class="o">(</span><span class="n">howy</span><span class="o">)</span> <span class="k">=</span> <span class="nc">Rope</span><span class="o">.</span><span class="n">parseTo</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">](</span><span class="s">"@HowyP"</span><span class="o">)</span>
+<span class="c1">// howy: TwitterHandle = Concat(Literal(@),AnyString(HowyP))
+</span>
+<span class="n">howy</span><span class="o">.</span><span class="n">write</span>
+<span class="c1">// res1: String = @HowyP
+</span></code></pre>
+</div>
+
+<h4 id="composing-and-decomposing">Composing and decomposing</h4>
+
+<p>After parsing, we can access the parts of the rope based on the
+properties of each individual type. In this case, they are pretty basic.
+A <code class="highlighter-rouge">Concat</code> has a prefix and suffix, and the <code class="highlighter-rouge">Literal</code> and <code class="highlighter-rouge">AnyString</code>
+contain single values:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">howy</span><span class="o">.</span><span class="n">prefix</span>
+<span class="c1">// res2: ropes.core.Literal['@'] = Literal(@)
+</span>
+<span class="n">howy</span><span class="o">.</span><span class="n">prefix</span><span class="o">.</span><span class="n">value</span>
+<span class="c1">// res3: Char = @
+</span>
+<span class="n">howy</span><span class="o">.</span><span class="n">suffix</span>
+<span class="c1">// res4: ropes.core.AnyString = AnyString(HowyP)
+</span>
+<span class="n">howy</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">value</span>
+<span class="c1">// res5: String = HowyP
+</span></code></pre>
+</div>
+
+<p>We can also create new handles from scratch, or modify existing ones:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">twitter</span><span class="k">:</span> <span class="kt">TwitterHandle</span> <span class="o">=</span> <span class="nc">Concat</span><span class="o">(</span><span class="nc">Literal</span><span class="o">(</span><span class="sc">'@'</span><span class="o">),</span> <span class="nc">AnyString</span><span class="o">(</span><span class="s">"Twitter"</span><span class="o">))</span>
+<span class="c1">// twitter: TwitterHandle = Concat(Literal(@),AnyString(Twitter))
+</span>
+<span class="k">val</span> <span class="n">bob</span><span class="k">:</span> <span class="kt">TwitterHandle</span>     <span class="o">=</span> <span class="n">howy</span><span class="o">.</span><span class="n">copy</span><span class="o">(</span><span class="n">suffix</span> <span class="k">=</span> <span class="nc">AnyString</span><span class="o">(</span><span class="s">"Bob"</span><span class="o">))</span>
+<span class="c1">// bob: TwitterHandle = Concat(Literal(@),AnyString(Bob))
+</span></code></pre>
+</div>
+
+<h4 id="generating">Generating</h4>
+
+<p>Lastly, a feature of all <code class="highlighter-rouge">Rope</code>s is that they can be generated via
+Scalacheck <code class="highlighter-rouge">Arbitrary</code>:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">org.scalacheck.Arbitrary.arbitrary</span>
+<span class="c1">// import org.scalacheck.Arbitrary.arbitrary
+</span>
+<span class="k">import</span> <span class="nn">ropes.scalacheck._</span>
+<span class="c1">// import ropes.scalacheck._
+</span>
+<span class="nc">List</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="mi">5</span><span class="o">)(</span><span class="n">arbitrary</span><span class="o">[</span><span class="kt">TwitterHandle</span><span class="o">].</span><span class="n">sample</span><span class="o">).</span><span class="n">flatten</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">write</span> <span class="o">+</span> <span class="sc">'\n'</span><span class="o">)</span>
+<span class="c1">// res6: List[String] =
+// List("@ₚ頾䙻繟⯉섘⛻圼᷇렠ṝ귷阳壄ำ鍔♟怂䰂
+// ", "@䳉䨮赚껗잏텖㿈籼附ഀ圂謗竴Ṣ磅俉䱓溼ဒ畨韗猥燭啽姥䶑ណ㟅⾼࢒玞㰏їセ餱愴䕾횽툿⁁뙶뱂ꨎԑ퓮㛤ꑝ떐틸堖᪮㪈싸㮕崮劫좽覇ᅻ㍈欷娦ࠎ复銔﷛㐩᣺簉禔￪ꇚ䚃爝耐̺蛾랏蓼쪘匊槌ܴ踡ꛌ〕뚣迺ﾮ裧孛︰꺌שּ
+// ", "@ᡁ箊᱗籧᯼殕ᴝꞔ뽞銤pᷘﱏ즵Ҧ⻊㦷遁㋂샐룄玸姥煏趰떌鶳襱붃ꬃ疾퍲Ṹ런䉟욓뻈墣퇜㙤䴁畕⍟겓룐ᙾ⛋貫南韺
+// ", "@ꔷ᷻雕묧댳풗覄萑캂쮃척햋ᨨϸ亙琯蝨硍Ἓ쑫ﾗ备揌抩湠銿檄︸㝆
+// ", "@닞筠妢巳얏룝헫퉗粌路䖨徵ྠꔳ⏛ퟤ䙼䀕๢䎻ꖒࡉ͡㡅ﮮ眅丞⽔〖헷⤵콨竍淪寁츽㱄쁢咒ᮺﮊᮤ庥졚㸱紓潏⻍幏穎⦫橱ꑒ↻㤅즍従㱲｛䘥对◓쓹撔︯ᠿ惥앵ꑯ୫Ɗ툂ᑝ
+// ")
+</span></code></pre>
+</div>
+</section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/ropes/highlight/highlight.pack.js"></script><script>hljs.configure({languages:['scala','java','bash']});
+hljs.initHighlighting();
+              </script><script>((window.gitter = {}).chat = {}).options = {
+room: 'howyp/ropes'};</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js"></script><script src="/ropes/js/main.js"></script></body></html>

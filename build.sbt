@@ -125,9 +125,6 @@ lazy val docs = module(project, modName = "docs", skipPublish = true)
     micrositeGithubRepo := "ropes",
     micrositePushSiteWith := GitHub4s,
     micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
-    libraryDependencies -= "org.scalameta" %% "mdoc"     % "1.2.10", // MDoc not published for 2.13 yet
-    libraryDependencies -= "org.tpolecat"  %% "tut-core" % "0.6.10",
-    libraryDependencies += "org.tpolecat"  %% "tut-core" % "0.6.12",
     scalacOptions --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings")
   )
   .dependsOn(core, dsl, scalacheck)

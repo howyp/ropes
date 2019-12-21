@@ -51,7 +51,7 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
     }
     "AnyString" - {
       type Example = AnyString
-      val Example = RopeCompanion[Example].materialise
+      val Example = RopeCompanion[Example]
       "has an apply method" in forAll { v: String =>
         Example(v) should be(AnyString(v))
       }
@@ -101,7 +101,7 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
       )
       "With two sections" - {
         type Example = Concat[CharacterClass['a' - 'z'], AnyString]
-        val Example = RopeCompanion[Example].materialise
+        val Example = RopeCompanion[Example]
         "has a from method" in forAll(genValues) {
           case (prefix, suffix) =>
             Example(prefix, suffix) should be(Concat(prefix, suffix))
@@ -118,7 +118,7 @@ class RopeCompanionSpec extends FreeSpec with Matchers with ScalaCheckDrivenProp
       "With many sections" - {
         type Example = Concat[CharacterClass['a' - 'z'],
                               Concat[CharacterClass['a' - 'z'], Concat[CharacterClass['a' - 'z'], AnyString]]]
-        val Example = RopeCompanion[Example].materialise
+        val Example = RopeCompanion[Example]
         "has a from method" in forAll(genValues) {
           case (prefix, suffix) =>
             Example(prefix, prefix, prefix, suffix) should be(Concat(prefix, Concat(prefix, Concat(prefix, suffix))))

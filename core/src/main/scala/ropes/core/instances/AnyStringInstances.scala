@@ -26,7 +26,6 @@ private[ropes] trait AnyStringInstances {
 
   class AnyStringCompanion[A <: AnyString](implicit ev: A =:= AnyString) extends Parsing[A] { self =>
     protected val parseInstance: Parse[A] = Parse[A]
-    final val materialise                 = self
 
     def apply(value: String): A         = AnyString(value).asInstanceOf[A]
     def unapply(arg: A): Option[String] = Some(arg.value)

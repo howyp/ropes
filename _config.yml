@@ -6,6 +6,6 @@ docs: true
 collections:
   tut:
     output: true
-version: 0.0.0+77-a15b926c-SNAPSHOT
+version: edb277f1-SNAPSHOT
 org: Howard Perrin
 markdown: kramdown

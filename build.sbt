@@ -77,6 +77,7 @@ val Dependencies = new {
   val scalacheck                 = "org.scalacheck"    %% "scalacheck"               % "1.14.0"
   val scalatest                  = "org.scalatest"     %% "scalatest"                % "3.1.0-SNAP13"
   val `scalatestplus-scalacheck` = "org.scalatestplus" %% "scalatestplus-scalacheck" % "1.0.0-SNAP8"
+  val shapeless                  = "com.chuusai"       %% "shapeless"                % "2.3.3"
 }
 
 def module(p: Project, modName: String, skipPublish: Boolean) =
@@ -97,8 +98,12 @@ lazy val scalacheck = module(project, modName = "scalacheck", skipPublish = fals
   .dependsOn(core)
   .settings(libraryDependencies ++= Seq(Dependencies.scalacheck))
 
+lazy val generic = module(project, modName = "generic", skipPublish = false)
+  .dependsOn(core)
+  .settings(libraryDependencies ++= Seq(Dependencies.shapeless))
+
 lazy val tests = module(project, modName = "tests", skipPublish = true)
-  .dependsOn(core, dsl, scalacheck)
+  .dependsOn(core, dsl, scalacheck, generic)
   .settings(
     scalacOptions --= Seq(
       // Scalacheck currently uses `Stream` which is deprecated in 2.13, so we have to turn off:

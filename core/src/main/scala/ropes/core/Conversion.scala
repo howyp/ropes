@@ -24,6 +24,8 @@ object Conversion {
   final type Failed = Failed.type
   final case object Failed
 
+  def apply[Source <: Rope, Target](implicit c: Conversion[Source, Target]): Conversion[Source, Target] = c
+
   def instance[Source <: Rope, Target](
       forwards: Source => Target,
       backwards: Target => Either[Conversion.Failed, Source]): Conversion[Source, Target] = {

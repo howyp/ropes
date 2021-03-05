@@ -23,8 +23,7 @@ package object scalacheck {
   implicit def arbLiteral[
       C <: Char with Singleton,
       N <: Naming
-  ](
-      implicit
+  ](implicit
       c: ValueOf[C]
   ): Arbitrary[Literal[C] { type Name = N }] =
     Arbitrary(Gen.const(Literal(c.value).asInstanceOf[Literal[C] { type Name = N }]))
@@ -44,21 +43,20 @@ package object scalacheck {
       Start <: Char with Singleton,
       End <: Char with Singleton,
       N <: Naming
-  ](
-      implicit
+  ](implicit
       start: ValueOf[Start],
       end: ValueOf[End]
   ): Arbitrary[Range[Start, End] { type Name = N }] =
     Arbitrary(
       Gen
         .choose(start.value: Char, end.value: Char)
-        .map(Range.unsafeFrom[Start, End](_).asInstanceOf[Range[Start, End] { type Name = N }]))
+        .map(Range.unsafeFrom[Start, End](_).asInstanceOf[Range[Start, End] { type Name = N }])
+    )
 
   implicit def arbCharacterClass[
       S <: Spec,
       N <: Naming
-  ](
-      implicit
+  ](implicit
       reduce: Reduce[S]
   ): Arbitrary[CharacterClass[S] { type Name = N }] =
     Arbitrary((reduce.reduce.map { case (s, b) => Gen.choose(s, b) } match {
@@ -71,21 +69,21 @@ package object scalacheck {
       Source <: Rope,
       Target,
       N <: Naming
-  ](
-      implicit
+  ](implicit
       arbSource: Arbitrary[Source],
       conversion: Conversion[Source, Target]
   ): Arbitrary[ConvertedTo[Source, Target] { type Name = N }] =
     Arbitrary(
       arbSource.arbitrary.map(
-        ConvertedTo.fromSource[Source, Target](_).asInstanceOf[ConvertedTo[Source, Target] { type Name = N }]))
+        ConvertedTo.fromSource[Source, Target](_).asInstanceOf[ConvertedTo[Source, Target] { type Name = N }]
+      )
+    )
 
   //TODO this should be redundant
   implicit def arbOptional[
       R <: Rope,
       N <: Naming
-  ](
-      implicit
+  ](implicit
       arb: Arbitrary[R]
   ): Arbitrary[Optional[R] { type Name = N }] =
     Arbitrary(Gen.option(arb.arbitrary).map(Optional.apply[R](_).asInstanceOf[Optional[R] { type Name = N }]))
@@ -95,8 +93,7 @@ package object scalacheck {
       MaxReps <: Int with Singleton,
       R <: Rope,
       N <: Naming
-  ](
-      implicit
+  ](implicit
       min: ValueOf[MinReps],
       max: ValueOf[MaxReps],
       arb: Arbitrary[R]
@@ -105,13 +102,13 @@ package object scalacheck {
       Gen
         .chooseNum(min.value: Int, max.value: Int)
         .flatMap(Gen.listOfN(_, arb.arbitrary))
-        .map(Repeated.unsafeFrom[MinReps, MaxReps, R](_).asInstanceOf[Repeated[MinReps, MaxReps, R] { type Name = N }]))
+        .map(Repeated.unsafeFrom[MinReps, MaxReps, R](_).asInstanceOf[Repeated[MinReps, MaxReps, R] { type Name = N }])
+    )
 
   implicit def arbOr[
       First <: Rope,
       Second <: Rope
-  ](
-      implicit
+  ](implicit
       arbFirst: Arbitrary[First],
       arbSecond: Arbitrary[Second]
   ): Arbitrary[First Or Second] = Arbitrary(

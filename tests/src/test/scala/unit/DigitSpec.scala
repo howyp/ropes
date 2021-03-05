@@ -42,7 +42,8 @@ class DigitSpec extends RopeLaws with CommonGens {
       Digit.from(int).getOrElse(fail()).value should be(int)
     }
     "Cannot be created from an invalid Int" in forAll(
-      Gen.oneOf(Gen.choose(Int.MinValue, 0), Gen.choose(9, Int.MaxValue))) { int =>
+      Gen.oneOf(Gen.choose(Int.MinValue, 0), Gen.choose(9, Int.MaxValue))
+    ) { int =>
       Digit.from(int) should be(a[Left[_, _]])
     }
   }

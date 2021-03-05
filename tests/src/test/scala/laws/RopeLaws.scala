@@ -35,9 +35,11 @@ trait RopeLaws extends FreeSpec with Matchers with ScalaCheckDrivenPropertyCheck
         assertion(parsed)
     }
     genSuffixToMakeValidStringIncomplete.foreach { genSuffixToValidStringIncomplete =>
-      "Parses correctly when incomplete" in forAll(genValidStringsWithDecompositionAssertion,
-                                                   genSuffixToValidStringIncomplete,
-                                                   minSuccessful(10000)) { (strAndAssertion, suffix) =>
+      "Parses correctly when incomplete" in forAll(
+        genValidStringsWithDecompositionAssertion,
+        genSuffixToValidStringIncomplete,
+        minSuccessful(10000)
+      ) { (strAndAssertion, suffix) =>
         val (str, assertion)                           = strAndAssertion
         val Parse.Result.Incomplete(parsed, remaining) = Parse[R].parse(str + suffix)
         assertion(parsed)
@@ -49,13 +51,14 @@ trait RopeLaws extends FreeSpec with Matchers with ScalaCheckDrivenPropertyCheck
         Parse[R].parse(str) should be(Parse.Result.Failure)
       }
     }
-    "Round-trips valid strings by parsing and writing back to an identical string" in forAll(genValidStrings,
-                                                                                             minSuccessful(10000)) {
-      original =>
-        val result = Parse[R].parse(original)
-        result should be(a[Parse.Result.Complete[_]])
-        val Parse.Result.Complete(parsed) = result
-        Write[R].write(parsed) should be(original)
+    "Round-trips valid strings by parsing and writing back to an identical string" in forAll(
+      genValidStrings,
+      minSuccessful(10000)
+    ) { original =>
+      val result                        = Parse[R].parse(original)
+      result should be(a[Parse.Result.Complete[_]])
+      val Parse.Result.Complete(parsed) = result
+      Write[R].write(parsed) should be(original)
     }
     "Round-trips arbitrary values by writing and parsing back to an identical value" in forAll(minSuccessful(10000)) {
       original: R =>

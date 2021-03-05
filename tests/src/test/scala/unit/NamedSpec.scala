@@ -50,8 +50,9 @@ class NamedSpec extends RopeLaws with CommonGens {
       }
       """For a 3-section concat""" in {
         val Parse.Result.Complete(parsed) =
-          Parse[Concat[Named[Literal['a'], "The a"],
-                       Concat[Named[Literal['b'], "The b"], Named[Literal['c'], "The c"]]]].parse("abc")
+          Parse[
+            Concat[Named[Literal['a'], "The a"], Concat[Named[Literal['b'], "The b"], Named[Literal['c'], "The c"]]]
+          ].parse("abc")
         parsed.section[1].value should be('a')
         parsed.section[2].value should be('b')
         parsed.section[3].value should be('c')
@@ -61,9 +62,10 @@ class NamedSpec extends RopeLaws with CommonGens {
       }
       """For a 4-section concat""" in {
         val Parse.Result.Complete(parsed) =
-          Parse[Concat[Named[Literal['a'], "The a"],
-                       Concat[Named[Literal['b'], "The b"],
-                              Concat[Named[Literal['c'], "The c"], Named[Literal['d'], "The d"]]]]].parse("abcd")
+          Parse[Concat[
+            Named[Literal['a'], "The a"],
+            Concat[Named[Literal['b'], "The b"], Concat[Named[Literal['c'], "The c"], Named[Literal['d'], "The d"]]]
+          ]].parse("abcd")
         parsed.section[1].value should be('a')
         parsed.section[2].value should be('b')
         parsed.section[3].value should be('c')

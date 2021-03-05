@@ -18,16 +18,20 @@ package ropes.core.instances
 import ropes.core.{Or, Parse, Rope, Write}
 
 trait OrInstances {
-  implicit def parseOr[First <: Rope, Second <: Rope](implicit parseFirst: Parse[First],
-                                                      parseSecond: Parse[Second]): Parse[First Or Second] = { str =>
+  implicit def parseOr[First <: Rope, Second <: Rope](implicit
+      parseFirst: Parse[First],
+      parseSecond: Parse[Second]
+  ): Parse[First Or Second] = { str =>
     parseFirst.parse(str).map(Or.First.apply) match {
       case Parse.Result.Failure => parseSecond.parse(str).map(Or.Second.apply)
       case success              => success
     }
   }
 
-  implicit def writeOr[First <: Rope, Second <: Rope](implicit writeFirst: Write[First],
-                                                      writeSecond: Write[Second]): Write[First Or Second] = {
+  implicit def writeOr[First <: Rope, Second <: Rope](implicit
+      writeFirst: Write[First],
+      writeSecond: Write[Second]
+  ): Write[First Or Second] = {
     case Or.First(v)  => writeFirst.write(v)
     case Or.Second(v) => writeSecond.write(v)
   }

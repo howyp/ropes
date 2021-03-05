@@ -30,7 +30,7 @@ class OptionalSpec extends RopeLaws with CommonGens {
           opt.value should be(Some(Literal('x')))
           ()
         },
-        "" -> { opt: Opt =>
+        ""  -> { opt: Opt =>
           opt.value should be(None)
           ()
         }

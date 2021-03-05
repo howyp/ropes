@@ -25,25 +25,27 @@ trait RepeatedInstances {
       implicit
       min: ValueOf[MinReps],
       max: ValueOf[MaxReps],
-      parseR: Parse[R]): Parse[Repeated[MinReps, MaxReps, R] { type Name = N }] = { originalString =>
+      parseR: Parse[R]
+  ): Parse[Repeated[MinReps, MaxReps, R] { type Name = N }] = { originalString =>
     @tailrec
     def repeatedParseUntilFailureOrMax(listSoFar: List[R], str: String): (List[R], String) =
       if (listSoFar.size == max.value) listSoFar -> str
       else
         parseR.parse(str) match {
-          case Parse.Result.Failure                  => listSoFar -> str
+          case Parse.Result.Failure                  => listSoFar        -> str
           case Parse.Result.Complete(v)              => (listSoFar :+ v) -> ""
           case Parse.Result.Incomplete(v, remaining) => repeatedParseUntilFailureOrMax(listSoFar :+ v, remaining)
         }
 
     val (list, remaining) = repeatedParseUntilFailureOrMax(List.empty, originalString)
     Repeated.from[MinReps, MaxReps, R](list) match {
-      case Left(_) => Parse.Result.Failure
+      case Left(_)       => Parse.Result.Failure
       case Right(values) =>
         Parse.Result.Success(values.asInstanceOf[Repeated[MinReps, MaxReps, R] { type Name = N }], remaining)
     }
   }
 
   implicit def repeatedWrite[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope, N <: Naming](
-      implicit w: Write[R]): Write[Repeated[MinReps, MaxReps, R] { type Name = N }] = _.values.map(_.write).mkString("")
+      implicit w: Write[R]
+  ): Write[Repeated[MinReps, MaxReps, R] { type Name = N }] = _.values.map(_.write).mkString("")
 }

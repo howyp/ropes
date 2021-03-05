@@ -24,7 +24,7 @@ import ropes.scalacheck._
 
 class RangeSpec extends RopeLaws with CommonGens {
   "A Range['a','z']" - {
-    val genAtoZ = Gen.choose('a', 'z')
+    val genAtoZ    = Gen.choose('a', 'z')
     val genNonAtoZ = Gen
       .oneOf(
         Gen.choose(Char.MinValue, ('a' - 1).toChar),

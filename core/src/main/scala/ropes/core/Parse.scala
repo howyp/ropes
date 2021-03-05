@@ -19,7 +19,7 @@ package ropes.core
 trait Parse[R <: Rope] {
   def parse(string: String): Parse.Result[R]
 }
-object Parse {
+object Parse           {
   def apply[R <: Rope](implicit parse: Parse[R]): Parse[R] = parse
 
   sealed trait Result[+R <: Rope] {
@@ -35,7 +35,7 @@ object Parse {
       case Result.Incomplete(v, r) => f(v, r)
     }
   }
-  object Result {
+  object Result                   {
     case object Failure             extends Result[Nothing]
     sealed trait Success[R <: Rope] extends Result[R]
 

@@ -18,15 +18,13 @@ package ropes.core
 
 import instances._
 
-/**
-  * Super-type of all available format specifications for strongly typed `String`s.
+/** Super-type of all available format specifications for strongly typed `String`s.
   */
 sealed trait Rope {
   type Name <: Naming
 }
 
-/**
-  * A `Rope` which specifies any number of any characters.
+/** A `Rope` which specifies any number of any characters.
   *
   * Note that this type will only be useful as the final section in a `Rope`, as it will
   * match all subsequent input.
@@ -34,10 +32,9 @@ sealed trait Rope {
 sealed case class AnyString(value: String) extends Rope with NameOps[AnyString] {
   type Name = Naming.Unassigned
 }
-object AnyString extends AnyStringInstances
+object AnyString                           extends AnyStringInstances
 
-/**
-  * A `Rope` which specifies a single literal value.
+/** A `Rope` which specifies a single literal value.
   *
   * Instances can be created either with a type-level singleton:
   *
@@ -57,12 +54,11 @@ object AnyString extends AnyStringInstances
 final case class Literal[V <: Char with Singleton](value: V) extends Rope with NameOps[Literal[V]] {
   type Name = Naming.Unassigned
 }
-object Literal extends LiteralInstances {
+object Literal                                               extends LiteralInstances              {
   def apply[V <: Char with Singleton](implicit valueOf: ValueOf[V]): Literal[V] = Literal[V](valueOf.value)
 }
 
-/**
-  *  A `Rope` which specifies that `Prefix` to be present before `Suffix`.
+/**  A `Rope` which specifies that `Prefix` to be present before `Suffix`.
   *
   *  For specifications with more than two concatenated sections, `Concat` should be nested in the `Suffix`, *not* the
   *  `Prefix`. This allows use of the `section` method to flatly access each section in a type-safe manner like so:
@@ -86,8 +82,7 @@ final case class Concat[Prefix <: Rope, Suffix <: Rope](prefix: Prefix, suffix: 
     with NameOps[Concat[Prefix, Suffix]] {
   type Name = Naming.Unassigned
 
-  /**
-    * Provides type-safe access to a numbered section of the concatenation, starting from `1`. Usefull when `Concat`s
+  /** Provides type-safe access to a numbered section of the concatenation, starting from `1`. Usefull when `Concat`s
     * have been right-nested:
     *
     * {{{
@@ -101,20 +96,19 @@ final case class Concat[Prefix <: Rope, Suffix <: Rope](prefix: Prefix, suffix: 
     * @tparam SectionNumber a singleton-typed `Int` indicating the section required, starting from `1`
     * @return The `SectionNumber`th section, typed according to the specification of `Prefix` or `Suffix` as appropriate
     */
-  def section[SectionNumber <: Singleton](
-      implicit sectionFinder: SectionFinder[Concat[Prefix, Suffix], SectionNumber]
+  def section[SectionNumber <: Singleton](implicit
+      sectionFinder: SectionFinder[Concat[Prefix, Suffix], SectionNumber]
   ): sectionFinder.Out = sectionFinder(this)
 }
 object Concat extends ConcatInstances
 
-/**
-  * A `Rope` which specifies that either `First` or `Second` should be present.
+/** A `Rope` which specifies that either `First` or `Second` should be present.
   *
   * @tparam First The first alternative `Rope` which may be present
   * @tparam Second The second alternative `Rope` which must be present if `First` is not.
   */
 sealed trait Or[+First <: Rope, +Second <: Rope] extends Rope
-object Or extends OrInstances {
+object Or                                        extends OrInstances {
   type Name = Naming.Unassigned
 
   final case class First[F <: Rope](value: F)  extends Or[F, Nothing] with NameOps[First[F]]
@@ -126,8 +120,7 @@ object Or extends OrInstances {
   }
 }
 
-/**
-  * A `Rope` which specifies a section by `S`, but exposes it's value as `T` via a `Conversion`. Sections
+/** A `Rope` which specifies a section by `S`, but exposes it's value as `T` via a `Conversion`. Sections
   * specified using this type will only be usable where an instance of `Conversion[S, T]` is available in
   * implicit scope to describe the conversion.
   *
@@ -142,18 +135,18 @@ sealed abstract case class ConvertedTo[S <: Rope, T](value: T) extends Rope with
   type Source = S
   type Target = T
 }
-object ConvertedTo extends ConvertedToInstances {
+object ConvertedTo                                             extends ConvertedToInstances                 {
   type Name = Naming.Unassigned
 
-  /**
-    * Attempts to create a `ConvertedTo` instance using a target value. An instance of `Conversion[Source, Target]`
+  /** Attempts to create a `ConvertedTo` instance using a target value. An instance of `Conversion[Source, Target]`
     * must be available in implicit scope to describe the conversion.
     *
     * @return A `Right[ConvertedTo[Source, Target]]` if the value supplied could be validly converted to the `Source`
     *         specification, or `Left[...]` otherwise
     */
-  def fromTarget[Source <: Rope, Target](target: Target)(
-      implicit conversion: Conversion[Source, Target]): Either[Rope.InvalidValue.type, ConvertedTo[Source, Target]] =
+  def fromTarget[Source <: Rope, Target](target: Target)(implicit
+      conversion: Conversion[Source, Target]
+  ): Either[Rope.InvalidValue.type, ConvertedTo[Source, Target]] =
     //TODO doing the conversion and throwing the value away feels bad, but if `backwards` was a partial function
     // we'd be doing that anyway
     conversion
@@ -163,21 +156,21 @@ object ConvertedTo extends ConvertedToInstances {
       .swap
       .map(_ => new ConvertedTo[Source, Target](target) {})
 
-  /**
-    * Creates a `ConvertedTo` instance using a source value. An instance of `Conversion[Source, Target]`
+  /** Creates a `ConvertedTo` instance using a source value. An instance of `Conversion[Source, Target]`
     * must be available in implicit scope to describe the conversion.
     *
     * @return The `source` converted to the `Target` type
     */
-  def fromSource[Source <: Rope, Target](source: Source)(
-      implicit conversion: Conversion[Source, Target]): ConvertedTo[Source, Target] =
+  def fromSource[Source <: Rope, Target](source: Source)(implicit
+      conversion: Conversion[Source, Target]
+  ): ConvertedTo[Source, Target]                                 =
     new ConvertedTo[Source, Target](conversion.forwards(source)) {}
 }
 
-sealed abstract case class CharacterClass[S <: Spec](value: Char) extends Rope {
+sealed abstract case class CharacterClass[S <: Spec](value: Char) extends Rope                    {
   type Name = Naming.Unassigned
 }
-object CharacterClass extends CharacterClassInstances {
+object CharacterClass                                             extends CharacterClassInstances {
   //TODO can we avoid re-calculating the reduction for each use?
   def from[S <: Spec](char: Char)(implicit reduce: Reduce[S]): Either[Rope.InvalidValue.type, CharacterClass[S]] = {
     val reduced = reduce.reduce
@@ -190,8 +183,7 @@ object CharacterClass extends CharacterClassInstances {
     from[S](char).getOrElse(throw new IllegalArgumentException(char.toString))
 }
 
-/**
-  * A `Rope` which indicates that a section should appear a given number of times.
+/** A `Rope` which indicates that a section should appear a given number of times.
   *
   * @tparam MinReps A singleton `Int` type representing the minimum number of repetitions of `R`. Must be >= 0
   * @tparam MaxReps A singleton `Int` type representing the maximum number of repetitions of `R`. Must be >= 1
@@ -200,8 +192,8 @@ object CharacterClass extends CharacterClassInstances {
   * @param values A list of values of `R`. Will have a size >= `MinReps` and <= `MaxReps`
   */
 sealed abstract case class Repeated[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope](
-    values: List[R])
-    extends Rope
+    values: List[R]
+) extends Rope
     with NameOps[Repeated[MinReps, MaxReps, R]] {
   type Name = Naming.Unassigned
 }
@@ -209,8 +201,7 @@ sealed abstract case class Repeated[MinReps <: Int with Singleton, MaxReps <: In
 object Repeated extends RepeatedInstances {
   type Name = Naming.Unassigned
 
-  /**
-    * A `Rope` which indicates that a section should appear exactly a given number of times.
+  /** A `Rope` which indicates that a section should appear exactly a given number of times.
     *
     * @tparam Reps A singleton `Int` type representing the number of repetitions of `R`. Must be >= 2
     * @tparam R The `Rope` specification which should be repeated
@@ -219,9 +210,10 @@ object Repeated extends RepeatedInstances {
     */
   type Exactly[Reps <: Int with Singleton, R <: Rope] = Repeated[Reps, Reps, R]
 
-  def from[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope](values: List[R])(
-      implicit min: ValueOf[MinReps],
-      max: ValueOf[MaxReps]): Either[Rope.InvalidValue.type, Repeated[MinReps, MaxReps, R]] =
+  def from[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope](values: List[R])(implicit
+      min: ValueOf[MinReps],
+      max: ValueOf[MaxReps]
+  ): Either[Rope.InvalidValue.type, Repeated[MinReps, MaxReps, R]] =
     Either.cond(
       test = values.size >= min.value && values.size <= max.value,
       right = new Repeated[MinReps, MaxReps, R](values) {},
@@ -229,7 +221,8 @@ object Repeated extends RepeatedInstances {
     )
 
   def unsafeFrom[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope](
-      values: List[R])(implicit min: ValueOf[MinReps], max: ValueOf[MaxReps]): Repeated[MinReps, MaxReps, R] =
+      values: List[R]
+  )(implicit min: ValueOf[MinReps], max: ValueOf[MaxReps]): Repeated[MinReps, MaxReps, R] =
     from[MinReps, MaxReps, R](values).getOrElse(throw new IllegalArgumentException(values.toString))
 }
 

@@ -18,17 +18,20 @@ package ropes.core.instances
 import ropes.core._
 
 private[ropes] trait ConvertedToInstances {
-  implicit def convertedToParse[Source <: Rope, Target, N <: Naming](
-      implicit sourceParse: Parse[Source],
-      conversion: Conversion[Source, Target]): Parse[ConvertedTo[Source, Target] { type Name = N }] =
+  implicit def convertedToParse[Source <: Rope, Target, N <: Naming](implicit
+      sourceParse: Parse[Source],
+      conversion: Conversion[Source, Target]
+  ): Parse[ConvertedTo[Source, Target] { type Name = N }] =
     sourceParse.parse(_).flatMap { (source, remainder) =>
       Parse.Result.Success(
         ConvertedTo.fromSource[Source, Target](source).asInstanceOf[ConvertedTo[Source, Target] { type Name = N }],
-        remainder)
+        remainder
+      )
     }
 
-  implicit def convertedToWrite[Source <: Rope, Target, N <: Naming](
-      implicit sourceWrite: Write[Source],
-      conversion: Conversion[Source, Target]): Write[ConvertedTo[Source, Target] { type Name = N }] =
+  implicit def convertedToWrite[Source <: Rope, Target, N <: Naming](implicit
+      sourceWrite: Write[Source],
+      conversion: Conversion[Source, Target]
+  ): Write[ConvertedTo[Source, Target] { type Name = N }] =
     target => sourceWrite.write(conversion.backwards(target.value).getOrElse(throw new IllegalStateException))
 }

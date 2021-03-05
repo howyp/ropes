@@ -19,8 +19,9 @@ package ropes.core.instances
 import ropes.core._
 
 private[ropes] trait LiteralInstances {
-  implicit def literalParseChar[C <: Char with Singleton, N <: Naming](
-      implicit c: ValueOf[C]): Parse[Literal[C] { type Name = N }] = { str =>
+  implicit def literalParseChar[C <: Char with Singleton, N <: Naming](implicit
+      c: ValueOf[C]
+  ): Parse[Literal[C] { type Name = N }] = { str =>
     if (str.length > 0 && str.charAt(0) == c.value)
       Parse.Result.Success(Literal[C](c.value).asInstanceOf[Literal[C] { type Name = N }], str.substring(1))
     else Parse.Result.Failure

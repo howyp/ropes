@@ -28,17 +28,16 @@ private[core] trait DigitInstances {
       MinReps <: Int with Singleton,
       MaxReps <: Int with Singleton,
       N <: Naming
-  ](
-      implicit
+  ](implicit
       minReps: ValueOf[MinReps],
       maxReps: ValueOf[MaxReps]
   ): Conversion[Repeated[MinReps, MaxReps, Digit] { type Name = N }, Int] =
     Conversion.instance[Repeated[MinReps, MaxReps, Digit] { type Name = N }, Int](
-      forwards = _.values.foldLeft(0) {
-        case (accumulated, digit) => accumulated * 10 + digit.value
+      forwards = _.values.foldLeft(0) { case (accumulated, digit) =>
+        accumulated * 10 + digit.value
       },
       backwards = { int =>
-        val listOfDigits =
+        val listOfDigits                =
           int.toString.toList
             .map(Range.unsafeFrom['0', '9'](_))
             .map(ConvertedTo.fromSource(_))
@@ -48,7 +47,8 @@ private[core] trait DigitInstances {
         Right(
           Repeated
             .unsafeFrom[MinReps, MaxReps, Digit](listOfDigitsPaddedWithZeros)
-            .asInstanceOf[Repeated[MinReps, MaxReps, Digit] { type Name = N }])
+            .asInstanceOf[Repeated[MinReps, MaxReps, Digit] { type Name = N }]
+        )
       }
     )
 }

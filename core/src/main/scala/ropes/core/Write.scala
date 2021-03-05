@@ -19,6 +19,6 @@ package ropes.core
 trait Write[R <: Rope] {
   def write(r: R): String
 }
-object Write {
+object Write           {
   def apply[R <: Rope](implicit write: Write[R]): Write[R] = write
 }

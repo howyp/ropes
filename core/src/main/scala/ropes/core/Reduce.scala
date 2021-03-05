@@ -20,8 +20,7 @@ import Spec._
 
 trait Reduce[S <: Spec] {
 
-  /**
-    * @return A inclusive range of characters which match the spec. The second character in each tuple must be
+  /** @return A inclusive range of characters which match the spec. The second character in each tuple must be
     *         greater than or equal to the first. The list must be in ascending order of first character in each tuple.
     */
   def reduce: List[(Char, Char)]
@@ -45,7 +44,7 @@ object Reduce {
   private def mergeAll(all: List[(Char, Char)]) = {
     all.sortBy(_._1).foldLeft(List.empty[(Char, Char)]) {
       case (List(), first) => List(first)
-      case (merged, next) =>
+      case (merged, next)  =>
         merged.init ::: merge(merged.last, next)
     }
   }
@@ -58,9 +57,10 @@ object Reduce {
     if (s2 + 1 >= b1.toInt) List(s1 -> b2)
     else List(s, b)
   }
-  implicit def `reduce-`[Start <: Char with Singleton, End <: Char with Singleton](
-      implicit start: ValueOf[Start],
-      end: ValueOf[End]): Reduce[Start - End] = {
+  implicit def `reduce-`[Start <: Char with Singleton, End <: Char with Singleton](implicit
+      start: ValueOf[Start],
+      end: ValueOf[End]
+  ): Reduce[Start - End] = {
     if (start.value <= end.value) instance(start.value -> end.value)
     else throw new IllegalStateException(s"""Range "'${start.value}' - '${end.value}'" is invalid""")
   }

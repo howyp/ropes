@@ -29,7 +29,7 @@ package object core extends DigitInstances with OptionalInstances {
   type Digit = Range['0', '9'] ConvertedTo Int
   object Digit {
     def from(value: Int): Either[Rope.InvalidValue.type, Digit] = ConvertedTo.fromTarget(value)
-    def unsafeFrom(value: Int): Digit =
+    def unsafeFrom(value: Int): Digit                           =
       Digit.from(value).getOrElse(throw new IllegalArgumentException(value.toString))
   }
 
@@ -40,19 +40,20 @@ package object core extends DigitInstances with OptionalInstances {
       ConvertedTo.fromTarget[Repeated[0, 1, R], Option[R]](option).getOrElse(throw new IllegalStateException())
   }
 
-  /**
-    * A `Rope` which holds a single character matching a given range.
+  /** A `Rope` which holds a single character matching a given range.
     * @tparam Start A singleton `Char` type which is the minimum allowable character, inclusive
     * @tparam End A singleton `Char` type which is the maximum allowable character, inclusive
     */
   type Range[Start <: Char with Singleton, End <: Char with Singleton] = CharacterClass[Start - End]
   object Range {
     def from[Start <: Char with Singleton: ValueOf, End <: Char with Singleton: ValueOf](
-        char: Char): Either[Rope.InvalidValue.type, Range[Start, End]] =
+        char: Char
+    ): Either[Rope.InvalidValue.type, Range[Start, End]] =
       CharacterClass.from[Start - End](char)
 
     def unsafeFrom[Start <: Char with Singleton: ValueOf, End <: Char with Singleton: ValueOf](
-        char: Char): Range[Start, End] =
+        char: Char
+    ): Range[Start, End] =
       from[Start, End](char).getOrElse(throw new IllegalArgumentException(char.toString))
   }
 

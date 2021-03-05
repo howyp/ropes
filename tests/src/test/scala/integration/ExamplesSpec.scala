@@ -105,20 +105,20 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
         "CR2 6XH" in {
 //          TODO Can we do this better? For instance allow the ' ' char to be implicit
           val postcode = for {
-            area     <- Rope.parseTo[PostCode.Area]("CR")
-            district <- Rope.parseTo[PostCode.District]("2")
+            area                         <- Rope.parseTo[PostCode.Area]("CR")
+            district                     <- Rope.parseTo[PostCode.District]("2")
             outward: PostCode.OutwardCode = Or.First(area +: district)
-            sector <- Digit.from(6)
-            unit   <- Rope.parseTo[PostCode.Unit]("XH")
+            sector                       <- Digit.from(6)
+            unit                         <- Rope.parseTo[PostCode.Unit]("XH")
           } yield outward +: ' ' +: sector +: unit
           postcode.getOrElse(fail()).write should be("CR2 6XH")
         }
         "EC1A 1BB" in {
           val postcode = for {
-            area     <- Rope.parseTo[PostCode.Area]("EC")
-            district <- Rope.parseTo[PostCode.District]("1A")
+            area                         <- Rope.parseTo[PostCode.Area]("EC")
+            district                     <- Rope.parseTo[PostCode.District]("1A")
             outward: PostCode.OutwardCode = Or.First(area +: district)
-            inward <- Rope.parseTo[PostCode.InwardCode]("1BB")
+            inward                       <- Rope.parseTo[PostCode.InwardCode]("1BB")
           } yield outward +: ' ' +: inward
           postcode.getOrElse(fail()).write should be("EC1A 1BB")
         }
@@ -184,8 +184,12 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
       type SSN    = Area +: Dash +: Group +: Dash +: Serial
 
       implicit val ssnConversion: Conversion[SSN, SocialSecurityNumber] = Conversion.instance(
-        forwards =
-          r => SocialSecurityNumber(Area = r.section["Area"].value, Group = r.section["Group"].value, Serial = r.section["Serial"].value),
+        forwards = r =>
+          SocialSecurityNumber(
+            Area = r.section["Area"].value,
+            Group = r.section["Group"].value,
+            Serial = r.section["Serial"].value
+          ),
         backwards = s =>
           Right(
             ConvertedTo.fromTarget[Repeated.Exactly[3, Digit], Int](s.Area).right.get.assignName["Area"] +:

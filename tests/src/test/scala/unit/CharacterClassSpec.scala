@@ -25,7 +25,7 @@ import ropes.scalacheck._
 
 class CharacterClassSpec extends RopeLaws with CommonGens {
   "A CharacterClass" - {
-    val genAtoZ = Gen.choose('a', 'z')
+    val genAtoZ    = Gen.choose('a', 'z')
     val genNonAtoZ = Gen
       .oneOf(
         Gen.choose(Char.MinValue, ('a' - 1).toChar),

@@ -3,7 +3,7 @@ layout: docs
 title: 4. The Ropes DSL
 ---
 
-```tut:invisible
+```scala mdoc:invisible
 import ropes.core._
 
 type Area   = Repeated.Exactly[3, Range['0', '9']]
@@ -21,7 +21,7 @@ operations to make this sort of thing simpler.
 Using it, we can re-write our definition using the `+:` syntax from the
 DSL:
 
-```tut:silent
+```scala mdoc:silent
 import ropes.dsl._
 type SSN = Area +: Dash +: Group +: Dash +: Serial
 ```

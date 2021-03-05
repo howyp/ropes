@@ -12,22 +12,22 @@ Let's dive straight into an example.
 We know that (simplistically) a Twitter handle always starts with a
 literal '@' symbol, followed by any string. We can define that with:
 
-```tut:silent
+```scala mdoc:silent
 import ropes.core._
 
 type TwitterHandle = Concat[Literal['@'], AnyString]
 ```
 
-Or you can use Concat as an infix type:
+Or you can use `Concat` as an infix type:
 
-```tut:silent
+```scala mdoc:silent:nest
 type TwitterHandle = Literal['@'] Concat AnyString
 ```
 
 Now, we can parse matching strings, and write them back to their
 original form:
 
-```tut:book
+```scala mdoc
 Rope.parseTo[TwitterHandle]("!Bob")
 val Right(howy) = Rope.parseTo[TwitterHandle]("@HowyP")
 howy.write
@@ -40,7 +40,7 @@ properties of each individual type. In this case, they are pretty basic.
 A `Concat` has a prefix and suffix, and the `Literal` and `AnyString`
 contain single values:
 
-```tut:book
+```scala mdoc
 howy.prefix
 howy.prefix.value
 howy.suffix
@@ -49,7 +49,7 @@ howy.suffix.value
 
 We can also create new handles from scratch, or modify existing ones:
 
-```tut:book
+```scala mdoc
 val twitter: TwitterHandle = Concat(Literal('@'), AnyString("Twitter"))
 val bob: TwitterHandle     = howy.copy(suffix = AnyString("Bob"))
 ```
@@ -59,7 +59,7 @@ val bob: TwitterHandle     = howy.copy(suffix = AnyString("Bob"))
 Lastly, a feature of all `Rope`s is that they can be generated via
 Scalacheck `Arbitrary`:
 
-```tut:book
+```scala mdoc
 import org.scalacheck.Arbitrary.arbitrary
 import ropes.scalacheck._
 

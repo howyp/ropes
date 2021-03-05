@@ -17,7 +17,7 @@ a US Social Security number is:
 
 So let's build that as a `Rope`:
 
-```tut:silent
+```scala mdoc:silent
 import ropes.core._
 
 type Area   = Repeated.Exactly[3, Range['0', '9']]
@@ -38,7 +38,7 @@ rather than the prefix.
 We _could_ access parts of the SSN in the same way as we have done
 previously:
 
-```tut:book
+```scala mdoc
 val Right(parsed) = Rope.parseTo[SSN]("078-05-1120")
 parsed.prefix.write
 parsed.suffix.suffix.prefix.write
@@ -49,7 +49,7 @@ but it is clumsy to navigate through all of the prefixes and suffixes.
 Instead, we ropes provides the `section` method to access a given
 section by index:
 
-```tut:book
+```scala mdoc
 parsed.section[1].write
 parsed.section[3].write
 parsed.section[5].write

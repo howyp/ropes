@@ -16,7 +16,7 @@ with, and they'd be more naturally represented as `Int`s.
 Ropes provides a way to do this using `ConvertedTo`, which takes a rope
 type and the type you want to convert to and from:
 
-```tut:silent
+```scala mdoc:silent
 import ropes.core._
 
 type Area   = Repeated.Exactly[3, Digit] ConvertedTo Int Named "Area"
@@ -24,7 +24,7 @@ type Group  = Repeated.Exactly[2, Digit] ConvertedTo Int Named "Group"
 type Serial = Repeated.Exactly[4, Digit] ConvertedTo Int Named "Serial"
 ```
 
-```tut:invisible
+```scala mdoc:invisible
 import ropes.dsl._
 type SSN = Area +: Literal['-'] +: Group +: Literal['-'] +: Serial
 val Right(parsed) = Rope.parseTo[SSN]("078-05-1120")
@@ -32,7 +32,7 @@ val Right(parsed) = Rope.parseTo[SSN]("078-05-1120")
 
 We can now use `.value` on each section and get a simple `Int`:
 
-```tut:book
+```scala mdoc
 parsed.section["Area"].value
 parsed.section["Group"].value
 parsed.section["Serial"].value

@@ -11,7 +11,7 @@ more closely, digits and `_` characters are also allowed in the username
 portion of the handle. A simple `Range` will not be sufficient here, so
 we can turn to `CharacterClass` and it's associated `Spec` types.
 
-```tut:silent
+```scala mdoc:silent
 import ropes.core._
 import ropes.core.Spec._
 

@@ -7,7 +7,7 @@ title: 5. Naming
 
 If we'd like, we can name parts of our rope:
 
-```tut:silent
+```scala mdoc:silent
 import ropes.core._
 
 type Area   = Repeated.Exactly[3, Digit] Named "Area"
@@ -15,7 +15,7 @@ type Group  = Repeated.Exactly[2, Digit] Named "Group"
 type Serial = Repeated.Exactly[4, Digit] Named "Serial"
 ```
 
-```tut:invisible
+```scala mdoc:invisible
 import ropes.dsl._
 type SSN = Area +: Literal['-'] +: Group +: Literal['-'] +: Serial
 val Right(parsed) = Rope.parseTo[SSN]("078-05-1120")
@@ -23,7 +23,7 @@ val Right(parsed) = Rope.parseTo[SSN]("078-05-1120")
 
 This makes sections easy to acess:
 
-```tut:book
+```scala mdoc
 parsed.section["Area"].write
 parsed.section["Group"].write
 parsed.section["Serial"].write

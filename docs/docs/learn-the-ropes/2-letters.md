@@ -11,7 +11,7 @@ But wait! The handles we made in section 1 don't look very realistic.
 Only 15 letters are allowed for the username portion of the handle.
 Let's update our specification:
 
-```tut:silent
+```scala mdoc:silent
 import ropes.core._
 
 type Username      = Repeated[1, 15, Letter]
@@ -22,7 +22,7 @@ Being more precise, we've stated that the `Username` must consist of
 letter characters, repeated 1 to 15 times. It now will not allow
 usernames which are too long or have non-letter characters:
 
-```tut:book
+```scala mdoc
 Rope.parseTo[TwitterHandle]("@HowyP")
 Rope.parseTo[TwitterHandle]("@TwoManyCharactersForAUsername")
 Rope.parseTo[TwitterHandle]("@foo&bar")
@@ -30,7 +30,7 @@ Rope.parseTo[TwitterHandle]("@foo&bar")
 
 Now, let's try generating some handles again:
 
-```tut:book
+```scala mdoc
 import org.scalacheck.Arbitrary.arbitrary
 import ropes.scalacheck._
 
@@ -41,7 +41,7 @@ List.fill(5)(arbitrary[TwitterHandle].sample).flatten.map(_.write + '\n')
 
 `Letter` comes pre-defined in ropes as:
 
-```tut:silent
+```scala mdoc:silent
 type Letter = Letter.Uppercase Or Letter.Lowercase
 object Letter {
     type Uppercase = Range['A', 'Z']

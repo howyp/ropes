@@ -16,11 +16,12 @@
 
 package laws
 import org.scalacheck.{Arbitrary, Gen, Shrink}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import org.scalatest.{FreeSpec, Matchers}
 import ropes.core.{Parse, Rope, Write}
 
-trait RopeLaws extends FreeSpec with Matchers with ScalaCheckDrivenPropertyChecks {
+trait RopeLaws extends AnyFreeSpec with Matchers with ScalaCheckDrivenPropertyChecks {
   private implicit def noShrink[T]: Shrink[T] = Shrink(_ => Stream.empty[T])
 
   def `obeys Rope laws`[R <: Rope: Parse: Arbitrary: Write](

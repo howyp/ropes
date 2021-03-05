@@ -63,6 +63,7 @@ package object scalacheck {
       case List()                                   => throw new IllegalStateException("Cannot create a generator for an empty CharacterClass")
       case List(single)                             => single
       case firstRange :: secondRange :: otherRanges => Gen.oneOf(firstRange, secondRange, otherRanges: _*)
+      case _                                        => ??? //TODO
     }).map(CharacterClass.unsafeFrom[S](_).asInstanceOf[CharacterClass[S] { type Name = N }]))
 
   implicit def arbConvertedTo[

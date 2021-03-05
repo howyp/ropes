@@ -16,15 +16,15 @@
 
 package integration
 
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 import ropes.core._
 import ropes.core.Spec._
 import ropes.dsl._
 import ropes.scalacheck._
-
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import org.scalatest.{FreeSpec, Matchers}
 
-class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyChecks {
+class ExamplesSpec extends AnyFreeSpec with Matchers with ScalaCheckDrivenPropertyChecks {
   "Some examples of valid ropes include" - {
     "twitter handles" - {
       //From https://help.twitter.com/en/managing-your-account/twitter-username-rules :

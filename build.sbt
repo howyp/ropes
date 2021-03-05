@@ -19,7 +19,7 @@ Global / resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 
-Global / scalaVersion := "2.13.1"
+Global / scalaVersion := "2.13.5"
 Global / scalacOptions ++= Seq(
   // Thanks to @tpolecat for this list at https://tpolecat.github.io/2017/04/25/scalac-flags.html
   // Some options have been commented as they are either not needed for this project, or do not seem to be available
@@ -44,7 +44,7 @@ Global / scalacOptions ++= Seq(
   "-Xlint:inaccessible",           // Warn about inaccessible types in method signatures.
   "-Xlint:infer-any",              // Warn when a type argument is inferred to be `Any`.
   "-Xlint:missing-interpolator",   // A string literal appears to be missing an interpolator id.
-  "-Xlint:nullary-override",       // Warn when non-nullary `def f()' overrides nullary `def f'.
+//  "-Xlint:nullary-override",       // Warn when non-nullary `def f()' overrides nullary `def f'.
   "-Xlint:nullary-unit",           // Warn when nullary methods return Unit.
   "-Xlint:option-implicit",        // Option.apply used implicit view.
   "-Xlint:package-object-classes", // Class or object defined in package object.
@@ -74,9 +74,9 @@ ThisBuild / Compile / console / scalacOptions --= Seq("-Ywarn-unused:imports", "
 ThisBuild / Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oSDI")
 
 val Dependencies = new {
-  val scalacheck                 = "org.scalacheck"    %% "scalacheck"               % "1.14.0"
-  val scalatest                  = "org.scalatest"     %% "scalatest"                % "3.1.0-SNAP13"
-  val `scalatestplus-scalacheck` = "org.scalatestplus" %% "scalatestplus-scalacheck" % "1.0.0-SNAP8"
+  val scalacheck                 = "org.scalacheck"    %% "scalacheck"      % "1.15.3"
+  val scalatest                  = "org.scalatest"     %% "scalatest"       % "3.2.5"
+  val `scalatestplus-scalacheck` = "org.scalatestplus" %% "scalacheck-1-15" % (scalatest.revision + ".0")
 }
 
 def module(p: Project, modName: String, skipPublish: Boolean) =

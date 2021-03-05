@@ -15,10 +15,11 @@
  */
 
 package unit
-import org.scalatest.{FreeSpec, Matchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 import ropes.core._
 
-class RopeCompanionSpec extends FreeSpec with Matchers {
+class RopeCompanionSpec extends AnyFreeSpec with Matchers {
   "The Rope companion object" - {
     "Can parse to a given rope" - {
       "Successfully if the parse is complete" in {

@@ -16,10 +16,11 @@
 
 package ropes.core
 
-import org.scalatest.{FreeSpec, Matchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 import ropes.core.Spec._
 
-class ReduceTest extends FreeSpec with Matchers {
+class ReduceTest extends AnyFreeSpec with Matchers {
 
   "Specs reduce down to ranges" - {
     "==['a']" in {

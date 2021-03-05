@@ -7,7 +7,7 @@ get parsers, writers, composition and generators for free.</p>
 
 <p>Everyone has come across code before that is <em>string</em>ly typed - where
 there are strong types for data structures, but fields that we know
-<strong>must</strong> match a certain format are represented simply as <code class="highlighter-rouge">String</code>s.
+<strong>must</strong> match a certain format are represented simply as <code class="language-plaintext highlighter-rouge">String</code>s.
 Things like email addresses, host names, post codes, user/product IDs
 etc. And often we don’t just need to validate the formats, but to be
 able to decompose and use specific parts of them</p>
@@ -17,16 +17,16 @@ strongly-typed strings, and give many useful ways to work with them.</p>
 
 <h3 id="principles">Principles</h3>
 
-<p><em>The type of a <code class="highlighter-rouge">Rope</code> completely expresses the definition of what values
+<p><em>The type of a <code class="language-plaintext highlighter-rouge">Rope</code> completely expresses the definition of what values
 are valid.</em></p>
 
-<p>Every valid <code class="highlighter-rouge">Rope</code> can be:</p>
+<p>Every valid <code class="language-plaintext highlighter-rouge">Rope</code> can be:</p>
 
 <ul>
-  <li><strong>Parsed</strong> safely from a <code class="highlighter-rouge">String</code></li>
-  <li><strong>Written</strong> precisely back to a <code class="highlighter-rouge">String</code></li>
+  <li><strong>Parsed</strong> safely from a <code class="language-plaintext highlighter-rouge">String</code></li>
+  <li><strong>Written</strong> precisely back to a <code class="language-plaintext highlighter-rouge">String</code></li>
   <li><strong>Decomposed</strong> into its constituent parts</li>
-  <li><strong>Composed</strong> with other <code class="highlighter-rouge">Rope</code>s to form a new ones</li>
+  <li><strong>Composed</strong> with other <code class="language-plaintext highlighter-rouge">Rope</code>s to form a new ones</li>
   <li><strong>Generated</strong> through arbitrary values which always adhere to the
 definition</li>
 </ul>
@@ -47,11 +47,11 @@ build against Scala 2.12 in the future.</p>
 <p>Frank Thomas’s <strong>excellent</strong>
 <a href="https://github.com/fthomas/refined">refined</a> library provides a way to enforce
 restrictions on a wide range of value and collection types in Scala,
-including <code class="highlighter-rouge">String</code>s. It does this through predicates, which give
+including <code class="language-plaintext highlighter-rouge">String</code>s. It does this through predicates, which give
 great power to the user to define any refinement they choose.</p>
 
 <p>However, because of this power, it is also problematic to provide the
-ability to decompose a refined <code class="highlighter-rouge">String</code> based on the given predicate,
+ability to decompose a refined <code class="language-plaintext highlighter-rouge">String</code> based on the given predicate,
 and is also not generally possible to generate arbitrary values matching
 predicates.</p>
 

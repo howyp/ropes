@@ -56,11 +56,11 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
     "UK Postcodes" - {
       //Wikipedia lists a validation Regex as:
       // ^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? [0-9][A-Za-z]{2}|[Gg][Ii][Rr] 0[Aa]{2})$
-      type PostCode = Concat[PostCode.OutwardCode, Concat[Literal[' '], PostCode.InwardCode]]
+      type PostCode = PostCode.OutwardCode +: Literal[' '] +: PostCode.InwardCode
       object PostCode {
         type Area        = Repeated[1, 2, Letter.Uppercase] Named "Area"
-        type District    = Concat[Repeated[1, 2, Digit] ConvertedTo Int, Optional[Letter.Uppercase]] Named "District"
-        type OutwardCode = Concat[Area, District] Or (Literal['G'] +: Literal['I'] +: Literal['R'])
+        type District    = ((Repeated[1, 2, Digit] ConvertedTo Int) +: Optional[Letter.Uppercase]) Named "District"
+        type OutwardCode = (Area +: District) Or (Literal['G'] +: Literal['I'] +: Literal['R'])
 
         type Sector     = Digit Named "Sector"
         type Unit       = Repeated[2, 2, Letter.Uppercase] Named "Unit"
@@ -105,20 +105,20 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
         "CR2 6XH" in {
 //          TODO Can we do this better? For instance allow the ' ' char to be implicit
           val postcode = for {
-            area                          <- Rope.parseTo[PostCode.Area]("CR")
-            district                      <- Rope.parseTo[PostCode.District]("2")
+            area     <- Rope.parseTo[PostCode.Area]("CR")
+            district <- Rope.parseTo[PostCode.District]("2")
             outward: PostCode.OutwardCode = Or.First(area +: district)
-            sector                        <- Digit.from(6)
-            unit                          <- Rope.parseTo[PostCode.Unit]("XH")
+            sector <- Digit.from(6)
+            unit   <- Rope.parseTo[PostCode.Unit]("XH")
           } yield outward +: ' ' +: sector +: unit
           postcode.getOrElse(fail()).write should be("CR2 6XH")
         }
         "EC1A 1BB" in {
           val postcode = for {
-            area                          <- Rope.parseTo[PostCode.Area]("EC")
-            district                      <- Rope.parseTo[PostCode.District]("1A")
+            area     <- Rope.parseTo[PostCode.Area]("EC")
+            district <- Rope.parseTo[PostCode.District]("1A")
             outward: PostCode.OutwardCode = Or.First(area +: district)
-            inward                        <- Rope.parseTo[PostCode.InwardCode]("1BB")
+            inward <- Rope.parseTo[PostCode.InwardCode]("1BB")
           } yield outward +: ' ' +: inward
           postcode.getOrElse(fail()).write should be("EC1A 1BB")
         }
@@ -160,10 +160,10 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
       }
       "Invalid NINOs fail to parse" in {
         val l = List(
-          "Q0123456C", // Prefix replaced with number
-          "Q123456C", // Prefix of single letter
+          "Q0123456C",     // Prefix replaced with number
+          "Q123456C",      // Prefix of single letter
           "QQ 12 34 56 C", // Spaces added
-          "QQ123456E" // Out of scope letter for suffix
+          "QQ123456E"      // Out of scope letter for suffix
         )
         every(l.map(Rope.parseTo[NINO](_))) should be(Left(Rope.InvalidValue))
       }
@@ -184,10 +184,8 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
       type SSN    = Area +: Dash +: Group +: Dash +: Serial
 
       implicit val ssnConversion: Conversion[SSN, SocialSecurityNumber] = Conversion.instance(
-        forwards = r =>
-          SocialSecurityNumber(Area = r.section["Area"].value,
-                               Group = r.section["Group"].value,
-                               Serial = r.section["Serial"].value),
+        forwards =
+          r => SocialSecurityNumber(Area = r.section["Area"].value, Group = r.section["Group"].value, Serial = r.section["Serial"].value),
         backwards = s =>
           Right(
             ConvertedTo.fromTarget[Repeated.Exactly[3, Digit], Int](s.Area).right.get.assignName["Area"] +:
@@ -195,7 +193,7 @@ class ExamplesSpec extends FreeSpec with Matchers with ScalaCheckDrivenPropertyC
               ConvertedTo.fromTarget[Repeated.Exactly[2, Digit], Int](s.Group).right.get.assignName["Group"] +:
               Literal['-'] +:
               ConvertedTo.fromTarget[Repeated.Exactly[4, Digit], Int](s.Serial).right.get.assignName["Serial"]
-        )
+          )
       )
 
       "078-05-1120" - {

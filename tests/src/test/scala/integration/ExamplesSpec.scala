@@ -191,13 +191,12 @@ class ExamplesSpec extends AnyFreeSpec with Matchers with ScalaCheckDrivenProper
             Serial = r.section["Serial"].value
           ),
         backwards = s =>
-          Right(
-            ConvertedTo.fromTarget[Repeated.Exactly[3, Digit], Int](s.Area).right.get.assignName["Area"] +:
-              Literal['-'] +:
-              ConvertedTo.fromTarget[Repeated.Exactly[2, Digit], Int](s.Group).right.get.assignName["Group"] +:
-              Literal['-'] +:
-              ConvertedTo.fromTarget[Repeated.Exactly[4, Digit], Int](s.Serial).right.get.assignName["Serial"]
-          )
+          (for {
+            area   <- ConvertedTo.fromTarget[Repeated.Exactly[3, Digit], Int](s.Area)
+            group  <- ConvertedTo.fromTarget[Repeated.Exactly[2, Digit], Int](s.Group)
+            serial <- ConvertedTo.fromTarget[Repeated.Exactly[4, Digit], Int](s.Serial)
+          } yield area.assignName["Area"] +: Literal['-'] +: group
+            .assignName["Group"] +: Literal['-'] +: serial.assignName["Serial"]).left.map(_ => Conversion.Failed)
       )
 
       "078-05-1120" - {
@@ -210,7 +209,7 @@ class ExamplesSpec extends AnyFreeSpec with Matchers with ScalaCheckDrivenProper
         }
         "composing and writing" in {
           //TODO can we make this more elegant, only supplying the Rope type to `fromTarget`?
-          val Right(composed: SSN) = for {
+          val Right(composed) = for {
             area   <- ConvertedTo.fromTarget[Repeated.Exactly[3, Digit], Int](78)
             group  <- ConvertedTo.fromTarget[Repeated.Exactly[2, Digit], Int](5)
             serial <- ConvertedTo.fromTarget[Repeated.Exactly[4, Digit], Int](1120)

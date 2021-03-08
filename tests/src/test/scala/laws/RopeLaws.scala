@@ -15,15 +15,13 @@
  */
 
 package laws
-import org.scalacheck.{Arbitrary, Gen, Shrink}
+import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import ropes.core.{Parse, Rope, Write}
 
 trait RopeLaws extends AnyFreeSpec with Matchers with ScalaCheckDrivenPropertyChecks {
-  private implicit def noShrink[T]: Shrink[T] = Shrink(_ => Stream.empty[T])
-
   def `obeys Rope laws`[R <: Rope: Parse: Arbitrary: Write](
       genValidStringsWithDecompositionAssertion: Gen[(String, R => Unit)],
       genSuffixToMakeValidStringIncomplete: Option[Gen[String]],

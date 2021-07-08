@@ -16,6 +16,7 @@
 
 package ropes.core.instances
 
+import ropes.core.RopeCompanion.Build
 import ropes.core._
 
 import scala.annotation.tailrec
@@ -46,4 +47,38 @@ trait RepeatedInstances {
 
   implicit def repeatedWrite[MinReps <: Int with Singleton, MaxReps <: Int with Singleton, R <: Rope, N <: Naming](
       implicit w: Write[R]): Write[Repeated[MinReps, MaxReps, R] { type Name = N }] = _.values.map(_.write).mkString("")
+
+  class RepeatedCompanion[MinReps <: Int with Singleton: ValueOf, MaxReps <: Int with Singleton: ValueOf, Inner <: Rope,
+  N <: Naming](protected val parseInstance: Parse[Repeated[MinReps, MaxReps, Inner] { type Name = N }])
+      extends Parsing[Repeated[MinReps, MaxReps, Inner] { type Name = N }] { self =>
+
+    def from(values: List[Inner]): Either[Rope.InvalidValue.type, Repeated[MinReps, MaxReps, Inner] { type Name = N }] =
+      Repeated
+        .from[MinReps, MaxReps, Inner](values)
+        .map(_.asInstanceOf[Repeated[MinReps, MaxReps, Inner] { type Name = N }])
+
+    def from(values: Inner*): Either[Rope.InvalidValue.type, Repeated[MinReps, MaxReps, Inner] { type Name = N }] =
+      Repeated
+        .from[MinReps, MaxReps, Inner](values.toList)
+        .map(_.asInstanceOf[Repeated[MinReps, MaxReps, Inner] { type Name = N }])
+
+    def unsafeFrom(values: List[Inner]): Repeated[MinReps, MaxReps, Inner] { type Name = N } =
+      Repeated
+        .unsafeFrom[MinReps, MaxReps, Inner](values)
+        .asInstanceOf[Repeated[MinReps, MaxReps, Inner] { type Name = N }]
+
+    def unsafeFrom(values: Inner*): Repeated[MinReps, MaxReps, Inner] { type Name = N } =
+      Repeated
+        .unsafeFrom[MinReps, MaxReps, Inner](values.toList)
+        .asInstanceOf[Repeated[MinReps, MaxReps, Inner] { type Name = N }]
+
+    def unapply(repeated: Repeated[MinReps, MaxReps, Inner] { type Name = N }): Option[List[Inner]] =
+      Some(repeated.values)
+  }
+  implicit def repeatdBuild[MinReps <: Int with Singleton: ValueOf,
+                            MaxReps <: Int with Singleton: ValueOf,
+                            Inner <: Rope,
+                            N <: Naming](implicit parse: Parse[Repeated[MinReps, MaxReps, Inner] { type Name = N }])
+    : Build.Aux[Repeated[MinReps, MaxReps, Inner] { type Name = N }, RepeatedCompanion[MinReps, MaxReps, Inner, N]] =
+    Build.instance(new RepeatedCompanion[MinReps, MaxReps, Inner, N](parse))
 }

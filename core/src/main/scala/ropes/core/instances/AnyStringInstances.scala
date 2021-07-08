@@ -16,10 +16,20 @@
 
 package ropes.core.instances
 
+import ropes.core.RopeCompanion.Build
 import ropes.core._
 
 private[ropes] trait AnyStringInstances {
-  implicit def anyStringParse[N <: Naming]: Parse[AnyString { type Name = N }] =
-    str => Parse.Result.Complete(AnyString(str).asInstanceOf[AnyString { type Name = N }])
+  implicit def anyStringParse[A <: AnyString]: Parse[A] = str => Parse.Result.Complete(AnyString(str).asInstanceOf[A])
+
   implicit val anyStringWrite: Write[AnyString] = _.value
+
+  class AnyStringCompanion[A <: AnyString](implicit ev: A =:= AnyString) extends Parsing[A] { self =>
+    protected val parseInstance: Parse[A] = Parse[A]
+
+    def apply(value: String): A         = AnyString(value).asInstanceOf[A]
+    def unapply(arg: A): Option[String] = Some(arg.value)
+  }
+  implicit def anyStringBuild[A <: AnyString](implicit ev: A =:= AnyString): Build.Aux[A, AnyStringCompanion[A]] =
+    Build.instance(new AnyStringCompanion[A])
 }

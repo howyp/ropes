@@ -16,6 +16,7 @@
 
 package ropes.core.instances
 
+import ropes.core.RopeCompanion.Build
 import ropes.core._
 
 private[ropes] trait CharacterClassInstances {
@@ -31,4 +32,19 @@ private[ropes] trait CharacterClassInstances {
 
   implicit def characterClassWrite[S <: Spec, N <: Naming]: Write[CharacterClass[S] { type Name = N }] =
     _.value.toString
+
+  class CharacterClassCompanion[S <: Spec](protected val parseInstance: Parse[CharacterClass[S]])
+      extends Parsing[CharacterClass[S]] {
+    def from(char: Char)(implicit reduce: Reduce[S]): Either[Rope.InvalidValue.type, CharacterClass[S]] =
+      CharacterClass.from[S](char)
+
+    def unsafeFrom(char: Char)(implicit reduce: Reduce[S]): CharacterClass[S] =
+      CharacterClass.unsafeFrom[S](char)
+
+    def unapply(arg: CharacterClass[S]): Option[Char] = Some(arg.value)
+  }
+
+  implicit def characterClassBuild[S <: Spec](
+      implicit parse: Parse[CharacterClass[S]]): Build.Aux[CharacterClass[S], CharacterClassCompanion[S]] =
+    Build.instance(new CharacterClassCompanion[S](parse))
 }

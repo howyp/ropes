@@ -16,6 +16,7 @@
 
 package ropes.core.instances
 
+import ropes.core.RopeCompanion.Build
 import ropes.core._
 
 private[ropes] trait LiteralInstances {
@@ -25,6 +26,10 @@ private[ropes] trait LiteralInstances {
       Parse.Result.Success(Literal[C](c.value).asInstanceOf[Literal[C] { type Name = N }], str.substring(1))
     else Parse.Result.Failure
   }
+
   implicit def literalWriteChar[C <: Char with Singleton, N <: Naming]: Write[Literal[C] { type Name = N }] =
     _.value.toString
+
+  implicit def literalBuild[V <: Char with Singleton](implicit v: ValueOf[V]): Build.Aux[Literal[V], Literal[V]] =
+    Build.instance(Literal(v.value))
 }
